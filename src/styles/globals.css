@@ -370,3 +370,8 @@ p {
 .qus-accordion-title.Mui-expanded,.main-accordion-title.Mui-expanded{
   min-height: 30px!important;
 }
+.card-title{
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom:1.5rem;
+}

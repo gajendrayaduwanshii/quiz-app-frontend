@@ -84,7 +84,7 @@ const Dashboard = () => {
       <div className="dashboard-container">
         <DashboardHeader
           user={dashboardData.user}
-          onStartQuiz={() => router.push("/quiz")}
+          onLearningQuiz={() => router.push("/learnquiz")}
         />
         <Grid item size={{ xs: 12 }}>
           <QuizResultsSummery quizResults={dashboardData.user.quizResult} />

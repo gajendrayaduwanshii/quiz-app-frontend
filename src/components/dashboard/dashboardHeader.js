@@ -1,4 +1,4 @@
-const DashboardHeader = ({ user, onStartQuiz }) => (
+const DashboardHeader = ({ user, onLearningQuiz }) => (
   <div className="dashboard-header">
     <h2 className="subheading">Welcome, {user.name}</h2>
 
@@ -15,8 +15,8 @@ const DashboardHeader = ({ user, onStartQuiz }) => (
         </a>
       )}
 
-      <button className="bg-btn-color-1 custom-btn" onClick={onStartQuiz}>
-        Start Quiz
+      <button className="bg-btn-color-1 custom-btn" onClick={onLearningQuiz}>
+        Learning & Quiz 
       </button>
     </div>
   </div>
