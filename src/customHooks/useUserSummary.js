@@ -13,7 +13,8 @@ export const useUserSummary = (user) => {
 
     const callGeminiAPI = async () => {
       setLoadingDashboard(true);
-      const apiKey = "AIzaSyBmbAFhkkfrVBSIGGWOZ_Kp2P0GH_WuJu8";
+      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+      console.log("Using API Key:", apiKey); // Debugging line
       const url =
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
