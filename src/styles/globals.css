@@ -176,6 +176,26 @@ p {
   font-size: 26px!important;
 }
 
+.custom-btn{
+     font-size: 15px;
+    padding: 0.7rem 1.2rem;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.bg-btn-color-1{
+    background-color: #1976d2;
+}
+.bg-btn-color-2{
+   background-color: transparent;
+   border: 1px solid #1976d2; 
+   color: #1976d2;
+}
+
 .header-wrapper{
   padding-right: 5px!important;
 }
@@ -229,4 +249,114 @@ p {
 .profile-img{
   width: 30px;
   height: 30px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.subheading {
+  font-size: 1.4rem;
+  color: #4b5563;
+}
+
+.quizButton {
+
+}
+
+.summarySection {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.summaryCard {
+  flex: 1;
+  min-width: 200px;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.dashboard-section {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chartRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 48%;
+}
+
+.card.fullWidth {
+  width: 100%;
+}
+
+.headerButtons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.dashboard-container ul li{
+  position: relative;
+  list-style: none ;
+  padding-left: 1.5em;
+}
+
+.dashboard-container ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.3em;
+  width: 0.8em;
+  height: 0.8em;
+  background-color: #1976d2;
+  border-radius: 50%;
+}
+
+.dashboard-container .pie-chart canvas{
+ max-width: 400px;
+  max-height:400px;
+  margin: 0 auto;
+  display: block;
+}
+
+.dashboard-container .line-chart canvas{
+  width: 100%;
+  margin: 0 auto;
+  display: block;
+}
+
+.dashboard-section-loader{
+ margin: 10px 0;
+ text-align: center;
+ width: 100%;
+}
+
+.accordion-card{
+  padding: 0!important;
+  background-color: #fff!important;
+  border-radius: 8px!important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)!important;
+  border: 0!important;
+  position: static!important;
 }

@@ -9,7 +9,11 @@ const QuizTimer = ({ timeLeft }) => {
   };
 
   return (
-    <Typography variant="h6" color={timeLeft <= 60 ? "error" : "primary"} style={{fontSize:"16px", margin: "20px 0 10px"}}>
+    <Typography
+      variant="h6"
+      color={timeLeft <= 60 ? "error" : "primary"}
+      sx={{ fontSize: 16, mt: 2.5, mb: 1 }}
+    >
       ⏳ Time Left: {formatTime(timeLeft)}
     </Typography>
   );

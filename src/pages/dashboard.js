@@ -1,72 +1,142 @@
-import { Grid, Typography, Box, Button } from "@mui/material";
-import DepartmentCardItem from "../components/DepartmentCardItem";
+"use client";
+
+import { useEffect, useState } from "react";
+import { Grid } from "@mui/material";
 import Head from "next/head";
-import FetchData from "@/customHooks/fetchData";
-import Loader from "@/components/Loader";
+import { useRouter } from "next/navigation";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { useUser } from "@/customHooks/useUser";
+import { useUserSummary } from "@/customHooks/useUserSummary";
+import DashboardHeader from "@/components/dashboard/dashboardHeader";
+import SummaryCards from "@/components/dashboard/summaryCards";
+import ChartsRow from "@/components/dashboard/chartsRow";
+import EducationSection from "@/components/dashboard/educationSection";
+import WorkExperienceSection from "@/components/dashboard/workExperienceSection";
+import CertificationsSection from "@/components/dashboard/certificationsSection";
+import UpskillInsightSection from "@/components/dashboard/upskillInsightSection";
+import DashboardInsightsSection from "@/components/dashboard/dashboardInsightsSection";
+import Loader from "@/components/loaderThree";
+import {
+  getSkillSummary,
+  getUpskillSuggestion,
+  parseCertifications,
+} from "@/helper/dashboard";
+import QuizResultsSummery from "@/components/dashboard/quizResultsSummery";
+import QuizResultsAccordion from "./../components/dashboard/quizResultsAccordion";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Tooltip,
+  Legend
+);
 
 const Dashboard = () => {
-  const { data, error, loading, refetch } = FetchData(
-    "http://localhost:1337/api/departments?populate[departmentImage][populate]=*&populate[technologies][populate][image][populate]=*&populate[technologies][populate][questions][populate]=*"
-  );
+  const router = useRouter();
+  const { user, loading } = useUser();
+  const { dashboardInsights, loadingDashboard } = useUserSummary(user);
 
-  const handleRetry = () => {
-    if (refetch) {
-      refetch(); 
-    } else {
-      window.location.reload();
+  const [dashboardData, setDashboardData] = useState({
+    user: null,
+    dashboardInsights: null,
+    loading: true,
+  });
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (!storedUser) {
+      router.push("/login");
+      return;
     }
-  };
 
+    if (!loading && user && !loadingDashboard && dashboardInsights) {
+      setDashboardData({
+        user,
+        dashboardInsights,
+        loading: false,
+      });
+    }
+  }, [loading, user, loadingDashboard, dashboardInsights, router]);
+
+  if (dashboardData.loading || !dashboardData.user) {
+    return <p>Loading...</p>;
+  }
+
+  const { strongest, weakest } = getSkillSummary(dashboardData.user.skills);
+  const years = Number(dashboardData.user.yearsExperience) || 0;
+  console.log("Dashboard Data:", user);
   return (
     <>
       <Head>
-        <title>Dashboard</title>
+        <title>Developer Dashboard</title>
       </Head>
-      <Box className="page-container">
-        <Typography
-          variant="h5"
-          gutterBottom
-          textAlign="left"
-          sx={{ mb: 2, fontWeight: "700" }}
-        >
-          All Departments
-        </Typography>
 
-        {loading && <Loader />}
+      <div className="dashboard-container">
+        <DashboardHeader
+          user={dashboardData.user}
+          onStartQuiz={() => router.push("/quiz")}
+        />
+        <Grid item size={{ xs: 12 }}>
+          <QuizResultsSummery quizResults={dashboardData.user.quizResult} />
+        </Grid>
+        <SummaryCards
+          user={dashboardData.user}
+          strongest={strongest}
+          weakest={weakest}
+          years={years}
+        />
 
-        {error && (
-          <Box sx={{ mb: 2, p: 2, border: "1px solid red", borderRadius: 1 }}>
-            <Typography color="error" variant="body1" gutterBottom>
-              Oops! Something went wrong while fetching the data.
-            </Typography>
-            <Typography color="error" variant="body2" sx={{ mb: 1 }}>
-              {error.message || "Unknown error occurred."}
-            </Typography>
-            <Button variant="outlined" color="error" onClick={handleRetry}>
-              Retry
-            </Button>
-          </Box>
-        )}
+        <ChartsRow skills={dashboardData.user.skills} />
 
-        {!loading && !error && data && data.length > 0 ? (
-          <Grid container spacing={2} className="main-container">
-            {data.map((item, index) => (
-              <DepartmentCardItem
-                key={index}
-                title={item.title}
-                description={item.description}
-                image={item.departmentImage?.url || ""}
-                departmentName={item.name}
-              />
-            ))}
+        <Grid container spacing={2}>
+          <Grid item size={{ xs: 12, sm: 4 }}>
+            <EducationSection educations={dashboardData.user.educations} />
           </Grid>
-        ) : (
-          !loading &&
-          !error && (
-            <Typography>No departments available at the moment.</Typography>
-          )
-        )}
-      </Box>
+          <Grid item size={{ xs: 12, sm: 4 }}>
+            <WorkExperienceSection
+              workExperiences={dashboardData.user.workExperiences}
+            />
+          </Grid>
+          <Grid item size={{ xs: 12, sm: 4 }}>
+            <CertificationsSection
+              parseCertifications={parseCertifications}
+              certifications={dashboardData.user.certifications}
+            />
+          </Grid>
+          <Grid item size={{ xs: 12 }}>
+            <UpskillInsightSection
+              getUpskillSuggestion={getUpskillSuggestion}
+              years={years}
+            />
+          </Grid>
+          <Grid item  size={{ xs: 12 }}>
+  <QuizResultsAccordion quizResults={dashboardData.user.quizResult} />
+</Grid>
+          {loadingDashboard ? (
+            <Loader />
+          ) : (
+            <Grid
+              item
+              size={{ xs: 12 }}
+              sx={{ gap: 2, display: "flex", flexDirection: "column" }}
+            >
+              <DashboardInsightsSection
+                dashboardInsights={dashboardData.dashboardInsights}
+              />
+            </Grid>
+          )}
+        </Grid>
+      </div>
     </>
   );
 };

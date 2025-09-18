@@ -1,6 +1,6 @@
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Typography, Box } from "@mui/material";
+import { Box } from "@mui/material";
 
 const QuizResult = ({ correctAnswers, incorrectAnswers }) => {
   const data = [
@@ -9,7 +9,7 @@ const QuizResult = ({ correctAnswers, incorrectAnswers }) => {
   ];
 
   return (
-    <Box sx={{ textAlign: "center", mt: 3 }}>
+    <Box sx={{ textAlign: "center", mt: 3, px: 2 }}>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
@@ -23,7 +23,7 @@ const QuizResult = ({ correctAnswers, incorrectAnswers }) => {
             label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
           >
             {data.map((entry, index) => (
-              <Cell key={index} fill={entry.color} />
+              <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
           <Tooltip />

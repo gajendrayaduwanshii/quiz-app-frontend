@@ -23,11 +23,12 @@ import EducationSection from "../components/registration/educationSection";
 import WorkExperienceSection from "../components/registration/workExperienceSection";
 import SkillsSection from "../components/registration/skillsSection";
 import CertificationsResumeSection from "../components/registration/certificationsResumeSection";
-
+import { useAuth } from "../context/AuthContext";
 import useRegistrationForm from "../customHooks/useRegistrationForm";
 
 import axios from "axios";
 
+ 
 const STRAPI_URL = "http://localhost:1337";
 
 const steps = [
@@ -41,7 +42,7 @@ const steps = [
 
 const RegistrationForm = () => {
   const router = useRouter();
-
+  const { setRegistrationCompleted } = useAuth(); 
   const {
     formData,
     errors,
@@ -215,8 +216,7 @@ const mapWorkExperience = (workArr) =>
       });
 
         setLoading(false);
-
-        alert("Registration successful!");
+        setRegistrationCompleted(true);
         router.push("/dashboard");
       } catch (error) {
         alert("An error occurred during submission. Please try again.");

@@ -6,6 +6,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const router = useRouter();
+    const [registrationCompleted, setRegistrationCompleted] = useState(false);
 
     useEffect(() => {
         if (typeof window !== "undefined") { 
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, setRegistrationCompleted, registrationCompleted }}>
             {children}
         </AuthContext.Provider>
     );

@@ -3,7 +3,17 @@ import { Modal, Box, Typography, IconButton, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import QuizResult from "./QuizResult";
 
-const QuizModal = ({ open, onClose, title, description, onStart, onRestart, correctCount, incorrectCount, handleGoBack }) => {
+const QuizModal = ({
+  open,
+  onClose,
+  title,
+  description,
+  onStart,
+  onRestart,
+  correctCount,
+  incorrectCount,
+  handleGoBack,
+}) => {
   return (
     <Modal open={open} onClose={onClose}>
       <Box
@@ -20,18 +30,15 @@ const QuizModal = ({ open, onClose, title, description, onStart, onRestart, corr
           textAlign: "center",
           position: "relative",
         }}
-      > 
-       {
-        onRestart ? 
-        <IconButton
-        onClick={onClose}
-        sx={{ position: "absolute", top: 8, right: 8, color: "gray" }}
       >
-        <CloseIcon />
-      </IconButton> :
-       <></>
-       }
-       
+        {onRestart && (
+          <IconButton
+            onClick={onClose}
+            sx={{ position: "absolute", top: 8, right: 8, color: "gray" }}
+          >
+            <CloseIcon />
+          </IconButton>
+        )}
 
         <Typography variant="h6">{title}</Typography>
 
@@ -39,13 +46,17 @@ const QuizModal = ({ open, onClose, title, description, onStart, onRestart, corr
           <QuizResult correctAnswers={correctCount} incorrectAnswers={incorrectCount} />
         ) : (
           <>
-            <Typography variant="body1" sx={{ mt: 2 }}>{description}</Typography>
-            <Button variant="contained" color="primary" onClick={onStart} sx={{ mt: 2 }}>
-              Start Quiz
-            </Button>
-            <Button variant="contained" color="secondary" onClick={handleGoBack} sx={{ mt: 2, ml:1 }}>
-              Back
-            </Button>
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              {description}
+            </Typography>
+            <Box sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 2 }}>
+              <Button variant="contained" color="primary" onClick={onStart}>
+                Start Quiz
+              </Button>
+              <Button variant="contained" color="secondary" onClick={handleGoBack}>
+                Back
+              </Button>
+            </Box>
           </>
         )}
       </Box>

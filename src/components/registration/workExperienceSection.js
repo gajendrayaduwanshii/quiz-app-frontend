@@ -60,7 +60,6 @@ const WorkExperienceSection = ({
                     <Checkbox
                       checked={exp.current}
                       onChange={(e) => {
-                        console.log("Checkbox changed:", e.target.checked);
                         handleArrayChange(
                           "workExperience",
                           i,
