@@ -360,3 +360,13 @@ p {
   border: 0!important;
   position: static!important;
 }
+
+.qus-accordion-title span{ 
+  margin: 0 0 0 !important;
+}
+.main-accordion-title span{
+  margin-bottom:0!important;
+}
+.qus-accordion-title.Mui-expanded,.main-accordion-title.Mui-expanded{
+  min-height: 30px!important;
+}
