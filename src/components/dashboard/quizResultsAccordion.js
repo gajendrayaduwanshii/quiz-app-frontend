@@ -27,10 +27,10 @@ const QuizResultsAccordion = ({ quizResults }) => {
       <Box display={"flex"} flexDirection="column" gap={1}>
       {quizResults.map((quiz, quizIndex) => (
         <Accordion className="accordion-card" key={quizIndex}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="h6">
+          <AccordionSummary className="main-accordion-title"  expandIcon={<ExpandMoreIcon />}>
+            <h3>
               {quiz.quizTitle || `Quiz ${quizIndex + 1}`}
-            </Typography>
+            </h3>
           </AccordionSummary>
 
           <AccordionDetails>
@@ -40,7 +40,7 @@ const QuizResultsAccordion = ({ quizResults }) => {
 
               return (
                 <Accordion key={qIndex} sx={{ mb: 1 }}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <AccordionSummary className="qus-accordion-title" expandIcon={<ExpandMoreIcon />}>
                     <Stack
                       direction="row"
                       spacing={1}
