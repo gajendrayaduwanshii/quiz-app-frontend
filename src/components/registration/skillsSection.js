@@ -8,34 +8,12 @@ import {
   Autocomplete,
 } from "@mui/material";
 import { AddCircle, RemoveCircle } from "@mui/icons-material";
+import skillsData from "./../../data/skills"; 
 
 const levelOptions = [
   { value: "Beginner", label: "Beginner" },
   { value: "Intermediate", label: "Intermediate" },
   { value: "Expert", label: "Expert" },
-];
-
-const skillsData = [
-  { skillName: "JavaScript" },
-  { skillName: "React" },
-  { skillName: "Node.js" },
-  { skillName: "TypeScript" },
-  { skillName: "Python" },
-  { skillName: "Django" },
-  { skillName: "Java" },
-  { skillName: "Spring" },
-  { skillName: "C#" },
-  { skillName: ".NET" },
-  { skillName: "SQL" },
-  { skillName: "MongoDB" },
-  { skillName: "AWS" },
-  { skillName: "Docker" },
-  { skillName: "Kubernetes" },
-  { skillName: "Git" },
-  { skillName: "Linux" },
-  { skillName: "CSS" },
-  { skillName: "HTML" },
-  { skillName: "GraphQL" },
 ];
 
 const SkillsSection = ({

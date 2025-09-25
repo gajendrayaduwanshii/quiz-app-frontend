@@ -31,7 +31,7 @@ const LearnQuiz = () => {
              Explore interactive lessons and study materials to strengthen your understanding of key concepts.
           </h3>
           <Button variant="contained" color="primary" component={Link} href="/learning">
-            Go to Learning
+            Go to Learning and Suggestions
           </Button>
         </CardContent>
       </Card>
@@ -42,8 +42,8 @@ const LearnQuiz = () => {
           <h3 className="card-title">
             Test your knowledge with fun and challenging quizzes based on what you've learned.
           </h3>
-          <Button variant="contained" color="secondary" component={Link} href="/quiz">
-            Go to Quiz
+          <Button variant="contained" color="secondary" component={Link} href="/technologies">
+            Go to Technologies For Quiz
           </Button>
         </CardContent>
       </Card>

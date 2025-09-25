@@ -43,7 +43,11 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
         <Typography variant="h6">Dashboard</Typography>
         <Box>
           <IconButton onClick={handleMenuOpen}>
-            <Avatar  alt={user?.email ? user.email.toUpperCase() : "User"} src={"/images/default-profile-image.jpg"}  className="profile-img"/>
+            <Avatar  
+              alt={user?.email ? user.email.toUpperCase() : "User"} 
+              src={"/images/default-profile-image.jpg"}  
+              className="profile-img"
+            />
           </IconButton>
           <Menu
             anchorEl={anchorEl}
@@ -52,8 +56,22 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             transformOrigin={{ vertical: "top", horizontal: "right" }}
           >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleMenuClose();
+                router.push("/profile");
+              }}
+            >
+              Profile
+            </MenuItem>
+             <MenuItem
+              onClick={() => {
+                handleMenuClose();
+                router.push("/changePassword");
+              }}
+            >
+              Change Password
+            </MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
         </Box>

@@ -120,9 +120,9 @@ const Login = () => {
   return (
     <Box className="login-wrapper">
       <Box>
-        <Typography variant="h5" className="stylish-title title">
-          AI Quiz
-        </Typography>
+        <Box sx={{textAlign:"center"}}>
+          <img src="/images/full-logo.png" className="main-logo-one" alt="Logo" />
+        </Box>
         <Paper className="login-container">
           <Grid container>
             <Grid item size={{xs:12, md:6}}>

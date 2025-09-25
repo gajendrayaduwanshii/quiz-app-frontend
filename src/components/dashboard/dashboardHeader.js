@@ -1,6 +1,6 @@
 const DashboardHeader = ({ user, onLearningQuiz }) => (
   <div className="dashboard-header">
-    <h2 className="subheading">Welcome, {user.name}</h2>
+    <h2 className="page-title">Welcome, {user.name}</h2>
 
     <div className="headerButtons">
       {user.uploadResume?.url && (

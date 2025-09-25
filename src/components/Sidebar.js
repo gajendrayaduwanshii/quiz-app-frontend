@@ -49,7 +49,9 @@ const Sidebar = ({ open }) => {
         }}
       >
         <Typography variant="h6" sx={{ color: "white", fontWeight: "bold", fontSize: open ? 24 : 16 }}>
-          AI Quiz
+          {open ? ( <img src="/images/full-logo.png" className="main-logo" alt="Logo"  style={{ height: open ? 40 : 30, transition: '0.3s all' }} />):
+           <img src="/images/logo-design.png" alt="Logo" className="main-logo"  style={{ height: open ? 40 : 30, transition: '0.3s all' }} />}
+         
         </Typography>
       </Box>
 

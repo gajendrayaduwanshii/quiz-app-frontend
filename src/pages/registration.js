@@ -184,12 +184,12 @@ const mapWorkExperience = (workArr) =>
         return;
       }
 
-      if (!formData.resumeFile) {
+      if (!formData.uploadResume) {
         alert("Please upload your resume PDF file");
         return;
       }
 
-      if (formData.resumeFile.type !== "application/pdf") {
+      if (formData.uploadResume.type !== "application/pdf") {
         alert("Please upload a PDF file for your resume");
         return;
       }
@@ -198,7 +198,7 @@ const mapWorkExperience = (workArr) =>
 
       try {
         // 1. Upload resume file
-        const uploadedFile = await uploadFileToStrapi(formData.resumeFile);
+        const uploadedFile = await uploadFileToStrapi(formData.uploadResume);
 
         if (!uploadedFile) {
           alert("File upload failed. Please try again.");
@@ -212,7 +212,7 @@ const mapWorkExperience = (workArr) =>
          // ✅ 2. Show form data in console before submitting
       console.log("Form data being submitted:", {
         ...formData,
-        resumeFile: uploadedFile,
+        uploadResume: uploadedFile,
       });
 
         setLoading(false);
@@ -291,7 +291,7 @@ const mapWorkExperience = (workArr) =>
           handleFileChange={handleFileChange}
           errors={{
             certifications: errors.certifications,
-            resumeFile: errors.resumeFile,
+            uploadResume: errors.uploadResume,
           }}
         />
         );

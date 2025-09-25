@@ -23,7 +23,7 @@ import WorkExperienceSection from "@/components/dashboard/workExperienceSection"
 import CertificationsSection from "@/components/dashboard/certificationsSection";
 import UpskillInsightSection from "@/components/dashboard/upskillInsightSection";
 import DashboardInsightsSection from "@/components/dashboard/dashboardInsightsSection";
-import Loader from "@/components/loaderThree";
+import Loader from "@/components/Loader";
 import {
   getSkillSummary,
   getUpskillSuggestion,
@@ -69,12 +69,12 @@ const Dashboard = () => {
   }, [loading, user, loadingDashboard, dashboardInsights, router]);
 
   if (dashboardData.loading || !dashboardData.user) {
-    return <p>Loading...</p>;
+    return <Loader />;
   }
 
   const { strongest, weakest } = getSkillSummary(dashboardData.user.skills);
   const years = Number(dashboardData.user.yearsExperience) || 0;
-  console.log("Dashboard Data:", user);
+
   return (
     <>
       <Head>
@@ -87,7 +87,7 @@ const Dashboard = () => {
           onLearningQuiz={() => router.push("/learnquiz")}
         />
         <Grid item size={{ xs: 12 }}>
-          <QuizResultsSummery quizResults={dashboardData.user.quizResult} />
+          <QuizResultsSummery quizResults={dashboardData.user.quizResult}  skills={dashboardData.user.skills}/>
         </Grid>
         <SummaryCards
           user={dashboardData.user}
@@ -119,9 +119,9 @@ const Dashboard = () => {
               years={years}
             />
           </Grid>
-          <Grid item  size={{ xs: 12 }}>
-  <QuizResultsAccordion quizResults={dashboardData.user.quizResult} />
-</Grid>
+          <Grid item size={{ xs: 12 }}>
+            <QuizResultsAccordion quizResults={dashboardData.user.quizResult} />
+          </Grid>
           {loadingDashboard ? (
             <Loader />
           ) : (

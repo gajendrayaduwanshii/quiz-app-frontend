@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 
-export const useQuiz = (user) => {
+export const useQuiz = (user, tech) => {
   const [questions, setQuestions] = useState([]);
   const [loadingQuiz, setLoadingQuiz] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !tech) return;
 
     const callGeminiAPI = async () => {
       setLoadingQuiz(true);
@@ -18,19 +18,21 @@ export const useQuiz = (user) => {
         "Content-Type": "application/json",
         "X-goog-api-key": apiKey,
       };
+      // Find the matching skill from user's skills
+      const matchedSkill = Array.isArray(user.skills)
+        ? user.skills.find(
+            (skill) =>
+              skill.skillName?.toLowerCase() === tech.toLowerCase()
+          )
+        : null;
 
-      // ✅ Safely access skills
-      const userSkills = Array.isArray(user.skills)
-        ? user.skills.map((skill) => skill.skillName).join(", ")
-        : "N/A";
-
+      const experience = matchedSkill?.yearsExperience || "N/A";
+      const level = matchedSkill?.level || "N/A"
       const prompt = `
-        Generate 20 quiz questions and answers in JSON format based on this user's skills and experience.
-        Format each question as {id, question, answer, options[]}.
-
-        User Skills: ${userSkills}
-        Experience Years: ${user.yearsExperience || "N/A"}
-      `;
+Generate 20 multiple-choice quiz questions in JSON format based on user's ${experience} years experience in ${tech} at an expert level ${level}".
+Each question should be an object: { id, question, options[], answer }.
+Make sure questions match the experience level.
+`;
 
       const body = JSON.stringify({
         contents: [
@@ -52,7 +54,6 @@ export const useQuiz = (user) => {
         });
 
         const data = await res.json();
-
         const output = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
         const jsonMatch = output.match(/\[.*\]/s);
 
@@ -71,7 +72,7 @@ export const useQuiz = (user) => {
     };
 
     callGeminiAPI();
-  }, [user]);
+  }, [user, tech]);
 
   return { questions, loadingQuiz };
 };
