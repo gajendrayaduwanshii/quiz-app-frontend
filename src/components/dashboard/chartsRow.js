@@ -1,3 +1,4 @@
+import { Grid } from "@mui/system";
 import { Bar, Pie } from "react-chartjs-2";
 
 const ChartsRow = ({ skills }) => {
@@ -7,7 +8,58 @@ const ChartsRow = ({ skills }) => {
       {
         label: "Skill Proficiency (Years)",
         data: skills?.map((s) => s.yearsExperience),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
+        backgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF",
+          "#FF9F40",
+          "#FFCD56",
+          "#C9CBCF",
+          "#36A2EB",
+          "#FF6384",
+          "#8AFF33",
+          "#33FFBD",
+          "#FF33F6",
+          "#FF5733",
+          "#33FF57",
+          "#3357FF",
+          "#F6FF33",
+          "#FF33A6",
+          "#33FFF3",
+          "#A633FF",
+          "#FF6F33",
+          "#33FF8A",
+          "#FF3380",
+          "#33A6FF",
+          "#FFBF33",
+          "#FF3333",
+          "#33FFBF",
+          "#8033FF",
+          "#FF33FF",
+          "#33FF66",
+          "#FF6633",
+          "#33FF99",
+          "#FF3399",
+          "#33CCFF",
+          "#FF9933",
+          "#FF3366",
+          "#33FFCC",
+          "#9933FF",
+          "#FF33CC",
+          "#33FF33",
+          "#FF9933",
+          "#33FF66",
+          "#FF33FF",
+          "#33CC33",
+          "#FF6666",
+          "#66FF33",
+          "#FF33CC",
+          "#33FF99",
+          "#CC33FF",
+          "#FF3399",
+        ],
       },
     ],
   };
@@ -29,14 +81,20 @@ const ChartsRow = ({ skills }) => {
 
   return (
     <div className="chartRow">
-      <div className="card pie-chart">
-        <h3>🧠 Skill Distribution</h3>
-        <Pie data={pieData} />
-      </div>
-      <div className="card">
-        <h3>📚 Skill Level Overview</h3>
-        <Bar data={barData} />
-      </div>
+      <Grid container spacing={2} sx={{width:"100%"}}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <div className="card pie-chart" style={{width:"100%",height:"100%"}}>
+            <h3>🧠 Skill Distribution</h3>
+            <Pie  width={400} height={400} data={pieData} />
+          </div>
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <div className="card" style={{width:"100%"}}>
+            <h3>📚 Skill Level Overview</h3>
+            <Bar data={barData} />
+          </div>
+        </Grid>
+      </Grid>
     </div>
   );
 };

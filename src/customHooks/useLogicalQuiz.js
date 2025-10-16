@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export const useQuiz = (user, tech) => {
+export const useLogicalQuiz = (user, tech) => {
   const [questions, setQuestions] = useState([]);
   const [loadingQuiz, setLoadingQuiz] = useState(false);
 
@@ -18,7 +18,8 @@ export const useQuiz = (user, tech) => {
         "Content-Type": "application/json",
         "X-goog-api-key": apiKey,
       };
-      // Find the matching skill from user's skills
+
+      // Match skill from user profile
       const matchedSkill = Array.isArray(user.skills)
         ? user.skills.find(
             (skill) =>
@@ -27,21 +28,28 @@ export const useQuiz = (user, tech) => {
         : null;
 
       const experience = matchedSkill?.yearsExperience || "N/A";
-      const level = matchedSkill?.level || "N/A"
+      const level = matchedSkill?.level || "N/A";
+
+      // 🧠 Updated prompt for logical coding questions with input/output
       const prompt = `
-Generate 20 multiple-choice quiz questions in JSON format based on user's ${experience} years experience in ${tech} at an expert level ${level}".
-Each question should be an object: { id, question, options[], answer }.
-Make sure questions match the experience level.
+Generate at least 5 logical coding questions for a user learning ${tech}.
+The user has ${experience} years of experience at level: ${level}.
+Each question should be an object in JSON format with:
+{
+  "id": number,
+  "question": string,
+  "input": string,            // sample input for the question
+  "expectedOutput": string    // correct output/result
+}
+
+Return all questions as a JSON array.
+Focus on coding/logical problems, not MCQs.
 `;
 
       const body = JSON.stringify({
         contents: [
           {
-            parts: [
-              {
-                text: prompt,
-              },
-            ],
+            parts: [{ text: prompt }],
           },
         ],
       });
@@ -55,13 +63,22 @@ Make sure questions match the experience level.
 
         const data = await res.json();
         const output = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-        const jsonMatch = output.match(/\[.*\]/s);
 
+        // Try to extract JSON array from response
+        const jsonMatch = output.match(/\[.*\]/s);
         if (jsonMatch) {
-          setQuestions(JSON.parse(jsonMatch[0]));
+          const parsed = JSON.parse(jsonMatch[0]);
+          // Optional: ensure each question has id, question, input, expectedOutput
+          const validated = parsed.map((q, idx) => ({
+            id: q.id || idx + 1,
+            question: q.question || "No question provided",
+            input: q.input || "",
+            expectedOutput: q.expectedOutput || "",
+          }));
+          setQuestions(validated);
         } else {
           setQuestions([]);
-          console.warn("Quiz data JSON not found in Gemini response.");
+          console.warn("Logical quiz JSON not found in Gemini response.");
         }
       } catch (error) {
         console.error("Error calling Gemini API:", error);

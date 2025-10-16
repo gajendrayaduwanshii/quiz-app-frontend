@@ -13,6 +13,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { textTransform } from "@mui/system";
 
 const QuizResultsAccordion = ({ quizResults }) => {
   if (!quizResults || quizResults.length === 0) {
@@ -28,8 +29,8 @@ const QuizResultsAccordion = ({ quizResults }) => {
       {quizResults.map((quiz, quizIndex) => (
         <Accordion className="accordion-card" key={quizIndex}>
           <AccordionSummary className="main-accordion-title"  expandIcon={<ExpandMoreIcon />}>
-            <h3>
-              {quiz.quizTitle || `Quiz ${quizIndex + 1}`}
+            <h3 className="h3-title">
+              {quiz.quizTitle || `${quiz.technology} Quiz ${quizIndex + 1}`}
             </h3>
           </AccordionSummary>
 

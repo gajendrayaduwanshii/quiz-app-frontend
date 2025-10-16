@@ -23,7 +23,7 @@ import WorkExperienceSection from "@/components/dashboard/workExperienceSection"
 import CertificationsSection from "@/components/dashboard/certificationsSection";
 import UpskillInsightSection from "@/components/dashboard/upskillInsightSection";
 import DashboardInsightsSection from "@/components/dashboard/dashboardInsightsSection";
-import Loader from "@/components/loaderThree";
+import Loader from "@/components/Loader";
 import {
   getSkillSummary,
   getUpskillSuggestion,
@@ -31,6 +31,8 @@ import {
 } from "@/helper/dashboard";
 import QuizResultsSummery from "@/components/dashboard/quizResultsSummery";
 import QuizResultsAccordion from "./../components/dashboard/quizResultsAccordion";
+import LoaderTwo from "@/components/LoaderTwo";
+import Compare from "./../components/compare/compare";
 
 ChartJS.register(
   CategoryScale,
@@ -69,12 +71,12 @@ const Dashboard = () => {
   }, [loading, user, loadingDashboard, dashboardInsights, router]);
 
   if (dashboardData.loading || !dashboardData.user) {
-    return <p>Loading...</p>;
+    return <LoaderTwo  text="AI Prepare Dashboard ..." />;
   }
 
   const { strongest, weakest } = getSkillSummary(dashboardData.user.skills);
   const years = Number(dashboardData.user.yearsExperience) || 0;
-  console.log("Dashboard Data:", user);
+
   return (
     <>
       <Head>
@@ -84,10 +86,10 @@ const Dashboard = () => {
       <div className="dashboard-container">
         <DashboardHeader
           user={dashboardData.user}
-          onLearningQuiz={() => router.push("/learnquiz")}
+          onLearningQuiz={() => router.push("/interactiveLearningHub")}
         />
         <Grid item size={{ xs: 12 }}>
-          <QuizResultsSummery quizResults={dashboardData.user.quizResult} />
+          <QuizResultsSummery quizResults={dashboardData.user.quizResult}  skills={dashboardData.user.skills}/>
         </Grid>
         <SummaryCards
           user={dashboardData.user}
@@ -119,11 +121,11 @@ const Dashboard = () => {
               years={years}
             />
           </Grid>
-          <Grid item  size={{ xs: 12 }}>
-  <QuizResultsAccordion quizResults={dashboardData.user.quizResult} />
-</Grid>
+          <Grid item size={{ xs: 12 }}>
+            <QuizResultsAccordion quizResults={dashboardData.user.quizResult} />
+          </Grid>
           {loadingDashboard ? (
-            <Loader />
+            <LoaderTwo  text="AI Prepare Dashboard ..." />
           ) : (
             <Grid
               item
@@ -136,6 +138,7 @@ const Dashboard = () => {
             </Grid>
           )}
         </Grid>
+        <Compare />
       </div>
     </>
   );

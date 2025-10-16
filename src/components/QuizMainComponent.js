@@ -13,7 +13,7 @@ const getRandomQuestions = (questions, count = 10) => {
   return shuffled.slice(0, count);
 };
 
-const QuizMainComponent = ({ questions, documentId }) => {
+const QuizMainComponent = ({ questions, documentId, tech }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
@@ -130,6 +130,7 @@ const QuizMainComponent = ({ questions, documentId }) => {
 
     const quizResult = {
       result: calculateResult(),
+      technology: tech,
       quizQuestion: selectedQuestions.map((question, index) => ({
         question: question.question,
         answer: answers[index] || null,
