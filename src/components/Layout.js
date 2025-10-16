@@ -1,22 +1,29 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useMediaQuery } from "@mui/material";
 import HeaderSidebar from "./HeaderSidebar";
 
 export default function Layout({ children }) {
   const pathname = usePathname();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const isMobile = useMediaQuery("(max-width:992px)");
 
-  // Define routes that should NOT use the layout
+  // Initialize sidebar open state based on screen size
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+
+  // Update sidebar state if screen resizes
+  useEffect(() => {
+    setSidebarOpen(!isMobile);
+  }, [isMobile]);
+
+  // Routes that should NOT use the layout
   const noLayoutRoutes = ['/login', '/registration'];
 
-  // If current path matches one of them, return children only
   if (noLayoutRoutes.includes(pathname)) {
     return <>{children}</>;
   }
 
-  // Otherwise, render layout with sidebar/header
   return (
     <HeaderSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}>
       {children}

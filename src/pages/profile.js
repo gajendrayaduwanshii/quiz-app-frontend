@@ -70,14 +70,12 @@ const Profile = () => {
     }
   }, [user]);
 
-  // Format date to yyyy-MM-dd
   const formatDate = (date) => {
     if (!date) return null;
     const d = new Date(date);
     return d.toISOString().split("T")[0];
   };
 
-  // Map education array
   const mapEducation = (educationArr) =>
     educationArr.map((edu) => ({
       degree: edu.degree,
@@ -86,7 +84,6 @@ const Profile = () => {
       grade: edu.grade,
     }));
 
-  // Map work experience array
   const mapWorkExperience = (workArr) =>
     workArr.map((work) => ({
       jobTitle: work.jobTitle || work.title || "",
@@ -97,7 +94,6 @@ const Profile = () => {
       current: work.current || false,
     }));
 
-  // Map skills array
   const mapSkills = (skillsArr) =>
     skillsArr.map((skill) => ({
       skillName: skill.skillName || skill.skill || "",
@@ -105,7 +101,6 @@ const Profile = () => {
       yearsExperience: skill.yearsExperience || skill.experienceYears || "",
     }));
 
-  // Get age from DOB
   const getAgeFromDOB = (dob) => {
     if (!dob) return null;
     const birthDate = new Date(dob);
@@ -116,7 +111,6 @@ const Profile = () => {
     return age;
   };
 
-  // Handle file input change for resume upload
   const handleFileChange = (e) => {
     if (!e || !e.target || !e.target.files) return;
     const file = e.target.files[0];
@@ -133,7 +127,6 @@ const Profile = () => {
 
     let uploadedFile = null;
 
-    // ✅ Upload resume if it's a File object
     if (profileData.uploadResume instanceof File) {
       const formData = new FormData();
       formData.append("files", profileData.uploadResume);
@@ -149,7 +142,7 @@ const Profile = () => {
           }
         );
 
-        uploadedFile = uploadResponse.data[0]; // Uploaded file info
+        uploadedFile = uploadResponse.data[0]; 
       } catch (uploadErr) {
         console.error("Resume upload failed:", uploadErr);
         alert("Resume upload failed.");
@@ -171,7 +164,6 @@ const Profile = () => {
       certifications: profileData.certifications,
       password: profileData.password || undefined,
 
-      // ✅ Assign only file ID here
       uploadResume: uploadedFile
         ? uploadedFile.id
         : profileData.uploadResume?.id || null,
@@ -193,7 +185,6 @@ const Profile = () => {
         setProfileData((prev) => ({
           ...prev,
           ...updated,
-          // ✅ Use uploadedFile if new file was uploaded
           uploadResume: uploadedFile || user.uploadResume || prev.uploadResume,
         }));
 

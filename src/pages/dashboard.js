@@ -31,6 +31,8 @@ import {
 } from "@/helper/dashboard";
 import QuizResultsSummery from "@/components/dashboard/quizResultsSummery";
 import QuizResultsAccordion from "./../components/dashboard/quizResultsAccordion";
+import LoaderTwo from "@/components/LoaderTwo";
+import Compare from "./../components/compare/compare";
 
 ChartJS.register(
   CategoryScale,
@@ -69,7 +71,7 @@ const Dashboard = () => {
   }, [loading, user, loadingDashboard, dashboardInsights, router]);
 
   if (dashboardData.loading || !dashboardData.user) {
-    return <Loader />;
+    return <LoaderTwo  text="AI Prepare Dashboard ..." />;
   }
 
   const { strongest, weakest } = getSkillSummary(dashboardData.user.skills);
@@ -84,7 +86,7 @@ const Dashboard = () => {
       <div className="dashboard-container">
         <DashboardHeader
           user={dashboardData.user}
-          onLearningQuiz={() => router.push("/learnquiz")}
+          onLearningQuiz={() => router.push("/interactiveLearningHub")}
         />
         <Grid item size={{ xs: 12 }}>
           <QuizResultsSummery quizResults={dashboardData.user.quizResult}  skills={dashboardData.user.skills}/>
@@ -123,7 +125,7 @@ const Dashboard = () => {
             <QuizResultsAccordion quizResults={dashboardData.user.quizResult} />
           </Grid>
           {loadingDashboard ? (
-            <Loader />
+            <LoaderTwo  text="AI Prepare Dashboard ..." />
           ) : (
             <Grid
               item
@@ -136,6 +138,7 @@ const Dashboard = () => {
             </Grid>
           )}
         </Grid>
+        <Compare />
       </div>
     </>
   );

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useUser } from "@/customHooks/useUser";
-import Loader from "@/components/Loader";
+import LoaderTwo from "@/components/LoaderTwo";
 import { useLearningSuggestions } from "@/customHooks/useLearningSuggestions"; 
 
 const Learning = () => {
@@ -28,7 +28,7 @@ const Learning = () => {
 
   // Show loader while user data or AI suggestions are loading
   if (userLoading || loadingSuggestions) {
-    return <Loader text="Loading personalized learning suggestions..." />;
+    return <LoaderTwo text="Prepare Personalized Learning Suggestions..." />;
   }
 
   // Show message if no suggestions available

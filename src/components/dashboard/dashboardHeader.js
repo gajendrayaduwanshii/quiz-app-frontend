@@ -16,7 +16,7 @@ const DashboardHeader = ({ user, onLearningQuiz }) => (
       )}
 
       <button className="bg-btn-color-1 custom-btn" onClick={onLearningQuiz}>
-        Learning & Quiz 
+        Interactive Learning
       </button>
     </div>
   </div>

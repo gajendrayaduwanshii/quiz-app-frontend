@@ -3,6 +3,7 @@ import { useUser } from "@/customHooks/useUser";
 import { useQuiz } from "@/customHooks/useQuiz";
 import LoaderTwo from "@/components/LoaderTwo";
 import QuizMainComponent from "@/components/QuizMainComponent";
+import { Box } from "@mui/material";
 
 const Quiz = () => {
   const router = useRouter();
@@ -19,13 +20,13 @@ const Quiz = () => {
   }
 
   return (
-    <>
+    <Box sx={{height: "calc(100vh - 180px)"}}>
       {questions.length > 0 ? (
         <QuizMainComponent tech={tech} questions={questions} documentId={user.documentId} />
       ) : (
         <div>No quiz questions available for "{tech}".</div>
       )}
-    </>
+    </Box>
   );
 };
 
