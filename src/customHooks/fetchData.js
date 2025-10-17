@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 const FetchData = (url) => {
   const [data, setData] = useState(null);
@@ -12,8 +11,14 @@ const FetchData = (url) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(url);
-      setData(res.data.data);
+      const res = await fetch(`/api/data/fetch?url=${encodeURIComponent(url)}`);
+      const result = await res.json();
+      
+      if (res.ok) {
+        setData(result.data);
+      } else {
+        setError(result.error || "Error fetching data");
+      }
     } catch (err) {
       setError(err.message || "Error fetching data");
     } finally {

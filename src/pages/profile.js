@@ -132,17 +132,17 @@ const Profile = () => {
       formData.append("files", profileData.uploadResume);
 
       try {
-        const uploadResponse = await axios.post(
-          "http://localhost:1337/api/upload",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        const uploadResponse = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
 
-        uploadedFile = uploadResponse.data[0]; 
+        const result = await uploadResponse.json();
+        if (uploadResponse.ok && result.file) {
+          uploadedFile = result.file;
+        } else {
+          throw new Error(result.error || "Upload failed");
+        } 
       } catch (uploadErr) {
         console.error("Resume upload failed:", uploadErr);
         alert("Resume upload failed.");
@@ -174,12 +174,23 @@ const Profile = () => {
     };
 
     try {
-      const response = await axios.put(
-        `http://localhost:1337/api/userlists/${documentId}`,
-        { data: payload }
-      );
+      const response = await fetch("/api/user/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          documentId,
+          data: payload,
+        }),
+      });
 
-      const updated = response.data?.data;
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Update failed");
+      }
+
+      const updated = result.user;
 
       if (updated) {
         setProfileData((prev) => ({

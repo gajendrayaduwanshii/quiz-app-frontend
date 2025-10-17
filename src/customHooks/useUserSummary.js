@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 
 export const useUserSummary = (user) => {
   const [dashboardInsights, setDashboardInsights] = useState({
@@ -7,90 +7,63 @@ export const useUserSummary = (user) => {
     studyPlan: "",
   });
   const [loadingDashboard, setLoadingDashboard] = useState(false);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchUserSummary = useCallback(async () => {
     if (!user) return;
 
-    const callGeminiAPI = async () => {
-      setLoadingDashboard(true);
-      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
-      console.log("Using API Key:", apiKey); // Debugging line
-      const url =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+    setLoadingDashboard(true);
+    setError(null);
 
-      const headers = {
-        "Content-Type": "application/json",
-        "X-goog-api-key": apiKey,
-      };
-
-      const fullUserData = JSON.stringify(user, null, 2);
-
-      const prompt = `
-You're an intelligent career assistant. Based on the following user profile (in JSON), return a structured JSON with:
-
-{
-  "summary": "1 paragraph summary of user's current state",
-  "rolesAndResponsibilities": "1-2 paragraphs suggesting what roles best fit their skills and experience",
-  "studyPlan": "Topics, technologies, or concepts they should study to level up"
-}
-
-Only respond with valid JSON. No explanation, no markdown, no comments.
-
-User Profile:
-\`\`\`json
-${fullUserData}
-\`\`\`
-      `;
-
-      const body = JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: prompt }],
-          },
-        ],
+    try {
+      const res = await fetch("/api/user/summary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user }),
       });
 
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          headers,
-          body,
+      const data = await res.json();
+
+      if (res.ok) {
+        setDashboardInsights({
+          summary: data.summary || "",
+          rolesAndResponsibilities: data.rolesAndResponsibilities || "",
+          studyPlan: data.studyPlan || "",
         });
-
-        const data = await res.json();
-
-        const output = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-        const jsonMatch = output.match(/\{.*\}/s);
-
-        if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
-          setDashboardInsights({
-            summary: parsed.summary || "",
-            rolesAndResponsibilities: parsed.rolesAndResponsibilities || "",
-            studyPlan: parsed.studyPlan || "",
-          });
-        } else {
-          setDashboardInsights({
-            summary: "",
-            rolesAndResponsibilities: "",
-            studyPlan: "",
-          });
-          console.warn("No valid JSON found in Gemini response.");
-        }
-      } catch (err) {
-        console.error("Gemini API failed", err);
+      } else {
+        setError(data.error);
         setDashboardInsights({
           summary: "",
           rolesAndResponsibilities: "",
           studyPlan: "",
         });
-      } finally {
-        setLoadingDashboard(false);
       }
-    };
-
-    callGeminiAPI();
+    } catch (err) {
+      setError(err.message);
+      setDashboardInsights({
+        summary: "",
+        rolesAndResponsibilities: "",
+        studyPlan: "",
+      });
+    } finally {
+      setLoadingDashboard(false);
+    }
   }, [user]);
 
-  return { dashboardInsights, loadingDashboard };
+  useEffect(() => {
+    fetchUserSummary();
+  }, [fetchUserSummary]);
+
+  const refetch = useCallback(() => {
+    fetchUserSummary();
+  }, [fetchUserSummary]);
+
+  return useMemo(() => ({ 
+    dashboardInsights, 
+    loadingDashboard, 
+    error, 
+    refetch 
+  }), [dashboardInsights, loadingDashboard, error, refetch]);
 };

@@ -225,7 +225,7 @@ const BasicInfo = ({
                           color="primary"
                           href={
                             profileData.uploadResume
-                              ? `http://localhost:1337${
+                              ? `${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}${
                                   typeof profileData.uploadResume === "object"
                                     ? profileData.uploadResume.url
                                     : profileData.uploadResume

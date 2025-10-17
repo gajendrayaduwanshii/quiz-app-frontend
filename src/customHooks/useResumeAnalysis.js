@@ -1,51 +1,56 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export const useResumeAnalysis = (user) => {
-  const [profileSummary, setProfileSummary] = useState("");
-  const [learningSuggestions, setLearningSuggestions] = useState([]);
+  const [analysisData, setAnalysisData] = useState({
+    profileSummary: "",
+    learningSuggestions: [],
+  });
   const [loadingResume, setLoadingResume] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchResumeAnalysis = useCallback(async () => {
     if (!user?.uploadResume?.url) return;
 
-    const analyzeResume = async () => {
-      setLoadingResume(true);
-      setError(null);
+    setLoadingResume(true);
+    setError(null);
 
-      try {
-        const baseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
-        const resumeUrl = `${baseUrl}${user.uploadResume.url}`;
+    try {
+      const response = await fetch("/api/resume/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          uploadResume: `${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}${user.uploadResume.url}` 
+        }),
+      });
 
-        const res = await fetch("/api/resume/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ uploadResume: resumeUrl }),
+      const data = await response.json();
+
+      if (response.ok) {
+        setAnalysisData({
+          profileSummary: typeof data.profileSummary === "string" ? data.profileSummary : "",
+          learningSuggestions: Array.isArray(data.learningSuggestions) ? data.learningSuggestions : [],
         });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          console.error("API error response:", data);
-          throw new Error(data.error || "Server error");
-        }
-
-        // Safely extract profileSummary and learningSuggestions
-        setProfileSummary(typeof data.profileSummary === "string" ? data.profileSummary : "");
-        setLearningSuggestions(Array.isArray(data.learningSuggestions) ? data.learningSuggestions : []);
-
-      } catch (err) {
-        console.error("Hook error analyzing resume:", err);
-        setProfileSummary("");
-        setLearningSuggestions([]);
-        setError(err.message || "Failed to analyze resume");
-      } finally {
-        setLoadingResume(false);
+      } else {
+        setError(data.error || "Failed to analyze resume");
       }
-    };
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoadingResume(false);
+    }
+  }, [user?.uploadResume?.url]);
 
-    analyzeResume();
-  }, [user]);
+  useEffect(() => {
+    fetchResumeAnalysis();
+  }, [fetchResumeAnalysis]);
 
-  return { profileSummary, learningSuggestions, loadingResume, error };
+  return { 
+    profileSummary: analysisData.profileSummary,
+    learningSuggestions: analysisData.learningSuggestions,
+    loadingResume, 
+    error, 
+    refetch: fetchResumeAnalysis
+  };
 };

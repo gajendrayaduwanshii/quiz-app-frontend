@@ -21,7 +21,7 @@ const Login = () => {
     data: users,
     error: fetchError,
     loading: fetchLoading,
-  } = FetchData("http://localhost:1337/api/userlists");
+  } = FetchData(`${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}/api/userlists`);
 
   // Check if user is already logged in
   useEffect(() => {

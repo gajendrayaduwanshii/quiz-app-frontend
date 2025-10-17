@@ -19,7 +19,7 @@ const Technologies = () => {
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <Typography>Loading...</Typography>
+        <LoaderTwo text="Loading Technologies..." />
       </Box>
     );
   }
@@ -27,7 +27,7 @@ const Technologies = () => {
   if (!user) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <Typography>Redirecting to login...</Typography>
+          <LoaderTwo text="Redirecting to login... ..." />
       </Box>
     );
   }
@@ -80,7 +80,7 @@ const Technologies = () => {
                     component={NextLink}
                     href={`/quiz/${encodeURIComponent(skill.skillName.toLowerCase())}`}
                   >
-                    View Details
+                    Start Quiz
                   </Button>
                 </CardContent>
               </Card>

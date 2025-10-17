@@ -1,7 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
-
-const API_URL = "http://localhost:1337";
 
 const usePostRequest = () => {
   const [response, setResponse] = useState(null);
@@ -9,12 +6,25 @@ const usePostRequest = () => {
 
   const postData = async (endpoint, data, config = {}) => {
     try {
-      const res = await axios.post(`${API_URL}${endpoint}`, data, config);
-      setResponse(res.data);
-      return res.data;
+      const res = await fetch("/api/data/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ endpoint, data, config }),
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        setResponse(result.data);
+        return result.data;
+      } else {
+        throw new Error(result.error || "POST request failed");
+      }
     } catch (err) {
       setError(err);
-      console.error("Axios POST error:", err);
+      console.error("POST error:", err);
       throw err;
     }
   };

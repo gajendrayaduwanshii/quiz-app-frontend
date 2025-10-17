@@ -87,19 +87,20 @@ const RegistrationForm = () => {
   // Upload file to Strapi and get uploaded file object
   const uploadFileToStrapi = async (file) => {
     const formData = new FormData();
-    formData.append("files", file);
+    formData.append("file", file);
 
     try {
-      const res = await axios.post(`${STRAPI_URL}/api/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
       });
 
-      if (Array.isArray(res.data) && res.data.length > 0) {
-        return res.data[0]; // uploaded file object
+      const result = await res.json();
+
+      if (res.ok && result.file) {
+        return result.file; // uploaded file object
       } else {
-        console.error("Unexpected response format from upload:", res.data);
+        console.error("Upload failed:", result.error);
         return null;
       }
     } catch (error) {
@@ -166,8 +167,23 @@ const mapWorkExperience = (workArr) =>
     };
 
     try {
-      const res = await axios.post(`${STRAPI_URL}/api/userlists`, payload);
-      return res.data;
+      const res = await fetch("/api/data/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          endpoint: "/api/userlists",
+          data: payload,
+        }),
+      });
+
+      const result = await res.json();
+      if (res.ok) {
+        return result.data;
+      } else {
+        throw new Error(result.error || "Registration failed");
+      }
     } catch (error) {
       console.error(
         "Error submitting userlist entry:",

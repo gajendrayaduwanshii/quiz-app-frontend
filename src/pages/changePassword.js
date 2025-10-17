@@ -147,10 +147,21 @@ const ChangePassword = () => {
         },
       };
 
-      await axios.put(
-        `http://localhost:1337/api/userlists/${user.documentId}`,
-        payload
-      );
+      const response = await fetch("/api/user/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          documentId: user.documentId,
+          data: payload.data,
+        }),
+      });
+
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.error || "Password update failed");
+      }
 
       setMessage({ text: "Password updated successfully!", type: "success" });
       handleLogout();

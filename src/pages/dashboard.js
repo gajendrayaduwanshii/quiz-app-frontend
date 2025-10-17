@@ -23,16 +23,18 @@ import WorkExperienceSection from "@/components/dashboard/workExperienceSection"
 import CertificationsSection from "@/components/dashboard/certificationsSection";
 import UpskillInsightSection from "@/components/dashboard/upskillInsightSection";
 import DashboardInsightsSection from "@/components/dashboard/dashboardInsightsSection";
+import QuizResultsSummery from "@/components/dashboard/quizResultsSummery";
+import QuizResultsAccordion from "@/components/dashboard/quizResultsAccordion";
+import AISkillAssessment from "@/components/dashboard/aiSkillAssessment";
+import AIInterviewPrep from "@/components/dashboard/aiInterviewPrep";
+import AILearningPath from "@/components/dashboard/aiLearningPath";
 import Loader from "@/components/Loader";
 import {
   getSkillSummary,
   getUpskillSuggestion,
   parseCertifications,
 } from "@/helper/dashboard";
-import QuizResultsSummery from "@/components/dashboard/quizResultsSummery";
-import QuizResultsAccordion from "./../components/dashboard/quizResultsAccordion";
 import LoaderTwo from "@/components/LoaderTwo";
-import Compare from "./../components/compare/compare";
 
 ChartJS.register(
   CategoryScale,
@@ -45,14 +47,38 @@ ChartJS.register(
 
 const Dashboard = () => {
   const router = useRouter();
-  const { user, loading } = useUser();
-  const { dashboardInsights, loadingDashboard } = useUserSummary(user);
+  const { user, loading, refetch: refetchUser } = useUser();
+  const { dashboardInsights, loadingDashboard, refetch } = useUserSummary(user);
 
   const [dashboardData, setDashboardData] = useState({
     user: null,
     dashboardInsights: null,
     loading: true,
   });
+
+  // Add timeout to prevent infinite loading
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (loading) {
+        setDashboardData(prev => ({ ...prev, loading: false }));
+      }
+    }, 10000); // 10 seconds timeout
+
+    return () => clearTimeout(timeout);
+  }, [loading]);
+
+  // Simple calculations without heavy memoization
+  const skillSummary = dashboardData.user?.skills 
+    ? getSkillSummary(dashboardData.user.skills)
+    : { strongest: [], weakest: [] };
+
+  const years = Number(dashboardData.user?.yearsExperience) || 0;
+
+  // Simple callback functions
+  const handleLearningQuiz = () => {
+    router.push("/interactiveLearningHub");
+  };
+
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -61,21 +87,53 @@ const Dashboard = () => {
       return;
     }
 
-    if (!loading && user && !loadingDashboard && dashboardInsights) {
+    // Always refresh user data on dashboard mount
+    refetchUser();
+  }, []); // Empty dependency array to run only once
+
+  // Separate useEffect for updating dashboard data
+  useEffect(() => {
+    if (!loading && user) {
       setDashboardData({
         user,
-        dashboardInsights,
+        dashboardInsights: dashboardInsights,
         loading: false,
       });
     }
-  }, [loading, user, loadingDashboard, dashboardInsights, router]);
+  }, [loading, user, dashboardInsights]);
 
-  if (dashboardData.loading || !dashboardData.user) {
-    return <LoaderTwo  text="AI Prepare Dashboard ..." />;
+  // Remove this useEffect to prevent infinite loops
+
+  // Listen for quiz completion and refresh user data
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'quizCompleted') {
+        refetchUser();
+        localStorage.removeItem('quizCompleted');
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom events
+    const handleQuizComplete = () => {
+      refetchUser();
+    };
+
+    window.addEventListener('quizCompleted', handleQuizComplete);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('quizCompleted', handleQuizComplete);
+    };
+  }, []);
+
+  // Show loading only when actually loading or no user data
+  if (loading || !user || dashboardData.loading) {
+    return <LoaderTwo text="AI Prepare Dashboard ..." />;
   }
 
-  const { strongest, weakest } = getSkillSummary(dashboardData.user.skills);
-  const years = Number(dashboardData.user.yearsExperience) || 0;
+  const { strongest, weakest } = skillSummary;
 
   return (
     <>
@@ -83,11 +141,12 @@ const Dashboard = () => {
         <title>Developer Dashboard</title>
       </Head>
 
-      <div className="dashboard-container">
-        <DashboardHeader
-          user={dashboardData.user}
-          onLearningQuiz={() => router.push("/interactiveLearningHub")}
-        />
+              <div className="dashboard-container">
+                <DashboardHeader
+                  user={dashboardData.user}
+                  onLearningQuiz={handleLearningQuiz}
+                />
+                
         <Grid item size={{ xs: 12 }}>
           <QuizResultsSummery quizResults={dashboardData.user.quizResult}  skills={dashboardData.user.skills}/>
         </Grid>
@@ -124,21 +183,47 @@ const Dashboard = () => {
           <Grid item size={{ xs: 12 }}>
             <QuizResultsAccordion quizResults={dashboardData.user.quizResult} />
           </Grid>
-          {loadingDashboard ? (
-            <LoaderTwo  text="AI Prepare Dashboard ..." />
-          ) : (
-            <Grid
-              item
-              size={{ xs: 12 }}
-              sx={{ gap: 2, display: "flex", flexDirection: "column" }}
-            >
-              <DashboardInsightsSection
-                dashboardInsights={dashboardData.dashboardInsights}
-              />
-            </Grid>
-          )}
+          <Grid
+            item
+            size={{ xs: 12 }}
+            sx={{ gap: 2, display: "flex", flexDirection: "column" }}
+          >
+            {loadingDashboard ? (
+              <LoaderTwo text="AI Prepare Dashboard ..." />
+            ) : (
+              <>
+                <DashboardInsightsSection
+                  dashboardInsights={dashboardInsights}
+                />
+              </>
+            )}
+          </Grid>
+          
+          {/* New AI Features - Temporarily disabled for debugging */}
+          <Grid
+            item
+            size={{ xs: 12 }}
+            sx={{ gap: 2, display: "flex", flexDirection: "column" }}
+          >
+            <AISkillAssessment user={dashboardData.user} />
+          </Grid>
+          
+          <Grid
+            item
+            size={{ xs: 12 }}
+            sx={{ gap: 2, display: "flex", flexDirection: "column" }}
+          >
+            <AIInterviewPrep user={dashboardData.user} />
+          </Grid>
+          
+          <Grid
+            item
+            size={{ xs: 12 }}
+            sx={{ gap: 2, display: "flex", flexDirection: "column" }}
+          >
+            <AILearningPath user={dashboardData.user} />
+          </Grid>
         </Grid>
-        <Compare />
       </div>
     </>
   );

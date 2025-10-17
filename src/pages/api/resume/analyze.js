@@ -19,30 +19,36 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "PDF is empty or unreadable" });
     }
 
-    // Single prompt for both profile summary and learning suggestions
+    // Enhanced prompt for comprehensive resume analysis
     const prompt = `
-You are an expert AI mentor for web developers. 
-Analyze the resume text below and return ONLY one JSON object in this exact format:
+You are a senior career counselor and technical mentor with 20+ years of experience in the tech industry. Analyze this developer's resume and provide comprehensive career guidance.
+
+**Your Task:**
+Analyze the resume text and return a JSON object with this exact structure:
 
 {
-  "profileSummary": "Exactly 5 lines of professional summary text. Each line must be a separate sentence describing role, responsibilities, strengths, and skills from the resume.",
+  "profileSummary": "Write a compelling 3-4 sentence professional summary that highlights their key strengths, technical expertise, years of experience, and unique value proposition. Make it sound like a professional LinkedIn summary.",
   "learningSuggestions": [
     {
-      "area": "Key competency, responsibility, or capability to enhance",
-      "recommendation": "Detailed, actionable guidance for improvement, including strategies, exercises, projects, and reasoning. Each recommendation must be at least 5 sentences long."
+      "area": "Specific skill or technology area to improve",
+      "recommendation": "Detailed, actionable learning path with specific technologies, frameworks, or concepts to master. Include practical projects, resources, and timeline. Make it specific to their current level and career goals."
     }
   ]
 }
 
-Strict Rules:
-1. "profileSummary" must contain exactly 5 lines (5 sentences).
-2. "learningSuggestions" must be an array of at least 5 objects.
-3. Each "recommendation" must be at least 5 full sentences long.
-4. Do NOT include any text outside the JSON object.
-5. Do NOT use markdown.
+**Analysis Guidelines:**
+- Identify their current skill level (Junior/Mid/Senior) based on experience
+- Highlight their strongest technical competencies
+- Identify skill gaps and growth opportunities
+- Suggest 4-6 specific learning areas with actionable recommendations
+- Consider current market trends and in-demand technologies
+- Provide realistic timelines and practical next steps
+- Focus on career advancement and skill development
 
-Resume Text:
+**Resume Content:**
 ${trimmedText}
+
+**Important:** Respond ONLY with valid JSON. No explanations, no markdown formatting, no additional text.
 `;
 
     // Helper to call Gemini API

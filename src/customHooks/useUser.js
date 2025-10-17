@@ -3,44 +3,71 @@ import { useRouter } from "next/navigation";
 
 export const useUser = () => {
   const router = useRouter();
+  const [documentId, setDocumentId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchUserData = async (documentId) => {
-      try {
-        const response = await fetch(
-          `http://localhost:1337/api/userlists?filters[documentId][$eq]=${documentId}&populate[uploadResume][populate]=*&populate[skills]=*&populate[workExperiences]=*&populate[educations]=*&populate[quizResult][populate]=*`
-        );
-        const result = await response.json();
+  // Simple fetch function - NO CACHING
+  const fetchUserData = async (docId) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await fetch(`/api/user/fetch?documentId=${docId}`, {
+        method: 'GET',
+        cache: 'no-cache' // Force fresh data
+      });
 
-        if (result?.data?.length > 0) {
-          setUser(result.data[0]);
-        } else {
-          router.push("/login");
-        }
-      } catch {
+      const result = await response.json();
+
+      if (result.user) {
+        setUser(result.user);
+      } else {
         router.push("/login");
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (err) {
+      console.error('useUser: Error fetching user data', err);
+      setError(err);
+      router.push("/login");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const init = () => {
+  // Initialize documentId from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
       const storedUser = localStorage.getItem("user");
       const userObj = storedUser ? JSON.parse(storedUser) : null;
-
+      
       if (!userObj?.documentId) {
         router.push("/login");
       } else {
-        fetchUserData(userObj.documentId);
+        setDocumentId(userObj.documentId);
       }
-    };
-
-    if (typeof window !== "undefined") {
-      init();
     }
   }, [router]);
 
-  return { user, loading };
+  // Fetch user data when documentId changes
+  useEffect(() => {
+    if (documentId) {
+      fetchUserData(documentId);
+    }
+  }, [documentId]);
+
+  // Simple refetch function - ALWAYS FRESH
+  const refetch = () => {
+    if (documentId) {
+      fetchUserData(documentId);
+    }
+  };
+
+  // Simple return value
+  return { 
+    user, 
+    loading, 
+    error, 
+    refetch 
+  };
 };
