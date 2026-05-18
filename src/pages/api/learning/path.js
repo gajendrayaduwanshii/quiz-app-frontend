@@ -1,3 +1,5 @@
+import { generateAIText } from "@/lib/aiClient";
+
 // AI-powered personalized learning path generator
 const learningCache = new Map();
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
@@ -20,12 +22,6 @@ export default async function handler(req, res) {
 
     if (cachedData && Date.now() - cachedData.timestamp < CACHE_DURATION) {
       return res.status(200).json(cachedData.data);
-    }
-
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
-    
-    if (!apiKey) {
-      return res.status(500).json({ error: "Google API Key not configured" });
     }
 
     const prompt = `
@@ -94,19 +90,7 @@ Return a JSON object with this exact structure:
 **Important:** Respond ONLY with valid JSON. No explanations, no markdown formatting.
     `;
 
-    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-goog-api-key": apiKey,
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
-    });
-
-    const data = await response.json();
-    const output = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const output = await generateAIText(prompt, { temperature: 0.4 });
     
     // Parse JSON response
     const jsonMatch = output.match(/\{[\s\S]*\}/);

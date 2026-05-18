@@ -33,11 +33,19 @@ export const useQuiz = (user, tech) => {
       const data = await res.json();
 
       if (res.ok) {
-        setQuestions(data.questions || []);
+        const questionsArray = data.questions || [];
+        console.log("Quiz API: Received questions", questionsArray.length);
+        
+        if (questionsArray.length === 0) {
+          console.warn("Quiz API: Empty questions array", data);
+          setError(data.error || "No questions generated. Please try again.");
+        }
+        
+        setQuestions(questionsArray);
       } else {
-        console.error("Error fetching quiz questions:", data.error);
+        console.error("Error fetching quiz questions:", data.error, data);
         setQuestions([]);
-        setError(data.error);
+        setError(data.error || "Failed to fetch quiz questions");
       }
     } catch (err) {
       console.error("Error calling quiz API:", err);

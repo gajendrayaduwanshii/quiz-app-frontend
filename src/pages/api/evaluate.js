@@ -1,6 +1,4 @@
-import OpenAI from "openai";
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import { generateAIText } from "@/lib/aiClient";
 
 export const config = {
   api: {
@@ -20,9 +18,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ feedback: "Question or answer missing." });
     }
 
-    // Call OpenAI API for feedback
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    const feedback = await generateAIText(null, {
       messages: [
         { role: "system", content: "You are an AI interview evaluator." },
         {
@@ -33,9 +29,7 @@ export default async function handler(req, res) {
       temperature: 0.5,
     });
 
-    const feedback = response?.choices?.[0]?.message?.content || "No feedback generated.";
-
-    res.status(200).json({ feedback });
+    res.status(200).json({ feedback: feedback || "No feedback generated." });
   } catch (err) {
     console.error("Error in /api/evaluate:", err);
     res.status(500).json({ feedback: "Error evaluating answer." });

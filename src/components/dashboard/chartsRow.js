@@ -1,71 +1,40 @@
 import { Grid } from "@mui/system";
 import { Bar, Pie } from "react-chartjs-2";
+import { BarChart3, PieChart } from "lucide-react";
+import PremiumCard from "@/components/premium/PremiumCard";
+import SectionHeader from "@/components/premium/SectionHeader";
 
-const ChartsRow = ({ skills }) => {
+const chartTextColor = "#94A3B8";
+const chartGridColor = "rgba(255,255,255,0.08)";
+
+const ChartsRow = ({ skills = [] }) => {
+  const labels = skills?.map((s) => s.skillName) || [];
+
   const pieData = {
-    labels: skills?.map((s) => s.skillName),
+    labels,
     datasets: [
       {
         label: "Skill Proficiency (Years)",
-        data: skills?.map((s) => s.yearsExperience),
+        data: skills?.map((s) => Number(s.yearsExperience) || 0),
         backgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#4BC0C0",
-          "#9966FF",
-          "#FF9F40",
-          "#FFCD56",
-          "#C9CBCF",
-          "#36A2EB",
-          "#FF6384",
-          "#8AFF33",
-          "#33FFBD",
-          "#FF33F6",
-          "#FF5733",
-          "#33FF57",
-          "#3357FF",
-          "#F6FF33",
-          "#FF33A6",
-          "#33FFF3",
-          "#A633FF",
-          "#FF6F33",
-          "#33FF8A",
-          "#FF3380",
-          "#33A6FF",
-          "#FFBF33",
-          "#FF3333",
-          "#33FFBF",
-          "#8033FF",
-          "#FF33FF",
-          "#33FF66",
-          "#FF6633",
-          "#33FF99",
-          "#FF3399",
-          "#33CCFF",
-          "#FF9933",
-          "#FF3366",
-          "#33FFCC",
-          "#9933FF",
-          "#FF33CC",
-          "#33FF33",
-          "#FF9933",
-          "#33FF66",
-          "#FF33FF",
-          "#33CC33",
-          "#FF6666",
-          "#66FF33",
-          "#FF33CC",
-          "#33FF99",
-          "#CC33FF",
-          "#FF3399",
+          "#7C3AED",
+          "#06B6D4",
+          "#22C55E",
+          "#F59E0B",
+          "#EF4444",
+          "#A78BFA",
+          "#67E8F9",
+          "#FB7185",
         ],
+        borderColor: "rgba(5,8,22,0.9)",
+        borderWidth: 3,
+        hoverOffset: 8,
       },
     ],
   };
 
   const barData = {
-    labels: skills?.map((s) => s.skillName),
+    labels,
     datasets: [
       {
         label: "Skill Level",
@@ -73,26 +42,63 @@ const ChartsRow = ({ skills }) => {
           const levelMap = { Beginner: 33, Intermediate: 66, Expert: 100 };
           return levelMap[s.level] || 0;
         }),
-        backgroundColor: "#4BC0C0",
-        borderRadius: 5,
+        backgroundColor: "rgba(6,182,212,0.72)",
+        borderColor: "#67E8F9",
+        borderWidth: 1,
+        borderRadius: 10,
       },
     ],
   };
 
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { color: chartTextColor, boxWidth: 12, usePointStyle: true },
+      },
+    },
+  };
+
+  const barOptions = {
+    ...commonOptions,
+    scales: {
+      x: { ticks: { color: chartTextColor }, grid: { color: chartGridColor } },
+      y: { ticks: { color: chartTextColor }, grid: { color: chartGridColor }, max: 100 },
+    },
+  };
+
   return (
-    <div className="chartRow">
-      <Grid container spacing={2} sx={{width:"100%"}}>
+    <div className="chartRow" style={{ marginTop: 32 }}>
+      <SectionHeader
+        eyebrow="Analytics"
+        title="Skill Intelligence"
+        description="Visual overview of your skill depth and proficiency mix."
+      />
+      <Grid container spacing={2.2} sx={{ width: "100%" }}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <div className="card pie-chart" style={{width:"100%",height:"100%"}}>
-            <h3>🧠 Skill Distribution</h3>
-            <Pie  width={400} height={400} data={pieData} />
-          </div>
+          <PremiumCard hover={false} sx={{ p: 2.5, height: 430 }}>
+            <SectionHeader
+              title="Skill Distribution"
+              description="Experience weight by skill"
+              action={<PieChart size={22} color="#06B6D4" />}
+            />
+            <div style={{ height: 320 }}>
+              <Pie data={pieData} options={commonOptions} />
+            </div>
+          </PremiumCard>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          <div className="card" style={{width:"100%"}}>
-            <h3>📚 Skill Level Overview</h3>
-            <Bar data={barData} />
-          </div>
+          <PremiumCard hover={false} sx={{ p: 2.5, height: 430 }}>
+            <SectionHeader
+              title="Skill Level Overview"
+              description="Beginner to expert calibration"
+              action={<BarChart3 size={22} color="#7C3AED" />}
+            />
+            <div style={{ height: 320 }}>
+              <Bar data={barData} options={barOptions} />
+            </div>
+          </PremiumCard>
         </Grid>
       </Grid>
     </div>

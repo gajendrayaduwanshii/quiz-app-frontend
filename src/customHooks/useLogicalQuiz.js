@@ -1,95 +1,59 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const useLogicalQuiz = (user, tech) => {
   const [questions, setQuestions] = useState([]);
   const [loadingQuiz, setLoadingQuiz] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!user || !tech) return;
+    let ignore = false;
 
-    const callGeminiAPI = async () => {
+    const fetchLogicalQuiz = async () => {
       setLoadingQuiz(true);
-
-      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
-      const url =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
-
-      const headers = {
-        "Content-Type": "application/json",
-        "X-goog-api-key": apiKey,
-      };
-
-      // Match skill from user profile
-      const matchedSkill = Array.isArray(user.skills)
-        ? user.skills.find(
-            (skill) =>
-              skill.skillName?.toLowerCase() === tech.toLowerCase()
-          )
-        : null;
-
-      const experience = matchedSkill?.yearsExperience || "N/A";
-      const level = matchedSkill?.level || "N/A";
-
-      // 🧠 Updated prompt for logical coding questions with input/output
-      const prompt = `
-Generate at least 5 logical coding questions for a user learning ${tech}.
-The user has ${experience} years of experience at level: ${level}.
-Each question should be an object in JSON format with:
-{
-  "id": number,
-  "question": string,
-  "input": string,            // sample input for the question
-  "expectedOutput": string    // correct output/result
-}
-
-Return all questions as a JSON array.
-Focus on coding/logical problems, not MCQs.
-`;
-
-      const body = JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: prompt }],
-          },
-        ],
-      });
+      setError(null);
 
       try {
-        const res = await fetch(url, {
+        const response = await fetch("/api/logical/quiz", {
           method: "POST",
-          headers,
-          body,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user, tech }),
         });
 
-        const data = await res.json();
-        const output = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        const data = await response.json();
 
-        // Try to extract JSON array from response
-        const jsonMatch = output.match(/\[.*\]/s);
-        if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
-          // Optional: ensure each question has id, question, input, expectedOutput
-          const validated = parsed.map((q, idx) => ({
-            id: q.id || idx + 1,
-            question: q.question || "No question provided",
-            input: q.input || "",
-            expectedOutput: q.expectedOutput || "",
-          }));
-          setQuestions(validated);
-        } else {
-          setQuestions([]);
-          console.warn("Logical quiz JSON not found in Gemini response.");
+        if (ignore) return;
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to generate logical quiz");
         }
-      } catch (error) {
-        console.error("Error calling Gemini API:", error);
-        setQuestions([]);
+
+        setQuestions(Array.isArray(data.questions) ? data.questions : []);
+        setError(data.error || null);
+      } catch (err) {
+        if (!ignore) {
+          setQuestions([]);
+          setError(err.message || "Failed to generate logical quiz");
+        }
       } finally {
-        setLoadingQuiz(false);
+        if (!ignore) setLoadingQuiz(false);
       }
     };
 
-    callGeminiAPI();
+    if (!user || !tech) {
+      setQuestions([]);
+      setLoadingQuiz(false);
+      setError(null);
+      return;
+    }
+
+    fetchLogicalQuiz();
+
+    return () => {
+      ignore = true;
+    };
   }, [user, tech]);
 
-  return { questions, loadingQuiz };
+  return { questions, loadingQuiz, error };
 };

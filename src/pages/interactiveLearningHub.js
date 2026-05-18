@@ -5,16 +5,17 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Box,
-  Card,
-  CardContent,
   Button,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   TextField,
+  Typography,
 } from "@mui/material";
-import { margin, maxWidth } from "@mui/system";
+import { BookOpen, BrainCircuit, Code2, FileSearch, Sparkles } from "lucide-react";
+import PremiumCard from "@/components/premium/PremiumCard";
+import PremiumButton from "@/components/premium/PremiumButton";
 
 const InteractiveLearningHub = () => {
   const router = useRouter();
@@ -38,120 +39,162 @@ const InteractiveLearningHub = () => {
   const cards = [
     {
       title: "Interactive Learning",
+      icon: BookOpen,
       description:
         "Explore interactive lessons and study materials to strengthen your understanding of key concepts.",
-      color: "bg-gradient-to-r from-indigo-500 to-purple-500",
+      accent: "#7C3AED",
       href: "/learning",
       buttonText: "Go to Learning and Suggestions",
-      buttonColor: "primary",
     },
     {
       title: "Fun Quizzes",
+      icon: BrainCircuit,
       description:
         "Test your knowledge with fun and challenging quizzes based on what you've learned.",
-      color: "bg-gradient-to-r from-green-400 to-teal-500",
+      accent: "#06B6D4",
       href: "/technologies",
       buttonText: "Go to Technologies For Quiz",
-      buttonColor: "secondary",
     },
     {
       title: "Logical Questions",
+      icon: Code2,
       description:
         "Solve logical and reasoning questions to improve problem-solving and critical thinking skills.",
-      color: "bg-gradient-to-r from-yellow-400 to-orange-500",
+      accent: "#22C55E",
       onClick: handleOpen,
       buttonText: "Go to Logical Questions",
-      buttonColor: "success",
     },
     {
       title: "Resume Analyzer",
+      icon: FileSearch,
       description:
         "Analyze your resume to get insights, suggestions, and improve your chances of landing your dream job.",
-      color: "bg-gradient-to-r from-blue-400 to-cyan-500",
+      accent: "#38BDF8",
       href: "/resumeAnalysis",
       buttonText: "Go to Resume Analyzer",
-      buttonColor: "info",
     },
   ];
 
   return (
       <Box
       sx={{
-        height: "calc(100vh - 180px)", // Adjusted for header/footer height
+        minHeight: "calc(100vh - 180px)",
         display: "flex",
-        justifyContent: "start",
-        alignItems: "start",
-        padding: 2,
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: { xs: 1, md: 2 },
         boxSizing: "border-box",
       }}
     >
+      <Box sx={{ textAlign: "center", mb: 4, maxWidth: 760 }}>
+        <Box
+          sx={{
+            mx: "auto",
+            mb: 2,
+            width: 54,
+            height: 54,
+            borderRadius: "18px",
+            display: "grid",
+            placeItems: "center",
+            background: "linear-gradient(135deg, #7C3AED, #06B6D4)",
+            boxShadow: "0 0 36px rgba(124,58,237,0.35)",
+          }}
+        >
+          <Sparkles size={25} color="#fff" />
+        </Box>
+        <Typography variant="h3" className="gradient-text" sx={{ fontWeight: 900, mb: 1 }}>
+          AI Learning Hub
+        </Typography>
+        <Typography sx={{ color: "text.secondary", fontSize: { xs: 15, md: 17 } }}>
+          Choose your next growth loop: learn, practice, reason, or improve your resume.
+        </Typography>
+      </Box>
+
       <Box
         display="grid"
-        gap={6}
+        gap={3}
         gridTemplateColumns={{ xs: "1fr", sm: "1fr 1fr" }}
         justifyContent="center"
         alignItems="stretch"
-        p={4}
-        style={{maxWidth:"1200px", margin:"auto"}}
+        sx={{ width: "100%", maxWidth: 1180 }}
       >
-        {cards.map((card, idx) => (
-          <Card
-            key={idx}
+        {cards.map((card) => {
+          const Icon = card.icon;
+
+          return (
+          <PremiumCard
+            key={card.title}
+            glow={`${card.accent}30`}
             sx={{
-              height: "100%",
-              borderRadius: 3,
-              overflow: "hidden",
-              boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
-              transition: "transform 0.3s, box-shadow 0.3s",
-              "&:hover": {
-                transform: "translateY(-5px)",
-                boxShadow: "0 12px 25px rgba(0,0,0,0.15)",
-              },
+              minHeight: 210,
+              p: { xs: 2.4, md: 3.2 },
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              textAlign: "center",
             }}
           >
-            <CardContent
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                height: "100%",
-                textAlign: "center",
-                p: 4,
-                background: card.color,
-                color: "black",
-              }}
-            >
-              <h3 className="text-xl font-bold mb-3">{card.title}</h3>
-              <p className="mb-4">{card.description}</p>
-            <div>
+            <Box>
+              <Box
+                sx={{
+                  mx: "auto",
+                  mb: 2,
+                  width: 52,
+                  height: 52,
+                  borderRadius: "18px",
+                  display: "grid",
+                  placeItems: "center",
+                  background: `linear-gradient(135deg, ${card.accent}, #06B6D4)`,
+                  boxShadow: `0 18px 38px ${card.accent}45`,
+                }}
+              >
+                <Icon size={24} color="#fff" />
+              </Box>
+              <Typography variant="h6" sx={{ color: "#FFFFFF", fontWeight: 900, mb: 1 }}>
+                {card.title}
+              </Typography>
+              <Typography sx={{ color: "#94A3B8", maxWidth: 470, mx: "auto", mb: 2.5 }}>
+                {card.description}
+              </Typography>
+            </Box>
+            <Box>
                 {card.href ? (
-                <Button
-                  variant="contained"
-                  color={card.buttonColor}
+                <PremiumButton
                   component={Link}
                   href={card.href}
+                  sx={{ minWidth: 220 }}
                 >
                   {card.buttonText}
-                </Button>
+                </PremiumButton>
               ) : (
-                <Button
-                  variant="contained"
-                  color={card.buttonColor}
+                <PremiumButton
                   onClick={card.onClick}
-                  style={{display:"inline-block"}}
+                  sx={{ minWidth: 220 }}
                 >
                   {card.buttonText}
-                </Button>
+                </PremiumButton>
               )}
-            </div>
-            </CardContent>
-          </Card>
-        ))}
+            </Box>
+          </PremiumCard>
+          );
+        })}
       </Box>
 
       {/* Modal for Logical Questions */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Select Technology</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{
+          sx: {
+            borderRadius: "24px",
+            border: "1px solid rgba(255,255,255,0.08)",
+            bgcolor: "rgba(11,17,32,0.96)",
+            backdropFilter: "blur(18px)",
+          },
+        }}
+      >
+        <DialogTitle sx={{ color: "#fff", fontWeight: 900 }}>Select Technology</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -165,10 +208,10 @@ const InteractiveLearningHub = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" color="success">
+          <Button onClick={handleClose} sx={{ color: "text.secondary" }}>Cancel</Button>
+          <PremiumButton onClick={handleSubmit}>
             Submit
-          </Button>
+          </PremiumButton>
         </DialogActions>
       </Dialog>
     </Box>

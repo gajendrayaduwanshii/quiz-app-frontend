@@ -18,15 +18,18 @@ export default function Layout({ children }) {
   }, [isMobile]);
 
   // Routes that should NOT use the layout
-  const noLayoutRoutes = ['/login', '/registration'];
+  const noLayoutRoutes = ['/login', '/registration', '/forgot-password', '/otp-verification'];
 
   if (noLayoutRoutes.includes(pathname)) {
     return <>{children}</>;
   }
 
   return (
-    <HeaderSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}>
-      {children}
-    </HeaderSidebar>
+    <div className="skillsync-shell">
+      <div className="skillsync-glow-grid" />
+      <HeaderSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}>
+        {children}
+      </HeaderSidebar>
+    </div>
   );
 }

@@ -1,3 +1,8 @@
+import { Box, Typography } from "@mui/material";
+import { BrainCircuit } from "lucide-react";
+import PremiumCard from "@/components/premium/PremiumCard";
+import SectionHeader from "@/components/premium/SectionHeader";
+
 const DashboardInsightsSection = ({ dashboardInsights }) => {
   const safeRender = (content) => {
     if (!content) return "";
@@ -26,52 +31,49 @@ const DashboardInsightsSection = ({ dashboardInsights }) => {
 
   if (!dashboardInsights) {
     return (
-      <div className="dashboard-section">
-        <h3>🤖 AI Insights</h3>
-        <p>Loading insights...</p>
-      </div>
+      <PremiumCard hover={false} sx={{ p: 3 }}>
+        <SectionHeader
+          title="AI Insights"
+          description="Dashboard intelligence is ready when AI widgets are enabled."
+          action={<BrainCircuit size={22} color="#06B6D4" />}
+        />
+        <Typography sx={{ color: "text.secondary" }}>No live AI insight loaded right now.</Typography>
+      </PremiumCard>
     );
   }
 
+  const InsightCard = ({ title, children }) => (
+    <PremiumCard hover={false} sx={{ p: 3, mb: 2 }}>
+      <Typography variant="h6" className="gradient-text" sx={{ fontWeight: 900, mb: 1 }}>
+        {title}
+      </Typography>
+      <Typography sx={{ color: "text.secondary", whiteSpace: "pre-wrap" }}>
+        {children}
+      </Typography>
+    </PremiumCard>
+  );
+
   return (
-    <>
+    <Box>
       {dashboardInsights.summary && (
-        <div className="dashboard-section">
-          <h3>🧾 Profile Summary</h3>
-          <p>{safeRender(dashboardInsights.summary)}</p>
-        </div>
+        <InsightCard title="Profile Summary">{safeRender(dashboardInsights.summary)}</InsightCard>
       )}
       {dashboardInsights.rolesAndResponsibilities && (
-        <div className="dashboard-section">
-          <h3>🎯 Suitable Roles & Responsibilities</h3>
-          <p>{safeRender(dashboardInsights.rolesAndResponsibilities)}</p>
-        </div>
+        <InsightCard title="Suitable Roles & Responsibilities">{safeRender(dashboardInsights.rolesAndResponsibilities)}</InsightCard>
       )}
       {dashboardInsights.studyPlan && (
-        <div className="dashboard-section">
-          <h3>📚 Study & Focus Recommendations</h3>
-          <p>{safeRender(dashboardInsights.studyPlan)}</p>
-        </div>
+        <InsightCard title="Study & Focus Recommendations">{safeRender(dashboardInsights.studyPlan)}</InsightCard>
       )}
       {dashboardInsights.skillGaps && (
-        <div className="dashboard-section">
-          <h3>⚠️ Critical Skill Gaps</h3>
-          <p>{safeRender(dashboardInsights.skillGaps)}</p>
-        </div>
+        <InsightCard title="Critical Skill Gaps">{safeRender(dashboardInsights.skillGaps)}</InsightCard>
       )}
       {dashboardInsights.marketInsights && (
-        <div className="dashboard-section">
-          <h3>📈 Market Insights & Trends</h3>
-          <p>{safeRender(dashboardInsights.marketInsights)}</p>
-        </div>
+        <InsightCard title="Market Insights & Trends">{safeRender(dashboardInsights.marketInsights)}</InsightCard>
       )}
       {dashboardInsights.careerPath && (
-        <div className="dashboard-section">
-          <h3>🚀 Career Progression Path</h3>
-          <p>{safeRender(dashboardInsights.careerPath)}</p>
-        </div>
+        <InsightCard title="Career Progression Path">{safeRender(dashboardInsights.careerPath)}</InsightCard>
       )}
-    </>
+    </Box>
   );
 };
 

@@ -1,4 +1,5 @@
 import pdfParse from "pdf-parse";
+import { generateAIText } from "@/lib/aiClient";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Only POST allowed" });
@@ -27,7 +28,14 @@ You are a senior career counselor and technical mentor with 20+ years of experie
 Analyze the resume text and return a JSON object with this exact structure:
 
 {
+  "atsScore": 0-100,
+  "roleMatch": 0-100,
   "profileSummary": "Write a compelling 3-4 sentence professional summary that highlights their key strengths, technical expertise, years of experience, and unique value proposition. Make it sound like a professional LinkedIn summary.",
+  "strongestSkills": ["Skill 1", "Skill 2", "Skill 3"],
+  "missingKeywords": ["Keyword 1", "Keyword 2", "Keyword 3"],
+  "formattingAnalysis": "Short ATS formatting analysis with specific improvement notes.",
+  "grammarAnalysis": "Short grammar and clarity analysis with specific improvement notes.",
+  "skillGapAnalysis": "Short skill gap analysis based on the resume and market expectations.",
   "learningSuggestions": [
     {
       "area": "Specific skill or technology area to improve",
@@ -40,6 +48,9 @@ Analyze the resume text and return a JSON object with this exact structure:
 - Identify their current skill level (Junior/Mid/Senior) based on experience
 - Highlight their strongest technical competencies
 - Identify skill gaps and growth opportunities
+- Score ATS readiness and role match using only the resume evidence
+- Extract missing keywords that would improve ATS performance
+- Analyze formatting, grammar, clarity, and keyword density
 - Suggest 4-6 specific learning areas with actionable recommendations
 - Consider current market trends and in-demand technologies
 - Provide realistic timelines and practical next steps
@@ -50,23 +61,6 @@ ${trimmedText}
 
 **Important:** Respond ONLY with valid JSON. No explanations, no markdown formatting, no additional text.
 `;
-
-    // Helper to call Gemini API
-    const callGemini = async (prompt) => {
-      const aiRes = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-goog-api-key": process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
-          },
-          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-        }
-      );
-      const aiData = await aiRes.json();
-      return aiData.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    };
 
     // Safe JSON parsing helper
     const safeJsonParse = (text) => {
@@ -81,7 +75,10 @@ ${trimmedText}
       }
     };
 
-    const aiText = await callGemini(prompt);
+    const aiText = await generateAIText(prompt, {
+      temperature: 0.4,
+      responseMimeType: "application/json",
+    });
 
     const parsedData = safeJsonParse(aiText);
 
@@ -91,7 +88,18 @@ ${trimmedText}
 
     // Return parsed object
     res.status(200).json({
+      atsScore: Number(parsedData.atsScore) || 0,
+      roleMatch: Number(parsedData.roleMatch) || 0,
       profileSummary: parsedData.profileSummary || null,
+      strongestSkills: Array.isArray(parsedData.strongestSkills)
+        ? parsedData.strongestSkills
+        : [],
+      missingKeywords: Array.isArray(parsedData.missingKeywords)
+        ? parsedData.missingKeywords
+        : [],
+      formattingAnalysis: parsedData.formattingAnalysis || "",
+      grammarAnalysis: parsedData.grammarAnalysis || "",
+      skillGapAnalysis: parsedData.skillGapAnalysis || "",
       learningSuggestions: parsedData.learningSuggestions || [],
     });
 

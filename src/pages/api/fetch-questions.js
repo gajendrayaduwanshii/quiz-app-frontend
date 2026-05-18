@@ -1,6 +1,4 @@
-import OpenAI from "openai";
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import { generateAIText } from "@/lib/aiClient";
 
 export default async function handler(req, res) {
   if (req.method !== "POST")
@@ -20,13 +18,7 @@ Return strictly as a JSON array like:
 `;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
-    });
-
-    const text = response?.choices?.[0]?.message?.content || "[]";
+    const text = await generateAIText(prompt, { temperature: 0.7 });
     let questions = [];
 
     try {

@@ -34,7 +34,9 @@ const HeaderSidebar = ({ children, sidebarOpen, setSidebarOpen }) => {
       {!isLoginPage && <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />}
       <Box
         sx={{
-          padding: isLoginPage ? "0" : "90px 20px",
+          position: "relative",
+          zIndex: 1,
+          padding: isLoginPage ? "0" : { xs: "82px 14px 92px", md: "92px 24px 32px" },
           marginLeft: isMobile
             ? "0"
             : isLoginPage
@@ -43,6 +45,7 @@ const HeaderSidebar = ({ children, sidebarOpen, setSidebarOpen }) => {
             ? "240px"
             : "80px",
           transition: "margin-left 0.3s ease",
+          minHeight: "100vh",
         }}
       >
         {children}

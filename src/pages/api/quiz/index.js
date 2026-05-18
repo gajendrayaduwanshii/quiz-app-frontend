@@ -1,3 +1,5 @@
+import { generateAIText } from "@/lib/aiClient";
+
 // Cache for quiz questions
 const quizCache = new Map();
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
@@ -9,9 +11,15 @@ export default async function handler(req, res) {
 
   try {
     const { user, tech } = req.body;
-    console.log("Quiz API: Received request", { tech, hasUser: !!user });
+    console.log("Quiz API: Received request", { 
+      tech, 
+      hasUser: !!user,
+      userSkills: user?.skills?.length || 0,
+      userId: user?.documentId || 'N/A'
+    });
 
     if (!user || !tech) {
+      console.error("Quiz API: Missing required fields", { hasUser: !!user, tech });
       return res.status(400).json({ error: "Missing user or tech" });
     }
 
@@ -64,48 +72,119 @@ Generate 20 high-quality multiple-choice questions in JSON format. Each question
 - Use industry-standard terminology
 - Consider the developer's experience level appropriately
 
-**Important:** Respond ONLY with valid JSON array. No explanations, no markdown, no additional text.
+**CRITICAL FORMATTING REQUIREMENTS:**
+- You MUST respond with ONLY a valid JSON array
+- Do NOT include any markdown code blocks (no code fences)
+- Do NOT include any explanations, comments, or additional text
+- Start directly with [ and end with ]
+- Ensure all JSON is properly formatted and valid
+- Example format: [{"id": "1", "question": "...", "options": [...], "answer": "..."}]
 `;
 
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
-    console.log("Quiz API: API Key present", !!apiKey);
-    
-    if (!apiKey) {
-      return res.status(500).json({ error: "Google API Key not configured" });
-    }
-    
-    const url =
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
-
-    console.log("Quiz API: Calling Gemini API for", tech);
-    const geminiRes = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-goog-api-key": apiKey,
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
+    const output = await generateAIText(prompt, {
+      temperature: 0.4,
+      responseMimeType: "application/json",
     });
-
-    const data = await geminiRes.json();
-    console.log("Quiz API: Gemini response status", geminiRes.status);
-    
-    const output = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
     console.log("Quiz API: Raw output length", output.length);
     
-    const jsonMatch = output.match(/\[.*\]/s);
-    console.log("Quiz API: JSON match found", !!jsonMatch);
+    if (!output || output.trim().length === 0) {
+      console.error("Quiz API: Empty response from AI provider");
+      return res.status(500).json({ 
+        error: "Empty response from AI",
+        questions: [] 
+      });
+    }
 
-    if (!jsonMatch) {
-      console.log("Quiz API: No JSON match found, returning empty questions");
-      return res.status(200).json({ questions: [] });
+    // Try multiple JSON extraction methods
+    let questions = null;
+    let jsonString = null;
+
+    // Method 1: Look for JSON array in markdown code blocks
+    const codeBlockMatch = output.match(/```(?:json)?\s*(\[.*?\])\s*```/s);
+    if (codeBlockMatch) {
+      jsonString = codeBlockMatch[1];
+      console.log("Quiz API: Found JSON in code block");
+    }
+
+    // Method 2: Look for JSON array directly
+    if (!jsonString) {
+      const jsonArrayMatch = output.match(/\[[\s\S]*\]/);
+      if (jsonArrayMatch) {
+        jsonString = jsonArrayMatch[0];
+        console.log("Quiz API: Found JSON array directly");
+      }
+    }
+
+    // Method 3: Try to find JSON between curly braces or brackets
+    if (!jsonString) {
+      const bracketMatch = output.match(/(\[[\s\S]{100,}\])/);
+      if (bracketMatch) {
+        jsonString = bracketMatch[1];
+        console.log("Quiz API: Found JSON with bracket matching");
+      }
+    }
+
+    // Method 4: Try to extract everything that looks like JSON
+    if (!jsonString) {
+      // Remove markdown formatting and extract JSON
+      const cleaned = output
+        .replace(/```json/g, '')
+        .replace(/```/g, '')
+        .replace(/^[^{[]*/, '') // Remove text before first [ or {
+        .replace(/[^}\]]*$/, ''); // Remove text after last } or ]
+      
+      if (cleaned.trim().startsWith('[') && cleaned.trim().endsWith(']')) {
+        jsonString = cleaned.trim();
+        console.log("Quiz API: Extracted JSON after cleaning");
+      }
+    }
+
+    if (!jsonString) {
+      console.error("Quiz API: No JSON found in response");
+      console.log("Quiz API: Full output (first 1000 chars):", output.substring(0, 1000));
+      console.log("Quiz API: Output length:", output.length);
+      return res.status(200).json({ 
+        questions: [],
+        error: "Could not extract valid JSON from AI response. The AI may have returned text instead of JSON.",
+        debug: output.substring(0, 500),
+        outputLength: output.length
+      });
     }
 
     try {
-      const questions = JSON.parse(jsonMatch[0]);
+      // Clean up the JSON string
+      jsonString = jsonString.trim();
+      
+      // Remove any trailing commas before closing brackets
+      jsonString = jsonString.replace(/,(\s*[}\]])/g, '$1');
+      
+      questions = JSON.parse(jsonString);
+      
+      // Validate questions structure
+      if (!Array.isArray(questions)) {
+        console.error("Quiz API: Parsed JSON is not an array");
+        return res.status(200).json({ questions: [] });
+      }
+
+      // Filter out invalid questions
+      questions = questions.filter(q => 
+        q && 
+        q.id && 
+        q.question && 
+        Array.isArray(q.options) && 
+        q.options.length >= 2 &&
+        q.answer
+      );
+
       console.log("Quiz API: Parsed questions count", questions.length);
+
+      if (questions.length === 0) {
+        console.error("Quiz API: No valid questions after filtering");
+        return res.status(200).json({ 
+          questions: [],
+          error: "No valid questions generated"
+        });
+      }
 
       // Cache the result
       quizCache.set(cacheKey, {
@@ -116,8 +195,13 @@ Generate 20 high-quality multiple-choice questions in JSON format. Each question
       res.status(200).json({ questions });
     } catch (parseError) {
       console.error("Quiz API: JSON parse error", parseError);
-      console.log("Quiz API: Raw output that failed to parse:", output);
-      res.status(200).json({ questions: [] });
+      console.log("Quiz API: JSON string that failed to parse:", jsonString?.substring(0, 500));
+      console.log("Quiz API: Full output:", output.substring(0, 1000));
+      return res.status(200).json({ 
+        questions: [],
+        error: "Failed to parse JSON response",
+        debug: jsonString?.substring(0, 200)
+      });
     }
   } catch (error) {
     console.error("Error in /api/quiz:", error);

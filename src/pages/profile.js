@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Typography, IconButton, Box, Button, Grid } from "@mui/material";
-import { Edit, Save, Cancel } from "@mui/icons-material";
+import { Avatar, Box, Chip, Grid, Stack, Typography } from "@mui/material";
+import { BriefcaseBusiness, Edit3, Mail, Save, ShieldCheck, Sparkles, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useUser } from "@/customHooks/useUser";
-import { useUserSummary } from "@/customHooks/useUserSummary";
 import Loader from "@/components/Loader";
+import PremiumCard from "@/components/premium/PremiumCard";
+import PremiumButton from "@/components/premium/PremiumButton";
+import SectionHeader from "@/components/premium/SectionHeader";
 
 import BasicInfo from "../components/profile/basicInfo";
 import SkillsSection from "../components/profile/skillsSection";
@@ -13,8 +15,8 @@ import EducationSection from "../components/profile/educationSection";
 import CertificationsSection from "../components/profile/certificationsSection";
 
 const Profile = () => {
-  const { user, loadingUser } = useUser();
-  const { loadingDashboard } = useUserSummary();
+  const router = useRouter();
+  const { user, loading } = useUser();
   const documentId = user?.documentId;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -210,62 +212,122 @@ const Profile = () => {
     setIsSaving(false);
   };
 
-  if (loadingUser || loadingDashboard) {
+  if (loading) {
     return <Loader />;
   }
 
+  const profileInitial = profileData.name?.[0]?.toUpperCase() || profileData.email?.[0]?.toUpperCase() || "S";
+  const profileCompleteness = Math.min(
+    100,
+    35 +
+      (profileData.skills?.length || 0) * 8 +
+      (profileData.workExperiences?.length || 0) * 10 +
+      (profileData.educations?.length || 0) * 8 +
+      (profileData.uploadResume ? 12 : 0)
+  );
+
   return (
-    <Box>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-        mb={3}
-      >
-        <h3 className="page-title" style={{marginBottom:'0'}}>User Profile</h3>
-        <Box display="flex" alignItems="center" gap={1}>
-        {isEditing ? (
-          <>
-            <button
-              onClick={handleSave}
-              sx={{ mr: 1 }}
-              disabled={isSaving}
-              className="bg-btn-color-1 custom-btn"
-            >
-              Update
-            </button>
-            <button
-              onClick={() => {
-                setIsEditing(false);
-                setProfileData((prev) => ({
-                  ...prev,
-                  uploadResume: user.uploadResume,
-                }));
+    <Box className="profile-page" sx={{ pb: 4 }}>
+      <PremiumCard hover={false} sx={{ p: { xs: 2.4, md: 3.4 }, mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: { xs: "flex-start", md: "center" },
+            justifyContent: "space-between",
+            gap: 3,
+            flexDirection: { xs: "column", md: "row" },
+          }}
+        >
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Avatar
+              sx={{
+                width: 74,
+                height: 74,
+                fontSize: 30,
+                fontWeight: 900,
+                background: "linear-gradient(135deg, #7C3AED, #06B6D4)",
+                boxShadow: "0 0 42px rgba(124,58,237,0.34)",
+                border: "2px solid rgba(255,255,255,0.12)",
               }}
-              disabled={isSaving}
-               className="custom-btn bg-btn-color-3"
             >
-              Cancel
-            </button>
-          </>
-        ) : (
-          <button
-            onClick={() => {
-              setIsEditing(true);
-              setProfileData((prev) => ({
-                ...prev,
-                uploadResume:
-                  prev.uploadResume instanceof File ? null : prev.uploadResume,
-              }));
-            }}
-           className="custom-btn bg-btn-color-2"
-          >
-            Edit Profile
-          </button>
-        )}
+              {profileInitial}
+            </Avatar>
+            <Box>
+              <Chip
+                icon={<Sparkles size={14} />}
+                label="SkillSync AI Profile"
+                sx={{
+                  mb: 1,
+                  color: "#fff",
+                  border: "1px solid rgba(6,182,212,0.32)",
+                  bgcolor: "rgba(6,182,212,0.10)",
+                }}
+              />
+              <Typography variant="h3" className="gradient-text" sx={{ fontWeight: 900, lineHeight: 1.05 }}>
+                {profileData.name || "User Profile"}
+              </Typography>
+              <Stack direction="row" spacing={1.2} sx={{ mt: 1, flexWrap: "wrap", rowGap: 1 }}>
+                <Chip icon={<Mail size={14} />} label={profileData.email || "No email"} />
+                <Chip icon={<BriefcaseBusiness size={14} />} label={profileData.currentJobTitle || "Role pending"} />
+                <Chip icon={<ShieldCheck size={14} />} label={`${profileCompleteness}% complete`} />
+              </Stack>
+            </Box>
+          </Stack>
+
+          <Box display="flex" alignItems="center" gap={1.2} flexWrap="wrap">
+            {isEditing ? (
+              <>
+                <PremiumButton
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  startIcon={<Save size={17} />}
+                >
+                  {isSaving ? "Updating..." : "Update Profile"}
+                </PremiumButton>
+                <PremiumButton
+                  onClick={() => {
+                    setIsEditing(false);
+                    setProfileData((prev) => ({
+                      ...prev,
+                      uploadResume: user.uploadResume,
+                    }));
+                  }}
+                  disabled={isSaving}
+                  startIcon={<X size={17} />}
+                  sx={{
+                    background: "linear-gradient(135deg, #EF4444, #F59E0B)",
+                    boxShadow: "0 16px 34px rgba(239,68,68,0.22)",
+                  }}
+                >
+                  Cancel
+                </PremiumButton>
+              </>
+            ) : (
+              <PremiumButton
+                onClick={() => {
+                  setIsEditing(true);
+                  setProfileData((prev) => ({
+                    ...prev,
+                    uploadResume:
+                      prev.uploadResume instanceof File ? null : prev.uploadResume,
+                  }));
+                }}
+                startIcon={<Edit3 size={17} />}
+              >
+                Edit Profile
+              </PremiumButton>
+            )}
+          </Box>
         </Box>
-      </Box>
-     <Grid container spacing={0}>
+      </PremiumCard>
+
+      <SectionHeader
+        eyebrow={isEditing ? "Update Mode" : "Profile Overview"}
+        title={isEditing ? "Update Profile Details" : "Career Profile"}
+        description={isEditing ? "Edit your profile information and save changes." : "Your current profile data synced from Strapi."}
+      />
+     <Grid container spacing={2.4}>
+      <PremiumCard hover={false} sx={{ p: { xs: 2.2, md: 3 }, width: "100%" }}>
       <BasicInfo
         profileData={profileData}
         isEditing={isEditing}
@@ -275,7 +337,9 @@ const Profile = () => {
         getAgeFromDOB={getAgeFromDOB}
         handleFileChange={handleFileChange} // pass file handler here
       />
+      </PremiumCard>
 
+      <PremiumCard hover={false} sx={{ p: { xs: 2.2, md: 3 }, width: "100%" }}>
       <SkillsSection
         profileData={profileData}
         isEditing={isEditing}
@@ -300,7 +364,9 @@ const Profile = () => {
           }))
         }
       />
+      </PremiumCard>
 
+      <PremiumCard hover={false} sx={{ p: { xs: 2.2, md: 3 }, width: "100%" }}>
       <WorkExperienceSection
         profileData={profileData}
         isEditing={isEditing}
@@ -333,7 +399,9 @@ const Profile = () => {
           }))
         }
       />
+      </PremiumCard>
 
+      <PremiumCard hover={false} sx={{ p: { xs: 2.2, md: 3 }, width: "100%" }}>
       <EducationSection
         profileData={profileData}
         isEditing={isEditing}
@@ -364,14 +432,14 @@ const Profile = () => {
           }))
         }
       />
+      </PremiumCard>
 
+      <PremiumCard hover={false} sx={{ p: { xs: 2.2, md: 3 }, width: "100%" }}>
       <CertificationsSection
         profileData={profileData}
         isEditing={isEditing}
-        handleCertificationChange={(index, field, value) => {
-          const newCerts = [...profileData.certifications];
-          newCerts[index] = { ...newCerts[index], [field]: value };
-          setProfileData((prev) => ({ ...prev, certifications: newCerts }));
+        handleCertificationChange={(value) => {
+          setProfileData((prev) => ({ ...prev, certifications: value }));
         }}
         addCertification={() =>
           setProfileData((prev) => ({
@@ -395,6 +463,7 @@ const Profile = () => {
           }))
         }
       />
+      </PremiumCard>
       </Grid>
     </Box>
   );

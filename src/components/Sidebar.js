@@ -5,33 +5,44 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Divider,
   Box,
   Typography,
   useMediaQuery,
   IconButton,
 } from "@mui/material";
-import { Dashboard, School, People, Code, Close } from "@mui/icons-material";
+import {
+  BarChart3,
+  BrainCircuit,
+  Code2,
+  FileText,
+  Home,
+  UserRound,
+  X,
+} from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const iconMap = {
-  dashboard: <Dashboard />,
-  learnquiz: <School />,
-  users: <People />,
-  coding: <Code />,
+  dashboard: BarChart3,
+  learnquiz: BrainCircuit,
+  users: Code2,
+  resume: FileText,
+  profile: UserRound,
 };
 
 const menuItems = [
   { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
-  { label: "Learning", href: "/learning", icon: "learnquiz" },
-  { label: "Technologies", href: "/technologies", icon: "users" },
+  { label: "AI Hub", href: "/interactiveLearningHub", icon: "learnquiz" },
+  { label: "Skill Quizzes", href: "/technologies", icon: "users" },
+  { label: "Resume AI", href: "/resumeAnalysis", icon: "resume" },
+  { label: "Profile", href: "/profile", icon: "profile" },
 ];
 
 const Sidebar = ({ open, setOpen }) => {
   const isMobile = useMediaQuery("(max-width:992px)");
   const drawerRef = useRef(null);
+  const pathname = usePathname();
 
-  // Click outside listener (mobile only)
   useEffect(() => {
     if (!isMobile) return;
 
@@ -52,10 +63,13 @@ const Sidebar = ({ open, setOpen }) => {
       sx={{
         transition: "width 0.3s ease",
         "& .MuiDrawer-paper": {
-          width: isMobile ? (open ? 240 : 0) : open ? 240 : 80,
+          width: isMobile ? (open ? 248 : 0) : open ? 248 : 80,
           transition: "width 0.3s ease",
-          backgroundColor: "#f4f4f4",
-          borderRight: "1px solid #ddd",
+          background:
+            "linear-gradient(180deg, rgba(11,17,32,0.96), rgba(5,8,22,0.94))",
+          borderRight: "1px solid rgba(255,255,255,0.08)",
+          backdropFilter: "blur(22px)",
+          boxShadow: "20px 0 60px rgba(0,0,0,0.36)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -65,100 +79,159 @@ const Sidebar = ({ open, setOpen }) => {
       }}
     >
       <Box sx={{ width: "100%" }}>
-        {/* Logo */}
         <Box
           sx={{
             width: "100%",
-            height: "56px",
+            height: 72,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "#1976d2",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            px: open ? 2 : 1,
           }}
         >
-          <Typography
-            variant="h6"
-            sx={{
-              color: "white",
-              fontWeight: "bold",
-              fontSize: open ? 24 : 16,
-            }}
-          >
-            {open ? (
-              <img
-                src="/images/full-logo.png"
-                alt="Logo"
-                className="main-logo"
-              />
-            ) : (
-              <img
-                src="/images/logo-design.png"
-                alt="Logo"
-                className="main-logo"
-              />
-            )}
-          </Typography>
-        </Box>
-
-        <Divider />
-
-        {/* Dynamic Menu Items */}
-        <List sx={{ width: "100%" }}>
-          {menuItems.map((item, index) => (
-            <ListItem
-              key={index}
-              component={Link}
-              href={item.href}
-              sx={{
-                color: "#1976d2",
-                borderRadius: "8px",
-                margin: "5px",
-                cursor: "pointer",
-                "&:hover": {
-                  backgroundColor: "#1976d2",
-                  color: "white",
-                  "& .MuiListItemIcon-root": { color: "white" },
-                },
-                transition: "0.3s",
-              }}
-            >
-              <ListItemIcon
+          {open ? (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
+              <Box
                 sx={{
-                  color: "inherit",
-                  minWidth: "auto",
-                  marginRight: open ? "16px" : "0",
+                  width: 38,
+                  height: 38,
+                  borderRadius: "14px",
+                  display: "grid",
+                  placeItems: "center",
+                  background: "linear-gradient(135deg, #7C3AED, #06B6D4)",
+                  boxShadow: "0 0 28px rgba(124,58,237,0.4)",
                 }}
               >
-                {iconMap[item.icon]}
-              </ListItemIcon>
-              {open && <ListItemText primary={item.label} />}
-            </ListItem>
-          ))}
+                <Home size={19} color="#fff" />
+              </Box>
+              <Box>
+                <Typography sx={{ color: "#fff", fontWeight: 900, lineHeight: 1 }}>
+                  SkillSync AI
+                </Typography>
+                <Typography sx={{ color: "#94A3B8", fontSize: 11 }}>
+                  Career intelligence
+                </Typography>
+              </Box>
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: "15px",
+                display: "grid",
+                placeItems: "center",
+                background: "linear-gradient(135deg, #7C3AED, #06B6D4)",
+                boxShadow: "0 0 28px rgba(124,58,237,0.4)",
+              }}
+            >
+              <Home size={19} color="#fff" />
+            </Box>
+          )}
+        </Box>
+
+        <List sx={{ width: "100%", px: 1.2, py: 2 }}>
+          {menuItems.map((item) => {
+            const Icon = iconMap[item.icon];
+            const active = pathname === item.href || pathname?.startsWith(`${item.href}/`);
+
+            return (
+              <ListItem
+                key={item.href}
+                component={Link}
+                href={item.href}
+                sx={{
+                  minHeight: 48,
+                  color: active ? "#FFFFFF" : "#94A3B8",
+                  borderRadius: "16px",
+                  mb: 0.7,
+                  cursor: "pointer",
+                  justifyContent: open ? "flex-start" : "center",
+                  background: active
+                    ? "linear-gradient(135deg, rgba(124,58,237,0.24), rgba(6,182,212,0.14))"
+                    : "transparent",
+                  border: active
+                    ? "1px solid rgba(255,255,255,0.10)"
+                    : "1px solid transparent",
+                  boxShadow: active ? "0 0 32px rgba(124,58,237,0.18)" : "none",
+                  "&:hover": {
+                    background: "rgba(255,255,255,0.07)",
+                    color: "#FFFFFF",
+                    transform: "translateX(2px)",
+                  },
+                  transition: "all 0.25s ease",
+                }}
+                onClick={() => {
+                  if (isMobile) setOpen(false);
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    color: "inherit",
+                    minWidth: "auto",
+                    mr: open ? 1.7 : 0,
+                  }}
+                >
+                  <Icon size={20} />
+                </ListItemIcon>
+                {open && (
+                  <ListItemText
+                    primary={item.label}
+                    primaryTypographyProps={{
+                      fontWeight: active ? 800 : 650,
+                      fontSize: 14,
+                    }}
+                  />
+                )}
+              </ListItem>
+            );
+          })}
         </List>
+
+        {open && (
+          <Box sx={{ px: 2, mt: 1 }}>
+            <Box
+              sx={{
+                p: 2,
+                borderRadius: "18px",
+                border: "1px solid rgba(255,255,255,0.08)",
+                background:
+                  "linear-gradient(135deg, rgba(124,58,237,0.18), rgba(6,182,212,0.08))",
+              }}
+            >
+              <Typography sx={{ fontSize: 12, color: "#94A3B8", mb: 0.5 }}>
+                AI Readiness
+              </Typography>
+              <Typography sx={{ fontSize: 20, fontWeight: 900 }}>82%</Typography>
+              <Typography sx={{ fontSize: 12, color: "#94A3B8" }}>
+                Keep improving weak topics.
+              </Typography>
+            </Box>
+          </Box>
+        )}
       </Box>
 
-      {/* Mobile Close Button at Bottom Center */}
       {isMobile && open && (
         <Box
           sx={{
             width: "100%",
             display: "flex",
             justifyContent: "center",
-            padding: 2,
+            p: 2,
           }}
         >
           <IconButton
             onClick={() => setOpen(false)}
             sx={{
-              backgroundColor: "#1976d2",
+              background: "linear-gradient(135deg, #7C3AED, #06B6D4)",
               color: "#fff",
-              "&:hover": { backgroundColor: "#155fa0" },
-              width: 40,
-              height: 40,
+              width: 42,
+              height: 42,
               borderRadius: "50%",
             }}
           >
-            <Close />
+            <X size={20} />
           </IconButton>
         </Box>
       )}

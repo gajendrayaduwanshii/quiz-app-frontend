@@ -1,3 +1,5 @@
+import { generateAIText } from "@/lib/aiClient";
+
 // Cache for user summaries
 const summaryCache = new Map();
 const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
@@ -21,14 +23,6 @@ export default async function handler(req, res) {
     if (cachedData && Date.now() - cachedData.timestamp < CACHE_DURATION) {
       return res.status(200).json(cachedData.data);
     }
-
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
-    
-    if (!apiKey) {
-      return res.status(500).json({ error: "Google API Key not configured" });
-    }
-    
-    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
     const fullUserData = JSON.stringify(user, null, 2);
 
@@ -63,19 +57,7 @@ ${fullUserData}
 **Important:** Respond ONLY with valid JSON. No explanations, no markdown formatting, no additional text.
     `;
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-goog-api-key": apiKey,
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
-    });
-
-    const data = await response.json();
-    const output = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const output = await generateAIText(prompt, { temperature: 0.4 });
     
     // Try multiple parsing strategies
     let parsed = null;

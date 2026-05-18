@@ -27,6 +27,7 @@ import { useAuth } from "../context/AuthContext";
 import useRegistrationForm from "../customHooks/useRegistrationForm";
 
 import axios from "axios";
+import { BrainCircuit, Save, UploadCloud } from "lucide-react";
 
  
 const STRAPI_URL = "http://localhost:1337";
@@ -324,19 +325,27 @@ const mapWorkExperience = (workArr) =>
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
+        p: { xs: 1.5, md: 3 },
       }}
     >
+      <Box className="skillsync-glow-grid" />
       <Card
         sx={{
-          maxWidth: 1200,
-          minHeight: "600px",
+          maxWidth: 1240,
+          minHeight: "680px",
           width: "100%",
-          boxShadow: 3,
+          borderRadius: "30px",
+          border: "1px solid rgba(255,255,255,0.08)",
+          background:
+            "linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.03))",
+          backdropFilter: "blur(24px)",
+          boxShadow: "0 30px 110px rgba(0,0,0,0.46), 0 0 60px rgba(124,58,237,0.16)",
           display: "flex",
           flexDirection: "column",
+          overflow: "hidden",
         }}
       >
-        <CardContent sx={{ flexGrow: 1, overflowY: "auto" }}>
+        <CardContent sx={{ flexGrow: 1, overflowY: "auto", p: { xs: 2.2, md: 4 } }}>
           <Box
             sx={{
               display: "flex",
@@ -348,23 +357,37 @@ const mapWorkExperience = (workArr) =>
             <Button
               startIcon={<ArrowBackIcon />}
               onClick={handleBackToLogin}
-              sx={{ textTransform: "none" }}
+              sx={{ color: "text.secondary" }}
             >
               Back to Login
             </Button>
 
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: "bold", flexGrow: 1, textAlign: "center" }}
-              gutterBottom
-            >
-              Registration
-            </Typography>
+            <Box sx={{ flexGrow: 1, textAlign: "center" }}>
+              <Box sx={{ display: "inline-flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+                <BrainCircuit size={22} color="#06B6D4" />
+                <Typography variant="h5" sx={{ fontWeight: 900 }}>
+                  SkillSync AI Registration
+                </Typography>
+              </Box>
+              <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                Build your Naukri-style career profile in guided AI-ready steps.
+              </Typography>
+            </Box>
 
             <Box sx={{ width: "120px" }} />
           </Box>
 
-          <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 3 }}>
+          <Stepper
+            activeStep={activeStep}
+            alternativeLabel
+            sx={{
+              mb: 3,
+              p: 2,
+              borderRadius: "22px",
+              border: "1px solid rgba(255,255,255,0.08)",
+              bgcolor: "rgba(255,255,255,0.035)",
+            }}
+          >
             {steps.map((label, index) => (
               <Step key={label} error={stepErrors[index] ? true : undefined}>
                 <StepLabel error={stepErrors[index] ? true : undefined}>
@@ -384,10 +407,12 @@ const mapWorkExperience = (workArr) =>
         <Box
           sx={{
             p: 2,
-            borderTop: "1px solid rgba(0,0,0,0.12)",
+            borderTop: "1px solid rgba(255,255,255,0.08)",
             display: "flex",
             justifyContent: "space-between",
-            backgroundColor: "background.paper",
+            gap: 2,
+            background: "rgba(5,8,22,0.76)",
+            backdropFilter: "blur(18px)",
             position: "sticky",
             bottom: 0,
             zIndex: 10,
@@ -397,6 +422,7 @@ const mapWorkExperience = (workArr) =>
             disabled={activeStep === 0 || loading}
             onClick={handleBack}
             variant="outlined"
+            sx={{ borderColor: "rgba(255,255,255,0.14)", color: "#fff" }}
           >
             Back
           </Button>
@@ -406,6 +432,7 @@ const mapWorkExperience = (workArr) =>
             color="primary"
             onClick={handleNext}
             disabled={loading}
+            startIcon={activeStep === steps.length - 1 ? <UploadCloud size={17} /> : <Save size={17} />}
           >
             {loading ? (
               <CircularProgress size={24} color="inherit" />
