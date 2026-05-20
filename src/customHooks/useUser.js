@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { authService } from "@/services/authService";
 
 export const useUser = () => {
   const router = useRouter();
@@ -38,8 +39,7 @@ export const useUser = () => {
   // Initialize documentId from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedUser = localStorage.getItem("user");
-      const userObj = storedUser ? JSON.parse(storedUser) : null;
+      const userObj = authService.getStoredUser();
       
       if (!userObj?.documentId) {
         router.push("/login");

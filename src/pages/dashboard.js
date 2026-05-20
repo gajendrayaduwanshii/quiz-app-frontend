@@ -1,11 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Grid, Typography, Box, Card, Button, Avatar } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { Grid, Typography, Box, Button, Chip, LinearProgress, Stack } from "@mui/material";
 import { alpha, useTheme } from "@mui/material/styles";
-import PsychologyIcon from "@mui/icons-material/Psychology";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
+import {
+  Award,
+  BarChart3,
+  BrainCircuit,
+  CheckCircle2,
+  CircleAlert,
+  Eye,
+  Target,
+  XCircle,
+} from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -51,6 +60,11 @@ import {
   parseCertifications,
 } from "@/helper/dashboard";
 import LoaderTwo from "@/components/LoaderTwo";
+import SectionHeader from "@/components/premium/SectionHeader";
+import PremiumCard from "@/components/premium/PremiumCard";
+import PremiumPage from "@/components/premium/PremiumPage";
+import AIActivityFeed from "@/components/premium/AIActivityFeed";
+import ProgressRing from "@/components/premium/ProgressRing";
 
 ChartJS.register(
   CategoryScale,
@@ -81,7 +95,7 @@ const Dashboard = () => {
   const loadingResume = false;
   const resumeError = null;
   const [quizModalOpen, setQuizModalOpen] = useState(false);
-  const [selectedQuizIndex, setSelectedQuizIndex] = useState(null);
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [showAllResults, setShowAllResults] = useState(false);
 
   const [dashboardData, setDashboardData] = useState({
@@ -107,6 +121,20 @@ const Dashboard = () => {
     : { strongest: [], weakest: [] };
 
   const years = Number(dashboardData.user?.yearsExperience) || 0;
+  const sortedQuizResults = useMemo(() => {
+    const getPercentage = (quiz) => {
+      const questions = quiz?.quizQuestion || [];
+      if (!questions.length) return 0;
+      const correct = questions.filter(
+        (q) => q.answer?.trim() === q.correctAnswer?.trim()
+      ).length;
+      return Math.round((correct / questions.length) * 100);
+    };
+
+    return [...(dashboardData.user?.quizResult || [])].sort(
+      (a, b) => getPercentage(a) - getPercentage(b)
+    );
+  }, [dashboardData.user?.quizResult]);
 
   // Simple callback functions
   const handleLearningQuiz = () => {
@@ -186,18 +214,115 @@ const Dashboard = () => {
         <title>Developer Dashboard</title>
       </Head>
 
-      <div className="dashboard-container ai-dashboard-container">
+      <PremiumPage
+        className="dashboard-container ai-dashboard-container"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 1,
+        }}
+      >
         <DashboardHeader
           user={dashboardData.user}
           onLearningQuiz={handleLearningQuiz}
         />
 
-        <Grid item size={{ xs: 12 }}>
-          <QuizResultsSummery
-            quizResults={dashboardData.user.quizResult}
-            skills={dashboardData.user.skills}
-          />
+        <Grid container spacing={2.4}>
+          <Grid item size={{ xs: 12, xl: 8.2 }}>
+            <PremiumCard
+              hover={false}
+              glow="rgba(124,58,237,0.16)"
+              sx={{
+                p: { xs: 2.2, md: 2.8 },
+                height: "100%",
+                borderRadius: "24px",
+                background:
+                  "linear-gradient(135deg, rgba(15,23,42,0.82), rgba(3,7,18,0.74)), radial-gradient(circle at 92% 0%, rgba(124,58,237,0.16), transparent 34%)",
+              }}
+            >
+              <Grid container spacing={2.2} alignItems="center">
+                <Grid item size={{ xs: 12, md: 4 }}>
+                  <ProgressRing
+                    value={Math.min(
+                      100,
+                      Math.round(
+                        ((dashboardData.user?.skills?.length || 0) * 12) +
+                          ((dashboardData.user?.quizResult?.length || 0) * 8) +
+                          (dashboardData.user?.uploadResume ? 22 : 0)
+                      )
+                    )}
+                    size={154}
+                    thickness={15}
+                    label="readiness"
+                    accent="#7C3AED"
+                    sx={{ mx: { xs: "auto", md: 0 } }}
+                  />
+                </Grid>
+                <Grid item size={{ xs: 12, md: 8 }}>
+                  <SectionHeader
+                    eyebrow="Executive Overview"
+                    title="AI Career Operating System"
+                    description="A high-signal cockpit for resume strength, skill coverage, quiz momentum, and next-best learning actions."
+                  />
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", sm: "repeat(3, minmax(0, 1fr))" },
+                      gap: 1.2,
+                    }}
+                  >
+                    {[
+                      ["Resume", dashboardData.user?.uploadResume ? "Ready" : "Pending", "#06B6D4"],
+                      ["Skills", dashboardData.user?.skills?.length || 0, "#22C55E"],
+                      ["Attempts", dashboardData.user?.quizResult?.length || 0, "#F59E0B"],
+                    ].map(([label, value, color]) => (
+                      <Box
+                        key={label}
+                        sx={{
+                          p: 1.6,
+                          borderRadius: "18px",
+                          border: `1px solid ${color}33`,
+                          bgcolor: `${color}12`,
+                        }}
+                      >
+                        <Typography sx={{ color: "text.secondary", fontSize: 12, fontWeight: 850 }}>
+                          {label}
+                        </Typography>
+                        <Typography sx={{ color: "#fff", fontSize: 24, fontWeight: 950, lineHeight: 1.15 }}>
+                          {value}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                </Grid>
+              </Grid>
+            </PremiumCard>
+          </Grid>
+          <Grid item size={{ xs: 12, xl: 3.8 }}>
+            <AIActivityFeed
+              items={[
+                {
+                  title: "Dashboard recalibrated",
+                  detail: `${dashboardData.user?.skills?.length || 0} skill signals are powering your overview.`,
+                  tag: "Live",
+                },
+                {
+                  title: "Quiz momentum tracked",
+                  detail: `${dashboardData.user?.quizResult?.length || 0} attempts available for analytics.`,
+                  tag: "Quiz",
+                },
+                {
+                  title: "Resume signal",
+                  detail: dashboardData.user?.uploadResume
+                    ? "Resume is attached and ready for AI analysis."
+                    : "Upload a resume to activate ATS intelligence.",
+                  tag: "ATS",
+                },
+              ]}
+            />
+          </Grid>
         </Grid>
+
         <SummaryCards
           user={dashboardData.user}
           strongest={strongest}
@@ -206,6 +331,11 @@ const Dashboard = () => {
         />
 
         <ChartsRow skills={dashboardData.user.skills} />
+
+        <QuizResultsSummery
+          quizResults={dashboardData.user.quizResult}
+          skills={dashboardData.user.skills}
+        />
 
         <Grid container spacing={2}>
           <Grid item size={{ xs: 12}}>
@@ -231,21 +361,20 @@ const Dashboard = () => {
           </Grid> */}
           {/* Individual Quiz Results Cards */}
            <Box size={{ xs: 12 }} sx={{ mt: 4, mb: 2, width:"100%" }} >
-           <div>
-           <h3 className="gradient-text" style={{fontSize:"1.45rem", marginBottom:16}}>Quiz Results Summary by Skill</h3>
-           </div>
-           
-           <div style={{display:"flex", flexWrap:"wrap", gap:16}}>
-           {dashboardData.user?.quizResult
-             ?.sort((a, b) => {
-               const aPercentage = a.quizQuestion?.length > 0 
-                 ? Math.round((a.quizQuestion?.filter(q => q.answer?.trim() === q.correctAnswer?.trim()).length / a.quizQuestion?.length) * 100) 
-                 : 0;
-               const bPercentage = b.quizQuestion?.length > 0 
-                 ? Math.round((b.quizQuestion?.filter(q => q.answer?.trim() === q.correctAnswer?.trim()).length / b.quizQuestion?.length) * 100) 
-                 : 0;
-               return aPercentage - bPercentage; // Ascending order
-             })
+           <SectionHeader
+             eyebrow="Assessment History"
+             title="Recent Quiz Attempts"
+             description="Open any attempt to review answers, score, and improvement areas."
+           />
+
+           <Box
+             sx={{
+               display: "grid",
+               gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))", lg: "repeat(3, minmax(0, 1fr))" },
+               gap: 2,
+             }}
+           >
+           {sortedQuizResults
              ?.slice(0, showAllResults ? undefined : 3)
              ?.map((quiz, quizIndex) => {
             const totalQuestions = quiz.quizQuestion?.length || 0;
@@ -265,42 +394,26 @@ const Dashboard = () => {
             };
 
             const getPerformanceIcon = (percentage) => {
-              if (percentage >= 80) return "🏆";
-              if (percentage >= 60) return "📈";
-              return "📉";
+              if (percentage >= 80) return <Award size={20} />;
+              if (percentage >= 60) return <Target size={20} />;
+              return <CircleAlert size={20} />;
             };
+            const performanceColor = getPerformanceColor(percentage);
+            const statusLabel =
+              percentage >= 80 ? "Excellent" : percentage >= 60 ? "On Track" : "Needs Focus";
 
             return (
-              <Grid item size={{ xs: 12, sm: 6, md: 4 }} key={quizIndex}>
-                <Card
+              <Box key={quiz.id || quiz.documentId || `${quiz.technology}-${quizIndex}`}>
+                <PremiumCard
+                  hover
                   sx={{
-                    background: `linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.028)), linear-gradient(135deg, ${alpha(
-                      getPerformanceColor(percentage),
-                      0.13
-                    )}, rgba(6,182,212,0.05))`,
-                    border: `1px solid ${alpha(
-                      getPerformanceColor(percentage),
-                      0.28
-                    )}`,
-                    backdropFilter: "blur(22px)",
-                    borderRadius: "24px",
-                    p: 2,
+                    height: "100%",
+                    minHeight: 276,
+                    border: `1px solid ${alpha(performanceColor, 0.26)}`,
+                    borderRadius: "18px",
+                    p: 2.2,
                     cursor: "pointer",
-                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                    position: "relative",
-                    overflow: "hidden",
-                    boxShadow: `0 24px 70px rgba(0,0,0,0.32), 0 0 36px ${alpha(getPerformanceColor(percentage), 0.16)}`,
-                    "&:hover": {
-                      transform: "translateY(-4px) scale(1.02)",
-                      boxShadow: `0 30px 90px rgba(0,0,0,0.38), 0 0 48px ${alpha(
-                        getPerformanceColor(percentage),
-                        0.24
-                      )}`,
-                      border: `1px solid ${alpha(
-                        getPerformanceColor(percentage),
-                        0.52
-                      )}`,
-                    },
+                    background: `linear-gradient(145deg, rgba(255,255,255,0.070), rgba(255,255,255,0.026)), radial-gradient(circle at 100% 0%, ${alpha(performanceColor, 0.16)}, transparent 35%)`,
                     "&::before": {
                       content: '""',
                       position: "absolute",
@@ -308,50 +421,45 @@ const Dashboard = () => {
                       left: 0,
                       right: 0,
                       height: 4,
-                      background: `linear-gradient(90deg, ${getPerformanceColor(
-                        percentage
-                      )}, ${alpha(getPerformanceColor(percentage), 0.7)})`,
+                      background: `linear-gradient(90deg, ${performanceColor}, ${alpha(performanceColor, 0.7)})`,
                       opacity: 0.8,
                     },
                   }}
                   onClick={() => {
-                    setSelectedQuizIndex(quizIndex);
+                    setSelectedQuiz(quiz);
                     setQuizModalOpen(true);
                   }}
                 >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mb: 2,
-                    }}
-                  >
-                    <Avatar
-                      sx={{
-                        background: `linear-gradient(135deg, ${getPerformanceColor(percentage)}, #06B6D4)`,
-                        width: 48,
-                        height: 48,
-                        boxShadow: `0 4px 12px ${alpha(
-                          getPerformanceColor(percentage),
-                          0.3
-                        )}`,
-                        border: `2px solid rgba(255,255,255,0.18)`,
-                      }}
-                    >
-                      <PsychologyIcon sx={{ fontSize: 24 }} />
-                    </Avatar>
-                    <Box sx={{ flexGrow: 1 }}>
+                  <Stack spacing={2} sx={{ height: "100%" }}>
+                    <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={1.5}>
+                      <Stack direction="row" spacing={1.4} alignItems="center" sx={{ minWidth: 0 }}>
+                        <Box
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            flex: "0 0 auto",
+                            borderRadius: "14px",
+                            display: "grid",
+                            placeItems: "center",
+                            color: "#fff",
+                            background: `linear-gradient(135deg, ${performanceColor}, #06B6D4)`,
+                            boxShadow: `0 14px 30px ${alpha(performanceColor, 0.26)}`,
+                            border: "1px solid rgba(255,255,255,0.16)",
+                          }}
+                        >
+                          <BrainCircuit size={22} />
+                        </Box>
+                        <Box sx={{ minWidth: 0 }}>
                       <Typography
                         variant="h6"
-                        fontWeight="bold"
                         sx={{
-                          background: `linear-gradient(45deg, #FFFFFF, #67E8F9, #A78BFA)`,
-                          backgroundClip: "text",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                          fontSize: "1.1rem",
+                          color: "#fff",
+                          fontWeight: 950,
+                          fontSize: "1.04rem",
                           lineHeight: 1.2,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
                         }}
                       >
                         {quiz.quizTitle || `${quiz.technology} Quiz`}
@@ -363,156 +471,145 @@ const Dashboard = () => {
                       >
                         {quiz.technology || "General Quiz"}
                       </Typography>
-                    </Box>
-                    <Box sx={{ textAlign: "center" }}>
-                      <Typography
-                        variant="h4"
-                        fontWeight="bold"
+                        </Box>
+                      </Stack>
+                      <Chip
+                        size="small"
+                        icon={getPerformanceIcon(percentage)}
+                        label={statusLabel}
                         sx={{
-                          color: getPerformanceColor(percentage),
-                          lineHeight: 1,
-                        }}
-                      >
-                        {getPerformanceIcon(percentage)}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  <Box sx={{ mb: 2 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        mb: 1,
-                      }}
-                    >
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        fontWeight="medium"
-                      >
-                        Performance
-                      </Typography>
-                      <Typography
-                        variant="h6"
-                        fontWeight="bold"
-                        sx={{ color: getPerformanceColor(percentage) }}
-                      >
-                        {percentage}%
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        height: 6,
-                        borderRadius: 3,
-                        bgcolor: "rgba(255,255,255,0.08)",
-                        overflow: "hidden",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          height: "100%",
-                          width: `${percentage}%`,
-                          bgcolor: getPerformanceColor(percentage),
-                          borderRadius: 3,
-                          transition: "width 0.3s ease",
+                          color: performanceColor,
+                          bgcolor: alpha(performanceColor, 0.12),
+                          border: `1px solid ${alpha(performanceColor, 0.24)}`,
+                          fontWeight: 900,
+                          flex: "0 0 auto",
+                          "& .MuiChip-icon": { color: performanceColor },
                         }}
                       />
+                    </Stack>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <Box
+                        sx={{
+                          width: 86,
+                          height: 86,
+                          flex: "0 0 auto",
+                          borderRadius: "50%",
+                          display: "grid",
+                          placeItems: "center",
+                          background: `conic-gradient(${performanceColor} 0deg, ${performanceColor} ${percentage * 3.6}deg, rgba(255,255,255,0.09) ${percentage * 3.6}deg, rgba(255,255,255,0.09) 360deg)`,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 64,
+                            height: 64,
+                            borderRadius: "50%",
+                            display: "grid",
+                            placeItems: "center",
+                            bgcolor: "rgba(5,8,22,0.94)",
+                            border: "1px solid rgba(255,255,255,0.08)",
+                          }}
+                        >
+                          <Typography sx={{ color: performanceColor, fontWeight: 950, fontSize: 18 }}>
+                            {percentage}%
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.8 }}>
+                          <Typography sx={{ color: "text.secondary", fontSize: 13, fontWeight: 800 }}>
+                            Accuracy
+                          </Typography>
+                          <Typography sx={{ color: performanceColor, fontSize: 13, fontWeight: 950 }}>
+                            {correctAnswers}/{totalQuestions}
+                          </Typography>
+                        </Stack>
+                        <LinearProgress
+                          variant="determinate"
+                          value={percentage}
+                          sx={{
+                            height: 8,
+                            borderRadius: 999,
+                            bgcolor: "rgba(255,255,255,0.08)",
+                            "& .MuiLinearProgress-bar": {
+                              borderRadius: 999,
+                              background: `linear-gradient(90deg, ${performanceColor}, #06B6D4)`,
+                            },
+                          }}
+                        />
+                      </Box>
                     </Box>
-                  </Box>
 
                   <Box
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      mb: 2,
+                      display: "grid",
+                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                      gap: 1,
                     }}
                   >
-                    <Box>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontSize: "0.8rem" }}
+                    {[
+                      { label: "Questions", value: totalQuestions, icon: <BarChart3 size={15} />, color: theme.palette.secondary.main },
+                      { label: "Correct", value: correctAnswers, icon: <CheckCircle2 size={15} />, color: theme.palette.success.main },
+                      { label: "Wrong", value: totalQuestions - correctAnswers, icon: <XCircle size={15} />, color: theme.palette.error.main },
+                    ].map((item) => (
+                      <Box
+                        key={item.label}
+                        sx={{
+                          p: 1.15,
+                          minHeight: 70,
+                          borderRadius: "14px",
+                          border: `1px solid ${alpha(item.color, 0.20)}`,
+                          bgcolor: alpha(item.color, 0.08),
+                        }}
                       >
-                        Questions
-                      </Typography>
-                      <Typography variant="h6" fontWeight="bold">
-                        {totalQuestions}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontSize: "0.8rem" }}
-                      >
-                        Correct
-                      </Typography>
-                      <Typography
-                        variant="h6"
-                        fontWeight="bold"
-                        sx={{ color: theme.palette.success.main }}
-                      >
-                        {correctAnswers}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontSize: "0.8rem" }}
-                      >
-                        Wrong
-                      </Typography>
-                      <Typography
-                        variant="h6"
-                        fontWeight="bold"
-                        sx={{ color: theme.palette.error.main }}
-                      >
-                        {totalQuestions - correctAnswers}
-                      </Typography>
-                    </Box>
+                        <Box sx={{ color: item.color, lineHeight: 0, mb: 0.7 }}>{item.icon}</Box>
+                        <Typography sx={{ fontWeight: 950, lineHeight: 1 }}>{item.value}</Typography>
+                        <Typography sx={{ color: "text.secondary", fontSize: 12, mt: 0.35 }}>
+                          {item.label}
+                        </Typography>
+                      </Box>
+                    ))}
                   </Box>
 
                   <Box
                     sx={{
+                      mt: "auto",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       gap: 1,
                       py: 1,
                       px: 2,
-                      borderRadius: 2,
-                      bgcolor: alpha(getPerformanceColor(percentage), 0.12),
-                      border: `1px solid ${alpha(
-                        getPerformanceColor(percentage),
-                        0.2
-                      )}`,
+                      borderRadius: "14px",
+                      bgcolor: alpha(performanceColor, 0.11),
+                      border: `1px solid ${alpha(performanceColor, 0.22)}`,
+                      color: performanceColor,
                     }}
                   >
-                    <Typography
-                      variant="body2"
-                      fontWeight="medium"
-                      sx={{ color: getPerformanceColor(percentage) }}
-                    >
-                      Click to view details
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: getPerformanceColor(percentage) }}
-                    >
-                      →
+                    <Eye size={16} />
+                    <Typography variant="body2" fontWeight={900}>
+                      Open review
                     </Typography>
                   </Box>
-                </Card>
-              </Grid>
+                  </Stack>
+                </PremiumCard>
+              </Box>
             );
           })}
-          </div>
-          <div style={{textAlign:"center", marginTop:16}}>
-          <Button variant="contained" color="primary" onClick={() => setShowAllResults(!showAllResults)}>
+          </Box>
+          <div style={{textAlign:"center", marginTop:18}}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setShowAllResults(!showAllResults)}
+            sx={{
+              px: 2.6,
+              borderRadius: "14px",
+              background: "linear-gradient(135deg, #7C3AED, #06B6D4)",
+              boxShadow: "0 16px 34px rgba(124,58,237,0.28)",
+            }}
+          >
             {showAllResults ? 'Hide All Results' : 'Show All Results'}
           </Button>
           </div>
@@ -617,20 +714,16 @@ const Dashboard = () => {
             /> */}
           </Grid>
         </Grid>
-      </div>
+      </PremiumPage>
 
       {/* Quiz Results Modal */}
       <QuizResultsModal
         open={quizModalOpen}
         onClose={() => {
           setQuizModalOpen(false);
-          setSelectedQuizIndex(null);
+          setSelectedQuiz(null);
         }}
-        quizResults={
-          selectedQuizIndex !== null
-            ? [dashboardData.user?.quizResult?.[selectedQuizIndex]]
-            : []
-        }
+        quizResults={selectedQuiz ? [selectedQuiz] : []}
       />
     </>
   );

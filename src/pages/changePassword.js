@@ -14,6 +14,7 @@ import axios from "axios";
 import { useUser } from "@/customHooks/useUser";
 import { validatePassword } from "./../helper/formValidationHelpers"; 
 import { useAuth } from "../context/AuthContext"; 
+import { authService } from "@/services/authService";
 
 const ChangePassword = () => {
   const router = useRouter();
@@ -44,7 +45,7 @@ const ChangePassword = () => {
   });
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedUser = authService.getStoredUser();
     if (!storedUser) {
       router.push("/login");
     }

@@ -18,7 +18,7 @@ const QuizResult = ({ correctAnswers, incorrectAnswers }) => {
           mb: 1.5,
           width: 96,
           height: 96,
-          borderRadius: "26px",
+          borderRadius: "18px",
           display: "grid",
           placeItems: "center",
           background: "linear-gradient(135deg, rgba(124,58,237,0.24), rgba(6,182,212,0.14))",

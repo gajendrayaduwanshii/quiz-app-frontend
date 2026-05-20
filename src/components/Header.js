@@ -17,7 +17,7 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import { Bell, LogOut, Menu as MenuIcon, Search, Settings, UserRound } from "lucide-react";
+import { Bell, Command, LogOut, Menu as MenuIcon, Search, Settings, Sparkles, UserRound } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 
@@ -142,13 +142,13 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
       position="fixed"
       elevation={0}
       sx={{
-        width: isMobile ? "100%" : `calc(100% - ${sidebarOpen ? 248 : 80}px)`,
-        ml: isMobile ? 0 : `${sidebarOpen ? 248 : 80}px`,
+        width: isMobile ? "100%" : `calc(100% - ${sidebarOpen ? 272 : 84}px)`,
+        ml: isMobile ? 0 : `${sidebarOpen ? 272 : 84}px`,
         transition: "width 0.3s ease, margin-left 0.3s ease",
-        background: "rgba(5,8,22,0.72)",
-        borderBottom: "1px solid rgba(255,255,255,0.08)",
-        backdropFilter: "blur(22px)",
-        boxShadow: "0 20px 60px rgba(0,0,0,0.24)",
+        px: { xs: 1, md: 2.4 },
+        pt: { xs: 1, md: 1.5 },
+        background: "transparent",
+        pointerEvents: "none",
       }}
     >
       <Toolbar
@@ -156,8 +156,15 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
           display: "flex",
           justifyContent: "space-between",
           gap: 2,
-          minHeight: "72px !important",
-          px: { xs: 1.5, md: 3 },
+          minHeight: "68px !important",
+          px: { xs: 1.1, md: 2 },
+          borderRadius: { xs: "20px", md: "24px" },
+          border: "1px solid rgba(255,255,255,0.10)",
+          background:
+            "linear-gradient(135deg, rgba(11,17,32,0.78), rgba(3,7,18,0.70))",
+          backdropFilter: "blur(26px)",
+          boxShadow: "0 20px 70px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.06)",
+          pointerEvents: "auto",
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, minWidth: 0 }}>
@@ -186,8 +193,8 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
               {getPageTitle()}
             </Typography>
             {!isMobile && (
-              <Typography sx={{ color: "text.secondary", fontSize: 12 }}>
-                AI-powered career, resume, and learning intelligence
+              <Typography sx={{ color: "text.secondary", fontSize: 12, display: "flex", alignItems: "center", gap: 0.7 }}>
+                <Sparkles size={12} color="#06B6D4" /> AI-powered career, resume, and learning intelligence
               </Typography>
             )}
           </Box>
@@ -239,6 +246,23 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
                 },
               }}
             />
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                px: 0.8,
+                py: 0.35,
+                borderRadius: "9px",
+                color: "text.secondary",
+                border: "1px solid rgba(255,255,255,0.08)",
+                bgcolor: "rgba(255,255,255,0.04)",
+                fontSize: 11,
+                fontWeight: 850,
+              }}
+            >
+              <Command size={12} /> K
+            </Box>
             {searchOpen && (
               <Box
                 sx={{
@@ -304,6 +328,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           {!isMobile && (
             <Chip
+              icon={<Sparkles size={14} />}
               label="AI Online"
               size="small"
               sx={{

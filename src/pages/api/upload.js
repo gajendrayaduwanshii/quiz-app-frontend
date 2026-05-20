@@ -1,3 +1,5 @@
+import { extractApiError, readJsonResponse } from "@/utils/readJsonResponse";
+
 export const config = {
   api: {
     bodyParser: false,
@@ -23,11 +25,14 @@ export default async function handler(req, res) {
       }
     );
 
+    const result = await readJsonResponse(response);
+
     if (!response.ok) {
-      throw new Error("Failed to upload file");
+      return res
+        .status(response.status)
+        .json({ error: extractApiError(result, `Failed to upload file: ${response.status}`) });
     }
 
-    const result = await response.json();
     res.status(200).json({ file: result[0] });
   } catch (error) {
     console.error("Error in /api/upload:", error);

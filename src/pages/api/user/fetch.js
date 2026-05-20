@@ -1,4 +1,5 @@
 // NO CACHE - Always fetch fresh data
+import { extractApiError, readJsonResponse } from "@/utils/readJsonResponse";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -23,11 +24,13 @@ export default async function handler(req, res) {
       }
     );
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch user data");
-    }
+    const result = await readJsonResponse(response);
 
-    const result = await response.json();
+    if (!response.ok) {
+      return res
+        .status(response.status)
+        .json({ error: extractApiError(result, `Failed to fetch user data: ${response.status}`) });
+    }
 
     if (result?.data?.length > 0) {
       const user = result.data[0];

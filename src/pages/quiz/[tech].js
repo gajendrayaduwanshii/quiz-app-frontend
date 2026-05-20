@@ -4,7 +4,10 @@ import { useUser } from "@/customHooks/useUser";
 import { useQuiz } from "@/customHooks/useQuiz";
 import LoaderTwo from "@/components/LoaderTwo";
 import QuizMainComponent from "@/components/QuizMainComponent";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import PremiumPage from "@/components/premium/PremiumPage";
+import PremiumCard from "@/components/premium/PremiumCard";
+import PremiumButton from "@/components/premium/PremiumButton";
 
 const Quiz = memo(() => {
   const router = useRouter();
@@ -38,53 +41,29 @@ const Quiz = memo(() => {
     }
 
     return (
-      <div style={{ 
-        padding: "2rem", 
-        textAlign: "center",
-        color: "#fff",
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100%"
-      }}>
-        <h2>No quiz questions available for "{tech}"</h2>
+      <PremiumCard hover={false} sx={{ p: 4, textAlign: "center", maxWidth: 680, mx: "auto" }}>
+        <Typography variant="h4" className="gradient-text" sx={{ fontWeight: 950, mb: 1 }}>
+          No quiz questions available for "{tech}"
+        </Typography>
         {error && (
-          <div style={{ 
-            padding: "1rem", 
-            background: "rgba(255, 0, 0, 0.1)", 
-            borderRadius: "8px",
-            maxWidth: "600px"
-          }}>
-            <p style={{ margin: 0, color: "#ff6b6b" }}>Error: {error}</p>
-          </div>
+          <Box sx={{ p: 1.5, bgcolor: "rgba(239,68,68,0.10)", border: "1px solid rgba(239,68,68,0.22)", borderRadius: "16px", mb: 2 }}>
+            <Typography sx={{ color: "#FCA5A5" }}>Error: {error}</Typography>
+          </Box>
         )}
-        <button 
-          onClick={() => window.location.reload()} 
-          style={{
-            padding: "0.75rem 1.5rem",
-            background: "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-            fontSize: "1rem"
-          }}
-        >
+        <PremiumButton onClick={() => window.location.reload()}>
           Retry
-        </button>
-        <p style={{ fontSize: "0.9rem", opacity: 0.7 }}>
+        </PremiumButton>
+        <Typography sx={{ color: "text.secondary", mt: 2 }}>
           Please check the server console for detailed error logs.
-        </p>
-      </div>
+        </Typography>
+      </PremiumCard>
     );
   }, [isLoading, user, questions, tech, router, error]);
 
   return (
-    <Box sx={{height: "calc(100vh - 180px)"}}>
+    <PremiumPage dense sx={{ minHeight: "calc(100vh - 180px)" }}>
       {quizContent}
-    </Box>
+    </PremiumPage>
   );
 });
 

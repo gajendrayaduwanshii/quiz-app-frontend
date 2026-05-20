@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useMediaQuery } from "@mui/material";
 import HeaderSidebar from "./HeaderSidebar";
+import AICopilot from "./premium/AICopilot";
+import CommandPalette from "./premium/CommandPalette";
 
 export default function Layout({ children }) {
   const pathname = usePathname();
@@ -27,9 +29,11 @@ export default function Layout({ children }) {
   return (
     <div className="skillsync-shell">
       <div className="skillsync-glow-grid" />
+      <CommandPalette />
       <HeaderSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}>
         {children}
       </HeaderSidebar>
+      <AICopilot />
     </div>
   );
 }

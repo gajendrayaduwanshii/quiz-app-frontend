@@ -10,6 +10,7 @@ import { ArrowRight, BrainCircuit, Code2, Gauge, Sparkles } from "lucide-react";
 import PremiumCard from "@/components/premium/PremiumCard";
 import PremiumButton from "@/components/premium/PremiumButton";
 import SectionHeader from "@/components/premium/SectionHeader";
+import PremiumPage from "@/components/premium/PremiumPage";
 
 const Technologies = () => {
   const router = useRouter();
@@ -40,7 +41,7 @@ const Technologies = () => {
   const skills = user.skills || [];
 
   return (
-    <Box
+    <PremiumPage
       sx={{
         minHeight: "calc(100vh - 180px)",
         padding: { xs: 1, md: 2 },
@@ -157,7 +158,7 @@ const Technologies = () => {
           </Grid>
         )}
       </Grid>
-    </Box>
+    </PremiumPage>
   );
 };
 

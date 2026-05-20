@@ -1,10 +1,10 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Jua&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;600;700;800;900&family=Jua&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 :root {
-  --background: #050816;
+  --background: #030712;
   --foreground: #ffffff;
-  --ss-bg-primary: #050816;
-  --ss-bg-secondary: #0B1120;
+  --ss-bg-primary: #030712;
+  --ss-bg-secondary: #080D19;
   --ss-card: rgba(255,255,255,0.05);
   --ss-border: rgba(255,255,255,0.08);
   --ss-accent-primary: #7C3AED;
@@ -32,10 +32,10 @@ body {
 body {
   color: var(--foreground);
   background:
-    radial-gradient(circle at 18% 0%, rgba(124,58,237,0.20), transparent 30%),
-    radial-gradient(circle at 88% 12%, rgba(6,182,212,0.16), transparent 28%),
-    linear-gradient(180deg, #050816 0%, #0B1120 58%, #050816 100%);
-  font-family: Inter, Arial, Helvetica, sans-serif;
+    radial-gradient(circle at 18% 0%, rgba(124,58,237,0.18), transparent 30%),
+    radial-gradient(circle at 88% 12%, rgba(6,182,212,0.14), transparent 28%),
+    linear-gradient(180deg, #030712 0%, #080D19 58%, #030712 100%);
+  font-family: Inter, Outfit, Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
@@ -71,7 +71,7 @@ a {
 }
 
 body, html {
-  font-family: Inter, Arial, sans-serif;
+  font-family: Inter, Outfit, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   color: var(--ss-text-primary);
@@ -79,8 +79,9 @@ body, html {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-weight: bold;
+  font-weight: 850;
   margin-bottom: 10px;
+  letter-spacing: 0;
 }
 
 p {
@@ -107,6 +108,92 @@ p {
     linear-gradient(135deg, #050816 0%, #0B1120 100%);
   position: relative;
   overflow: hidden;
+}
+
+.skillsync-shell {
+  position: relative;
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(3,7,18,0.86), rgba(3,7,18,0.96)),
+    radial-gradient(circle at 8% 8%, rgba(124,58,237,0.18), transparent 34%),
+    radial-gradient(circle at 92% 16%, rgba(6,182,212,0.13), transparent 30%);
+}
+
+.skillsync-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.88), transparent 78%);
+  z-index: 0;
+}
+
+.skillsync-glow-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.skillsync-glow-grid::before,
+.skillsync-glow-grid::after {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 999px;
+  filter: blur(62px);
+  opacity: 0.34;
+  animation: ssFloat 12s ease-in-out infinite alternate;
+}
+
+.skillsync-glow-grid::before {
+  left: -140px;
+  top: 8%;
+  background: rgba(124,58,237,0.44);
+}
+
+.skillsync-glow-grid::after {
+  right: -140px;
+  top: 18%;
+  background: rgba(6,182,212,0.34);
+  animation-delay: -4s;
+}
+
+@keyframes ssFloat {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(24px, 38px, 0) scale(1.08); }
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #FFFFFF 0%, #C4B5FD 42%, #67E8F9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.premium-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(103,232,249,0.42) rgba(255,255,255,0.05);
+}
+
+.premium-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.premium-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(180deg, #7C3AED, #06B6D4);
+}
+
+.premium-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.04);
 }
 .login-wrapper img{
   width: 100%;
@@ -164,6 +251,38 @@ p {
   justify-content: center;
   background-color: rgb(15 15 15 / 90%);
   z-index: 9999;
+}
+
+.MuiAutocomplete-popper,
+.MuiPopover-root,
+.MuiMenu-root {
+  z-index: 1600 !important;
+}
+
+.MuiAutocomplete-popper .MuiAutocomplete-paper,
+.MuiPopover-root .MuiPaper-root,
+.MuiMenu-root .MuiPaper-root {
+  background: rgba(5, 8, 22, 0.98) !important;
+  background-image: none !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55) !important;
+  backdrop-filter: blur(18px);
+}
+
+.MuiAutocomplete-popper .MuiAutocomplete-option,
+.MuiMenu-root .MuiMenuItem-root {
+  color: #fff !important;
+}
+
+.MuiAutocomplete-popper .MuiAutocomplete-option.Mui-focused,
+.MuiMenu-root .MuiMenuItem-root:hover {
+  background-color: rgba(6, 182, 212, 0.16) !important;
+}
+
+.MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected="true"],
+.MuiMenu-root .MuiMenuItem-root.Mui-selected {
+  background-color: rgba(124, 58, 237, 0.28) !important;
 }
 
 
@@ -235,10 +354,12 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url("/images/login-bg-image.jpg");
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(124,58,237,0.28), transparent 30%),
+    radial-gradient(circle at 80% 10%, rgba(6,182,212,0.22), transparent 28%),
+    linear-gradient(135deg, #050816 0%, #0B1120 100%);
+  position: relative;
+  overflow: hidden;
 }
 .login-wrapper img{
   width: 100%;
@@ -248,6 +369,11 @@ p {
 .login-container{
   max-width: 750px;
   overflow: hidden;
+  background: rgba(255,255,255,0.06)!important;
+  border: 1px solid var(--ss-border);
+  border-radius: 22px!important;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 30px 110px rgba(0,0,0,0.46), 0 0 60px rgba(124,58,237,0.18);
 }
 
 .title.stylish-title{
@@ -287,7 +413,7 @@ p {
   gap: 18px;
   flex-wrap: wrap;
   padding: 28px;
-  border-radius: 28px;
+  border-radius: 20px;
   border: 1px solid var(--ss-border);
   background:
     linear-gradient(135deg, rgba(124,58,237,0.18), rgba(6,182,212,0.08)),
@@ -311,7 +437,7 @@ p {
 
 .dashboard-container .MuiCard-root,
 .dashboard-container .MuiPaper-root {
-  border-radius: 24px;
+  border-radius: 18px;
 }
 
 .dashboard-container .MuiChip-root {

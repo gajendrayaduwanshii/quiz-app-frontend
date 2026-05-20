@@ -8,6 +8,7 @@ import { Box, Grid, Typography } from "@mui/material";
 import { BookOpenCheck, CalendarCheck, GraduationCap, Sparkles } from "lucide-react";
 import PremiumCard from "@/components/premium/PremiumCard";
 import SectionHeader from "@/components/premium/SectionHeader";
+import PremiumPage from "@/components/premium/PremiumPage";
 
 const Learning = () => {
   const router = useRouter();
@@ -50,7 +51,7 @@ const Learning = () => {
   }
 
   return (
-    <Box className="learning-container" sx={{ pb: 4 }}>
+    <PremiumPage className="learning-container" sx={{ pb: 4 }}>
       <SectionHeader
         eyebrow="Learning Intelligence"
         title="Personalized Learning Suggestions"
@@ -106,7 +107,7 @@ const Learning = () => {
           );
         })}
       </Grid>
-    </Box>
+    </PremiumPage>
   );
 };
 

@@ -13,13 +13,6 @@ const EducationSection = ({ educations = [] }) => {
     return '#7C3AED';
   };
 
-  const getGradeIcon = (grade) => {
-    if (grade >= 90) return '🏆';
-    if (grade >= 80) return '🥇';
-    if (grade >= 70) return '🥈';
-    return '🥉';
-  };
-
   return (
     <Box sx={{ mt: 3 }}>
       <SectionHeader
@@ -30,7 +23,6 @@ const EducationSection = ({ educations = [] }) => {
       <Grid container spacing={2.2}>
         {educations?.length ? educations.map((edu, i) => {
           const gradeColor = getGradeColor(edu.grade || 0);
-          const gradeIcon = getGradeIcon(edu.grade || 0);
           
           return (
             <Grid item size={{ xs: 12, sm: 6, md: 4 }} key={i}>
@@ -64,9 +56,7 @@ const EducationSection = ({ educations = [] }) => {
                       bgcolor: `${gradeColor}18`,
                       border: `1px solid ${gradeColor}35`
                     }}>
-                      <Typography variant="h5" sx={{ lineHeight: 1 }}>
-                        {gradeIcon}
-                      </Typography>
+                      <Award size={22} color={gradeColor} />
                     </Box>
                   </Box>
 

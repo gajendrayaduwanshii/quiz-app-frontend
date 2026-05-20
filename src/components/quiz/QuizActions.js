@@ -1,5 +1,7 @@
 import React, { memo, useMemo, useCallback } from "react";
-import { Button } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
+import { ArrowLeft, ArrowRight, BarChart3, Home, RotateCcw, Send } from "lucide-react";
+import PremiumButton from "@/components/premium/PremiumButton";
 
 const QuizActions = memo(({
   activeStep,
@@ -44,21 +46,20 @@ const QuizActions = memo(({
   const actionButtons = useMemo(() => {
     if (isLastStep) {
       return (
-        <Button onClick={handleSubmit} disabled={submitted} variant="contained" color="success">
+        <PremiumButton onClick={handleSubmit} disabled={submitted} startIcon={<Send size={17} />}>
           Submit
-        </Button>
+        </PremiumButton>
       );
     }
     
     return (
-      <Button
+      <PremiumButton
         disabled={!hasAnswer}
         onClick={handleNext}
-        variant="contained"
-        color="primary"
+        endIcon={<ArrowRight size={17} />}
       >
         Next
-      </Button>
+      </PremiumButton>
     );
   }, [isLastStep, hasAnswer, submitted, handleSubmit, handleNext]);
 
@@ -67,36 +68,78 @@ const QuizActions = memo(({
     
     return (
       <>
-        <Button onClick={handleShowResult} variant="contained" color="success">
+        <Button
+          onClick={handleShowResult}
+          variant="outlined"
+          startIcon={<BarChart3 size={17} />}
+          sx={{ color: "#fff", borderColor: "rgba(255,255,255,0.14)" }}
+        >
           Show Result
         </Button>
-        <Button onClick={handleRestart} variant="contained" color="success">
+        <Button
+          onClick={handleRestart}
+          variant="outlined"
+          startIcon={<RotateCcw size={17} />}
+          sx={{ color: "#fff", borderColor: "rgba(255,255,255,0.14)" }}
+        >
           Restart Quiz
         </Button>
-        <Button onClick={handleGoToDashboard} variant="contained" color="secondary">
+        <PremiumButton onClick={handleGoToDashboard} startIcon={<Home size={17} />}>
           Go To Dashboard
-        </Button>
+        </PremiumButton>
       </>
     );
   }, [submitted, handleShowResult, handleRestart, handleGoToDashboard]);
 
   return (
-    <div style={{ marginTop: 20, display: "flex", gap: 10, alignItems: "center" }}>
+    <Box
+      sx={{
+        mt: 2,
+        p: 1.2,
+        display: "flex",
+        gap: 1.2,
+        alignItems: "center",
+        flexDirection: { xs: "column", sm: "row" },
+        borderRadius: "20px",
+        border: "1px solid rgba(255,255,255,0.08)",
+        bgcolor: "rgba(255,255,255,0.04)",
+        backdropFilter: "blur(18px)",
+      }}
+    >
       <Button
         disabled={isFirstStep}
         onClick={handleBack}
-        variant="contained"
-        color="secondary"
+        variant="outlined"
+        startIcon={<ArrowLeft size={17} />}
+        sx={{
+          width: { xs: "100%", sm: "auto" },
+          color: "#fff",
+          borderColor: "rgba(255,255,255,0.14)",
+          "&.Mui-disabled": {
+            color: "rgba(255,255,255,0.28)",
+            borderColor: "rgba(255,255,255,0.06)",
+          },
+        }}
       >
         Previous
       </Button>
 
-      {actionButtons}
+      <Box sx={{ width: { xs: "100%", sm: "auto" }, "& > button": { width: { xs: "100%", sm: "auto" } } }}>
+        {actionButtons}
+      </Box>
 
-      <div style={{ marginLeft: "auto", display: "flex", gap: 10 }}>
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        spacing={1}
+        sx={{
+          ml: { sm: "auto" },
+          width: { xs: "100%", sm: "auto" },
+          "& > button": { width: { xs: "100%", sm: "auto" } },
+        }}
+      >
         {resultButtons}
-      </div>
-    </div>
+      </Stack>
+    </Box>
   );
 });
 

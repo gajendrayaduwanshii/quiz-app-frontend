@@ -7,6 +7,8 @@ import Loader from "@/components/Loader";
 import PremiumCard from "@/components/premium/PremiumCard";
 import PremiumButton from "@/components/premium/PremiumButton";
 import SectionHeader from "@/components/premium/SectionHeader";
+import PremiumPage from "@/components/premium/PremiumPage";
+import { authService } from "@/services/authService";
 
 import BasicInfo from "../components/profile/basicInfo";
 import SkillsSection from "../components/profile/skillsSection";
@@ -42,7 +44,7 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedUser = authService.getStoredUser();
     if (!storedUser) {
       router.push("/login");
       return;
@@ -75,19 +77,20 @@ const Profile = () => {
   const formatDate = (date) => {
     if (!date) return null;
     const d = new Date(date);
+    if (Number.isNaN(d.getTime())) return null;
     return d.toISOString().split("T")[0];
   };
 
   const mapEducation = (educationArr) =>
-    educationArr.map((edu) => ({
-      degree: edu.degree,
-      institution: edu.institution,
+    (Array.isArray(educationArr) ? educationArr : []).map((edu) => ({
+      degree: edu.degree || "",
+      institution: edu.institution || "",
       passingYear: edu.passingYear || edu.year || "",
-      grade: edu.grade,
+      grade: edu.grade || "",
     }));
 
   const mapWorkExperience = (workArr) =>
-    workArr.map((work) => ({
+    (Array.isArray(workArr) ? workArr : []).map((work) => ({
       jobTitle: work.jobTitle || work.title || "",
       company: work.company || "",
       startDate: formatDate(work.startDate),
@@ -97,11 +100,28 @@ const Profile = () => {
     }));
 
   const mapSkills = (skillsArr) =>
-    skillsArr.map((skill) => ({
+    (Array.isArray(skillsArr) ? skillsArr : []).map((skill) => ({
       skillName: skill.skillName || skill.skill || "",
       level: skill.level || "",
       yearsExperience: skill.yearsExperience || skill.experienceYears || "",
     }));
+
+  const normalizeCertifications = (certifications) => {
+    if (Array.isArray(certifications)) {
+      return certifications
+        .map((cert) => {
+          if (typeof cert === "string") return cert;
+          return cert?.name || cert?.title || cert?.certification || "";
+        })
+        .filter(Boolean)
+        .join(", ");
+    }
+
+    return certifications || "";
+  };
+
+  const removeUndefinedFields = (obj) =>
+    Object.fromEntries(Object.entries(obj).filter(([, value]) => value !== undefined));
 
   const getAgeFromDOB = (dob) => {
     if (!dob) return null;
@@ -153,17 +173,17 @@ const Profile = () => {
       }
     }
 
-    const payload = {
+    const payload = removeUndefinedFields({
       name: profileData.name,
       email: profileData.email,
       phoneNumber: profileData.phoneNumber || "",
-      dob: profileData.dob,
-      gender: profileData.gender,
+      dob: formatDate(profileData.dob),
+      gender: profileData.gender || "",
       currentJobTitle: profileData.currentJobTitle,
       currentCompany: profileData.currentCompany,
       yearsExperience: profileData.yearsExperience,
       desiredJobType: profileData.desiredJobType,
-      certifications: profileData.certifications,
+      certifications: normalizeCertifications(profileData.certifications),
       password: profileData.password || undefined,
 
       uploadResume: uploadedFile
@@ -173,7 +193,7 @@ const Profile = () => {
       skills: mapSkills(profileData.skills),
       workExperiences: mapWorkExperience(profileData.workExperiences),
       educations: mapEducation(profileData.educations),
-    };
+    });
 
     try {
       const response = await fetch("/api/user/update", {
@@ -206,7 +226,7 @@ const Profile = () => {
       }
     } catch (err) {
       console.error("Error saving profile:", err);
-      alert("Error updating profile.");
+      alert(err.message || "Error updating profile.");
     }
 
     setIsSaving(false);
@@ -227,7 +247,7 @@ const Profile = () => {
   );
 
   return (
-    <Box className="profile-page" sx={{ pb: 4 }}>
+    <PremiumPage className="profile-page" sx={{ pb: 4 }}>
       <PremiumCard hover={false} sx={{ p: { xs: 2.4, md: 3.4 }, mb: 3 }}>
         <Box
           sx={{
@@ -465,7 +485,7 @@ const Profile = () => {
       />
       </PremiumCard>
       </Grid>
-    </Box>
+    </PremiumPage>
   );
 };
 

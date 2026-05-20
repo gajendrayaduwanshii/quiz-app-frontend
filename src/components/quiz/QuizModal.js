@@ -1,6 +1,6 @@
 import React from "react";
-import { Modal, Box, Typography, IconButton, Button, Stack } from "@mui/material";
-import { ArrowLeft, Play, RotateCcw, X } from "lucide-react";
+import { Modal, Box, Typography, IconButton, Button, Stack, Alert, CircularProgress } from "@mui/material";
+import { ArrowLeft, Download, Link, Mail, Play, RotateCcw, X } from "lucide-react";
 import QuizResult from "./QuizResult";
 import PremiumButton from "@/components/premium/PremiumButton";
 
@@ -14,6 +14,11 @@ const QuizModal = ({
   correctCount,
   incorrectCount,
   handleGoBack,
+  onDownloadReport,
+  onEmailReport,
+  onShareReportLink,
+  reportLoading = false,
+  reportError = "",
 }) => {
   return (
     <Modal open={open} onClose={onClose}>
@@ -33,7 +38,7 @@ const QuizModal = ({
           backdropFilter: "blur(24px)",
           p: { xs: 2.4, sm: 3.4 },
           boxShadow: "0 34px 120px rgba(0,0,0,0.62), 0 0 60px rgba(124,58,237,0.20)",
-          borderRadius: "28px",
+          borderRadius: "20px",
           textAlign: "center",
           outline: "none",
         }}
@@ -73,6 +78,40 @@ const QuizModal = ({
               Your assessment result is ready.
             </Typography>
             <QuizResult correctAnswers={correctCount} incorrectAnswers={incorrectCount} />
+            {reportError && (
+              <Alert severity={reportError.includes("copy") ? "success" : "warning"} sx={{ mt: 1.5, textAlign: "left" }}>
+                {reportError}
+              </Alert>
+            )}
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2} justifyContent="center" sx={{ mt: 2 }}>
+              <Button
+                variant="outlined"
+                onClick={onDownloadReport}
+                disabled={reportLoading}
+                startIcon={reportLoading ? <CircularProgress size={16} /> : <Download size={17} />}
+                sx={{ color: "#fff", borderColor: "rgba(255,255,255,0.14)" }}
+              >
+                PDF Download
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={onEmailReport}
+                disabled={reportLoading}
+                startIcon={<Mail size={17} />}
+                sx={{ color: "#fff", borderColor: "rgba(255,255,255,0.14)" }}
+              >
+                Email Report
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={onShareReportLink}
+                disabled={reportLoading}
+                startIcon={<Link size={17} />}
+                sx={{ color: "#fff", borderColor: "rgba(255,255,255,0.14)" }}
+              >
+                Share Link
+              </Button>
+            </Stack>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2} justifyContent="center" sx={{ mt: 2 }}>
               <PremiumButton onClick={onRestart} startIcon={<RotateCcw size={17} />}>
                 Restart Quiz

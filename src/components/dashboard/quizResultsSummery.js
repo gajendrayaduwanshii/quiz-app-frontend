@@ -1,88 +1,83 @@
 "use client";
 
-import React from "react";
-import { 
-  Box, 
-  Typography, 
-  Paper, 
-  Grid, 
-  LinearProgress, 
-  Card, 
-  CardContent, 
-  Avatar, 
-  Chip, 
-  Stack, 
-  Divider,
-  Badge,
-  IconButton,
-  Tooltip
-} from "@mui/material";
+import React, { useMemo } from "react";
+import { Box, Chip, Grid, LinearProgress, Stack, Typography } from "@mui/material";
 import { alpha, useTheme } from "@mui/material/styles";
-import PsychologyIcon from "@mui/icons-material/Psychology";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import TrendingDownIcon from "@mui/icons-material/TrendingDown";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
-import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
-import SchoolIcon from "@mui/icons-material/School";
-import WorkIcon from "@mui/icons-material/Work";
-import StarIcon from "@mui/icons-material/Star";
-import CodeIcon from "@mui/icons-material/Code";
+import { BrainCircuit, CheckCircle2, Code2, Target, TrendingDown, TrendingUp, Trophy, XCircle } from "lucide-react";
 import PremiumCard from "@/components/premium/PremiumCard";
 import SectionHeader from "@/components/premium/SectionHeader";
 
-const QuizResultsSummaryBySkill = ({ quizResults, skills }) => {
+const normalize = (value) => String(value || "").trim().toLowerCase();
+
+const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
   const theme = useTheme();
 
-  // Helper to calculate summary for a specific technology
-  const getSummaryForSkill = (skillName) => {
-    let totalQuestions = 0;
-    let totalCorrect = 0;
+  const summaryBySkill = useMemo(() => {
+    return (skills || []).map((skill) => {
+      const skillName = skill.skillName || skill.skill || "Skill";
+      const attempts = (quizResults || []).filter(
+        (quiz) => normalize(quiz?.technology) === normalize(skillName)
+      );
 
-    // Filter quiz results for this skill (case-insensitive)
-    const filteredResults = quizResults.filter(
-      (quiz) => quiz.technology.toLowerCase() === skillName.toLowerCase()
-    );
+      const totals = attempts.reduce(
+        (acc, quiz) => {
+          (quiz.quizQuestion || []).forEach((question) => {
+            const userAnswer = normalize(question.answer);
+            const correctAnswer = normalize(question.correctAnswer);
+            acc.totalQuestions += 1;
+            if (userAnswer && correctAnswer && userAnswer === correctAnswer) {
+              acc.totalCorrect += 1;
+            }
+          });
+          return acc;
+        },
+        { totalQuestions: 0, totalCorrect: 0 }
+      );
 
-    filteredResults.forEach((quiz) => {
-      quiz.quizQuestion.forEach((q) => {
-        totalQuestions++;
+      const totalWrong = totals.totalQuestions - totals.totalCorrect;
+      const percentage = totals.totalQuestions
+        ? Math.round((totals.totalCorrect / totals.totalQuestions) * 100)
+        : 0;
 
-        // Safely handle potential null/undefined answers
-        const userAnswer =
-          typeof q.answer === "string" ? q.answer.trim() : "";
-        const correctAnswer =
-          typeof q.correctAnswer === "string" ? q.correctAnswer.trim() : "";
-
-        if (userAnswer === correctAnswer) {
-          totalCorrect++;
-        }
-      });
+      return {
+        ...skill,
+        skillName,
+        attempts: attempts.length,
+        totalQuestions: totals.totalQuestions,
+        totalCorrect: totals.totalCorrect,
+        totalWrong,
+        percentage,
+      };
     });
+  }, [quizResults, skills]);
 
-    const totalWrong = totalQuestions - totalCorrect;
-    const correctPercentage =
-      totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0;
-
-    return { totalQuestions, totalCorrect, totalWrong, correctPercentage };
-  };
-
-  const getPerformanceColor = (percentage) => {
-    if (percentage >= 80) return theme.palette.success.main;
-    if (percentage >= 60) return theme.palette.warning.main;
-    return theme.palette.error.main;
-  };
-
-  const getPerformanceIcon = (percentage) => {
-    if (percentage >= 80) return <EmojiEventsIcon />;
-    if (percentage >= 60) return <TrendingUpIcon />;
-    return <TrendingDownIcon />;
-  };
-
-  const getPerformanceEmoji = (percentage) => {
-    if (percentage >= 80) return "🏆";
-    if (percentage >= 60) return "📈";
-    return "📉";
+  const getPerformance = (percentage, totalQuestions) => {
+    if (!totalQuestions) {
+      return {
+        label: "Not Started",
+        color: theme.palette.secondary.main,
+        icon: <BrainCircuit size={16} />,
+      };
+    }
+    if (percentage >= 80) {
+      return {
+        label: "Excellent",
+        color: theme.palette.success.main,
+        icon: <Trophy size={16} />,
+      };
+    }
+    if (percentage >= 60) {
+      return {
+        label: "On Track",
+        color: theme.palette.warning.main,
+        icon: <TrendingUp size={16} />,
+      };
+    }
+    return {
+      label: "Needs Focus",
+      color: theme.palette.error.main,
+      icon: <TrendingDown size={16} />,
+    };
   };
 
   return (
@@ -90,211 +85,187 @@ const QuizResultsSummaryBySkill = ({ quizResults, skills }) => {
       <SectionHeader
         eyebrow="Quiz Analytics"
         title="Quiz Results Summary by Skill"
-        description="Skill-wise quiz performance, attempts, and improvement signals."
+        description="Skill-wise performance snapshot from your latest quiz attempts."
       />
-      <Grid container spacing={2.2}>
-        {(skills || []).map((skill) => {
-          const {
-            totalQuestions,
-            totalCorrect,
-            totalWrong,
-            correctPercentage,
-          } = getSummaryForSkill(skill.skillName);
 
-          const performanceColor = getPerformanceColor(correctPercentage);
-          const performanceIcon = getPerformanceIcon(correctPercentage);
-          const performanceEmoji = getPerformanceEmoji(correctPercentage);
+      <Grid container spacing={2.3}>
+        {summaryBySkill.map((skill, index) => {
+          const performance = getPerformance(skill.percentage, skill.totalQuestions);
+          const ringColor = performance.color;
 
           return (
-            <Grid item size={{ xs: 12, sm: 6, md: 4 }} key={skill.id}>
-              <PremiumCard glow={`${performanceColor}33`} sx={{ height: 300 }}>
-                <Box sx={{ p: 2.5, height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                      <Box sx={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: '17px',
-                        background: `linear-gradient(135deg, ${performanceColor}, ${alpha(performanceColor, 0.7)})`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: `0 16px 34px ${alpha(performanceColor, 0.38)}`,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'scale(1.1)',
-                        }
-                      }} className="skill-icon">
-                        <CodeIcon sx={{ fontSize: 22, color: 'white' }} />
+            <Grid item size={{ xs: 12, sm: 6, lg: 4 }} key={skill.id || skill.skillName || index}>
+              <PremiumCard
+                hover
+                glow={alpha(ringColor, 0.28)}
+                sx={{
+                  height: "100%",
+                  minHeight: 292,
+                  p: 2.4,
+                  borderRadius: "18px",
+                  border: `1px solid ${alpha(ringColor, 0.26)}`,
+                  background:
+                    `linear-gradient(145deg, rgba(255,255,255,0.078), rgba(255,255,255,0.028)), radial-gradient(circle at 100% 0%, ${alpha(ringColor, 0.18)}, transparent 34%)`,
+                }}
+              >
+                <Stack spacing={2.1} sx={{ height: "100%" }}>
+                  <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={1.5}>
+                    <Stack direction="row" spacing={1.4} alignItems="center" sx={{ minWidth: 0 }}>
+                      <Box
+                        sx={{
+                          width: 48,
+                          height: 48,
+                          flex: "0 0 auto",
+                          borderRadius: "16px",
+                          display: "grid",
+                          placeItems: "center",
+                          background: `linear-gradient(135deg, ${alpha(ringColor, 0.95)}, ${alpha(theme.palette.secondary.main, 0.84)})`,
+                          boxShadow: `0 16px 36px ${alpha(ringColor, 0.28)}`,
+                          border: "1px solid rgba(255,255,255,0.18)",
+                        }}
+                      >
+                        <Code2 size={22} color="#fff" />
                       </Box>
-                      <Box>
-                        <Typography variant="h6" fontWeight="bold" sx={{ 
-                          color: theme.palette.text.primary,
-                          fontSize: '1.15rem',
-                          mb: 0.5
-                        }}>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            fontWeight: 950,
+                            lineHeight: 1.15,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
                           {skill.skillName}
                         </Typography>
-                        <Chip 
-                          label={skill.level} 
-                          size="small" 
-                          sx={{ 
-                            bgcolor: alpha(performanceColor, 0.1),
-                            color: performanceColor,
-                            border: `1px solid ${alpha(performanceColor, 0.3)}`,
-                            fontWeight: 'bold',
-                            fontSize: '0.7rem'
-                          }}
-                        />
+                        <Stack direction="row" spacing={0.8} sx={{ mt: 0.8, flexWrap: "wrap", rowGap: 0.8 }}>
+                          <Chip
+                            size="small"
+                            label={skill.level || "Level pending"}
+                            sx={{
+                              color: "#fff",
+                              bgcolor: "rgba(255,255,255,0.07)",
+                              border: "1px solid rgba(255,255,255,0.10)",
+                              fontWeight: 800,
+                            }}
+                          />
+                          <Chip
+                            size="small"
+                            icon={performance.icon}
+                            label={performance.label}
+                            sx={{
+                              color: ringColor,
+                              bgcolor: alpha(ringColor, 0.13),
+                              border: `1px solid ${alpha(ringColor, 0.26)}`,
+                              fontWeight: 900,
+                            }}
+                          />
+                        </Stack>
                       </Box>
-                    </Box>
-                    <Box sx={{ 
-                      textAlign: 'center',
-                      background: alpha(performanceColor, 0.1),
-                      borderRadius: '16px',
-                      width: 50,
-                      height: 50,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      border: `2px solid ${alpha(performanceColor, 0.2)}`
-                    }}>
-                      <Typography variant="h5" sx={{ color: performanceColor }}>
-                        {performanceEmoji}
-                      </Typography>
-                    </Box>
-                  </Box>
+                    </Stack>
 
-                  {totalQuestions === 0 ? (
-                    <Box sx={{ 
-                      textAlign: 'center', 
-                      py: 2.5,
-                      flexGrow: 1,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      background: `linear-gradient(135deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025))`,
-                      borderRadius: '20px',
-                      border: `1px dashed rgba(255,255,255,0.14)`
-                    }}>
-                      <Box sx={{
-                        width: 58,
-                        height: 58,
-                        borderRadius: '18px',
-                        background: `linear-gradient(135deg, rgba(124,58,237,0.18), rgba(6,182,212,0.12))`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mb: 1.5
-                      }}>
-                        <PsychologyIcon sx={{ fontSize: 30, color: theme.palette.secondary.main }} />
-                      </Box>
-                      <Typography variant="h6" color="text.secondary" fontWeight="bold" sx={{ mb: 1 }}>
-                        No Quiz Attempts
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Take a quiz to see your performance
-                      </Typography>
-                    </Box>
-                  ) : (
-                    <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                      {/* Performance Circle */}
-                      <Box sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center',
-                        mb: 2,
-                        position: 'relative'
-                      }}>
-                        <Box sx={{
-                          width: 80,
-                          height: 80,
-                          borderRadius: '50%',
-                          background: `conic-gradient(${performanceColor} 0deg, ${performanceColor} ${correctPercentage * 3.6}deg, ${alpha(theme.palette.grey[300], 0.3)} ${correctPercentage * 3.6}deg, ${alpha(theme.palette.grey[300], 0.3)} 360deg)`,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          position: 'relative',
-                          '&::before': {
-                            content: '""',
-                            position: 'absolute',
-                            width: 58,
-                            height: 58,
-                            borderRadius: '50%',
-                            background: '#0B1120',
-                            zIndex: 1
-                          }
-                        }}>
-                          <Typography variant="h6" fontWeight="bold" sx={{ 
-                            color: performanceColor,
-                            zIndex: 2,
-                            position: 'relative'
-                          }}>
-                            {correctPercentage.toFixed(0)}%
-                          </Typography>
-                        </Box>
-                      </Box>
-
-                      {/* Stats in Different Layout */}
-                      <Box sx={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: '1fr 1fr', 
-                        gap: 1.5, 
-                        mb: 2 
-                      }}>
-                        <Box sx={{ 
-                          textAlign: 'center',
-                          p: 1.5,
-                          background: alpha(theme.palette.info.main, 0.11),
-                          borderRadius: '16px',
-                          border: `1px solid ${alpha(theme.palette.info.main, 0.2)}`
-                        }}>
-                          <Typography variant="h6" fontWeight="bold" color="info.main">
-                            {totalQuestions}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            Questions
-                          </Typography>
-                        </Box>
-                        <Box sx={{ 
-                          textAlign: 'center',
-                          p: 1.5,
-                          background: alpha(theme.palette.success.main, 0.11),
-                          borderRadius: '16px',
-                          border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`
-                        }}>
-                          <Typography variant="h6" fontWeight="bold" color="success.main">
-                            {totalCorrect}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            Correct
-                          </Typography>
-                        </Box>
-                      </Box>
-
-                      {/* Performance Status */}
-                      <Box sx={{ 
-                        mt: 'auto',
-                        p: 1.5,
-                        background: `linear-gradient(135deg, ${alpha(performanceColor, 0.1)} 0%, ${alpha(performanceColor, 0.05)} 100%)`,
-                        borderRadius: '16px',
-                        border: `1px solid ${alpha(performanceColor, 0.2)}`,
-                        textAlign: 'center'
-                      }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, mb: 0.5 }}>
-                          {performanceIcon}
-                          <Typography variant="body2" fontWeight="bold" sx={{ color: performanceColor }}>
-                            {correctPercentage >= 80 ? 'Excellent' : correctPercentage >= 60 ? 'Good' : 'Needs Improvement'}
-                          </Typography>
-                        </Box>
-                        <Typography variant="caption" color="text.secondary">
-                          {totalWrong} incorrect
+                    <Box
+                      sx={{
+                        width: 76,
+                        height: 76,
+                        flex: "0 0 auto",
+                        borderRadius: "50%",
+                        display: "grid",
+                        placeItems: "center",
+                        background: `conic-gradient(${ringColor} 0deg, ${ringColor} ${skill.percentage * 3.6}deg, rgba(255,255,255,0.09) ${skill.percentage * 3.6}deg, rgba(255,255,255,0.09) 360deg)`,
+                        boxShadow: `0 18px 42px ${alpha(ringColor, 0.18)}`,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 56,
+                          height: 56,
+                          borderRadius: "50%",
+                          display: "grid",
+                          placeItems: "center",
+                          bgcolor: "rgba(5,8,22,0.94)",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                        }}
+                      >
+                        <Typography sx={{ color: ringColor, fontWeight: 950, fontSize: 18 }}>
+                          {skill.percentage}%
                         </Typography>
                       </Box>
                     </Box>
+                  </Stack>
+
+                  <Box>
+                    <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.8 }}>
+                      <Typography sx={{ color: "text.secondary", fontSize: 13, fontWeight: 800 }}>
+                        Accuracy
+                      </Typography>
+                      <Typography sx={{ color: ringColor, fontSize: 13, fontWeight: 950 }}>
+                        {skill.totalCorrect}/{skill.totalQuestions || 0}
+                      </Typography>
+                    </Stack>
+                    <LinearProgress
+                      variant="determinate"
+                      value={skill.percentage}
+                      sx={{
+                        height: 8,
+                        borderRadius: 999,
+                        bgcolor: "rgba(255,255,255,0.08)",
+                        "& .MuiLinearProgress-bar": {
+                          borderRadius: 999,
+                          background: `linear-gradient(90deg, ${ringColor}, ${theme.palette.secondary.main})`,
+                        },
+                      }}
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                      gap: 1,
+                    }}
+                  >
+                    {[
+                      { label: "Attempts", value: skill.attempts, icon: <Target size={15} />, color: theme.palette.secondary.main },
+                      { label: "Correct", value: skill.totalCorrect, icon: <CheckCircle2 size={15} />, color: theme.palette.success.main },
+                      { label: "Wrong", value: skill.totalWrong, icon: <XCircle size={15} />, color: theme.palette.error.main },
+                    ].map((item) => (
+                      <Box
+                        key={item.label}
+                        sx={{
+                          p: 1.25,
+                          minHeight: 76,
+                          borderRadius: "16px",
+                          border: `1px solid ${alpha(item.color, 0.22)}`,
+                          bgcolor: alpha(item.color, 0.09),
+                        }}
+                      >
+                        <Box sx={{ color: item.color, lineHeight: 0, mb: 0.7 }}>{item.icon}</Box>
+                        <Typography sx={{ fontWeight: 950, lineHeight: 1 }}>{item.value}</Typography>
+                        <Typography sx={{ color: "text.secondary", fontSize: 12, mt: 0.35 }}>
+                          {item.label}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+
+                  {!skill.totalQuestions && (
+                    <Box
+                      sx={{
+                        mt: "auto",
+                        p: 1.35,
+                        borderRadius: "16px",
+                        border: "1px dashed rgba(103,232,249,0.24)",
+                        bgcolor: "rgba(6,182,212,0.08)",
+                      }}
+                    >
+                      <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                        Start one quiz for this skill to unlock performance signals.
+                      </Typography>
+                    </Box>
                   )}
-                </Box>
+                </Stack>
               </PremiumCard>
             </Grid>
           );

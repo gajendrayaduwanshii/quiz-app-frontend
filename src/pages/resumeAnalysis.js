@@ -18,6 +18,7 @@ import { useResumeAnalysis } from "@/customHooks/useResumeAnalysis";
 import PremiumCard from "@/components/premium/PremiumCard";
 import PremiumButton from "@/components/premium/PremiumButton";
 import SectionHeader from "@/components/premium/SectionHeader";
+import PremiumPage from "@/components/premium/PremiumPage";
 
 const ResumeAnalysis = () => {
   const router = useRouter();
@@ -58,7 +59,7 @@ const ResumeAnalysis = () => {
   // Show message if no resume uploaded
   if (!user?.uploadResume) {
     return (
-      <Box sx={{ pb: 4 }}>
+      <PremiumPage sx={{ pb: 4 }}>
         <SectionHeader
           eyebrow="Resume Intelligence"
           title="Resume AI Analyzer"
@@ -91,12 +92,12 @@ const ResumeAnalysis = () => {
             Go to Profile
           </PremiumButton>
         </PremiumCard>
-      </Box>
+      </PremiumPage>
     );
   }
 
   return (
-    <Box sx={{ pb: 4 }}>
+    <PremiumPage sx={{ pb: 4 }}>
       <SectionHeader
         eyebrow="Resume Intelligence"
         title="AI Resume Analyzer"
@@ -295,7 +296,7 @@ const ResumeAnalysis = () => {
           )}
         </Grid>
       </Grid>
-    </Box>
+    </PremiumPage>
   );
 };
 

@@ -19,12 +19,12 @@ const PremiumCard = ({
       sx={{
         position: "relative",
         overflow: "hidden",
-        borderRadius: "24px",
-        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: "18px",
+        border: "1px solid rgba(148,163,184,0.16)",
         background:
-          "linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.028))",
-        backdropFilter: "blur(22px)",
-        boxShadow: `0 24px 70px rgba(0,0,0,0.38), 0 0 42px ${glow}`,
+          "linear-gradient(145deg, rgba(255,255,255,0.070), rgba(255,255,255,0.026))",
+        backdropFilter: "blur(20px)",
+        boxShadow: `0 22px 58px rgba(0,0,0,0.32), 0 0 30px ${glow}`,
         transition: "border-color 220ms ease, box-shadow 220ms ease",
         "&::before": {
           content: '""',
@@ -32,8 +32,8 @@ const PremiumCard = ({
           inset: 0,
           pointerEvents: "none",
           background:
-            "linear-gradient(135deg, rgba(124,58,237,0.18), transparent 32%, rgba(6,182,212,0.12))",
-          opacity: 0.75,
+            "linear-gradient(135deg, rgba(124,58,237,0.10), transparent 38%, rgba(6,182,212,0.08))",
+          opacity: 0.72,
         },
         "& > *": {
           position: "relative",

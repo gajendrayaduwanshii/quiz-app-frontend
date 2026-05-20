@@ -50,7 +50,7 @@ You are a senior technical interviewer and assessment expert with deep expertise
 - Skills: ${user.skills?.map(s => s.skillName).join(', ') || 'Not specified'}
 
 **Quiz Requirements:**
-Generate 20 high-quality multiple-choice questions in JSON format. Each question must be an object with this exact structure:
+Generate 10 high-quality multiple-choice questions in JSON format. Each question must be an object with this exact structure:
 {
   "id": "unique_question_id",
   "question": "Clear, specific question text",

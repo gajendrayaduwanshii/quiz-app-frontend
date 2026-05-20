@@ -28,13 +28,13 @@ export const skillSyncTheme = createTheme({
   },
   typography: {
     fontFamily:
-      "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
-    h1: { fontWeight: 800, letterSpacing: 0 },
-    h2: { fontWeight: 800, letterSpacing: 0 },
-    h3: { fontWeight: 750, letterSpacing: 0 },
-    h4: { fontWeight: 750, letterSpacing: 0 },
-    h5: { fontWeight: 700, letterSpacing: 0 },
-    h6: { fontWeight: 700, letterSpacing: 0 },
+      "Inter, Geist, Satoshi, Outfit, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+    h1: { fontWeight: 900, letterSpacing: 0 },
+    h2: { fontWeight: 900, letterSpacing: 0 },
+    h3: { fontWeight: 850, letterSpacing: 0 },
+    h4: { fontWeight: 850, letterSpacing: 0 },
+    h5: { fontWeight: 800, letterSpacing: 0 },
+    h6: { fontWeight: 800, letterSpacing: 0 },
     button: { textTransform: "none", fontWeight: 700 },
   },
   shape: {
@@ -44,18 +44,44 @@ export const skillSyncTheme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          background: "#050816",
+          background: "#030712",
           color: "#FFFFFF",
+        },
+      },
+    },
+    MuiSkeleton: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "rgba(255,255,255,0.08)",
+          borderRadius: 14,
+          "&::after": {
+            background:
+              "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)",
+          },
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
+          color: "#DDE7F3",
+        },
+        head: {
+          color: "#94A3B8",
+          fontWeight: 850,
+          fontSize: 12,
+          textTransform: "uppercase",
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          background: "rgba(255,255,255,0.05)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          background: "linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.030))",
+          border: "1px solid rgba(148,163,184,0.15)",
           backdropFilter: "blur(18px)",
-          boxShadow: "0 24px 80px rgba(0,0,0,0.35)",
+          boxShadow: "0 24px 80px rgba(0,0,0,0.38)",
         },
       },
     },
@@ -63,6 +89,86 @@ export const skillSyncTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundImage: "none",
+        },
+      },
+    },
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          background: "rgba(5,8,22,0.98)",
+          backgroundImage: "none",
+          border: "1px solid rgba(255,255,255,0.12)",
+          boxShadow: "0 24px 80px rgba(0,0,0,0.55)",
+          backdropFilter: "blur(18px)",
+        },
+      },
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          background: "rgba(5,8,22,0.98)",
+          backgroundImage: "none",
+          border: "1px solid rgba(255,255,255,0.12)",
+          boxShadow: "0 24px 80px rgba(0,0,0,0.55)",
+          backdropFilter: "blur(18px)",
+        },
+        list: {
+          padding: 6,
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          borderRadius: 10,
+          color: "#FFFFFF",
+          "&:hover": {
+            backgroundColor: "rgba(6,182,212,0.14)",
+          },
+          "&.Mui-selected": {
+            backgroundColor: "rgba(124,58,237,0.22)",
+          },
+          "&.Mui-selected:hover": {
+            backgroundColor: "rgba(124,58,237,0.30)",
+          },
+        },
+      },
+    },
+    MuiAutocomplete: {
+      styleOverrides: {
+        paper: {
+          background: "rgba(5,8,22,0.98)",
+          backgroundImage: "none",
+          border: "1px solid rgba(255,255,255,0.12)",
+          boxShadow: "0 24px 80px rgba(0,0,0,0.55)",
+          backdropFilter: "blur(18px)",
+          color: "#FFFFFF",
+          overflow: "hidden",
+        },
+        listbox: {
+          padding: 6,
+          "& .MuiAutocomplete-option": {
+            borderRadius: 10,
+            color: "#FFFFFF",
+            minHeight: 40,
+          },
+          "& .MuiAutocomplete-option[aria-selected='true']": {
+            backgroundColor: "rgba(124,58,237,0.24)",
+          },
+          "& .MuiAutocomplete-option.Mui-focused": {
+            backgroundColor: "rgba(6,182,212,0.16)",
+          },
+          "& .MuiAutocomplete-option[aria-selected='true'].Mui-focused": {
+            backgroundColor: "rgba(124,58,237,0.32)",
+          },
+        },
+        noOptions: {
+          color: "#94A3B8",
+          background: "rgba(5,8,22,0.98)",
+        },
+        loading: {
+          color: "#94A3B8",
+          background: "rgba(5,8,22,0.98)",
         },
       },
     },

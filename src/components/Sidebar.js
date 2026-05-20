@@ -14,8 +14,11 @@ import {
   BarChart3,
   BrainCircuit,
   Code2,
+  FileSearch,
   FileText,
   Home,
+  Mic2,
+  Route,
   UserRound,
   X,
 } from "lucide-react";
@@ -27,6 +30,9 @@ const iconMap = {
   learnquiz: BrainCircuit,
   users: Code2,
   resume: FileText,
+  learning: Route,
+  interview: Mic2,
+  analysis: FileSearch,
   profile: UserRound,
 };
 
@@ -34,7 +40,9 @@ const menuItems = [
   { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
   { label: "AI Hub", href: "/interactiveLearningHub", icon: "learnquiz" },
   { label: "Skill Quizzes", href: "/technologies", icon: "users" },
+  { label: "Learning Plan", href: "/learning", icon: "learning" },
   { label: "Resume AI", href: "/resumeAnalysis", icon: "resume" },
+  { label: "Voice AI", href: "/voiceInterviewAI", icon: "interview" },
   { label: "Profile", href: "/profile", icon: "profile" },
 ];
 
@@ -63,13 +71,13 @@ const Sidebar = ({ open, setOpen }) => {
       sx={{
         transition: "width 0.3s ease",
         "& .MuiDrawer-paper": {
-          width: isMobile ? (open ? 248 : 0) : open ? 248 : 80,
+          width: isMobile ? (open ? 272 : 0) : open ? 272 : 84,
           transition: "width 0.3s ease",
           background:
-            "linear-gradient(180deg, rgba(11,17,32,0.96), rgba(5,8,22,0.94))",
+            "linear-gradient(180deg, rgba(11,17,32,0.82), rgba(3,7,18,0.92))",
           borderRight: "1px solid rgba(255,255,255,0.08)",
-          backdropFilter: "blur(22px)",
-          boxShadow: "20px 0 60px rgba(0,0,0,0.36)",
+          backdropFilter: "blur(28px)",
+          boxShadow: "24px 0 80px rgba(0,0,0,0.42)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -82,7 +90,7 @@ const Sidebar = ({ open, setOpen }) => {
         <Box
           sx={{
             width: "100%",
-            height: 72,
+            height: 84,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -94,9 +102,9 @@ const Sidebar = ({ open, setOpen }) => {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
               <Box
                 sx={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: "14px",
+                  width: 42,
+                  height: 42,
+                  borderRadius: "16px",
                   display: "grid",
                   placeItems: "center",
                   background: "linear-gradient(135deg, #7C3AED, #06B6D4)",
@@ -106,7 +114,7 @@ const Sidebar = ({ open, setOpen }) => {
                 <Home size={19} color="#fff" />
               </Box>
               <Box>
-                <Typography sx={{ color: "#fff", fontWeight: 900, lineHeight: 1 }}>
+                <Typography sx={{ color: "#fff", fontWeight: 950, lineHeight: 1 }}>
                   SkillSync AI
                 </Typography>
                 <Typography sx={{ color: "#94A3B8", fontSize: 11 }}>
@@ -142,19 +150,19 @@ const Sidebar = ({ open, setOpen }) => {
                 component={Link}
                 href={item.href}
                 sx={{
-                  minHeight: 48,
+                  minHeight: 50,
                   color: active ? "#FFFFFF" : "#94A3B8",
-                  borderRadius: "16px",
+                  borderRadius: "17px",
                   mb: 0.7,
                   cursor: "pointer",
                   justifyContent: open ? "flex-start" : "center",
                   background: active
-                    ? "linear-gradient(135deg, rgba(124,58,237,0.24), rgba(6,182,212,0.14))"
+                    ? "linear-gradient(135deg, rgba(124,58,237,0.28), rgba(6,182,212,0.16))"
                     : "transparent",
                   border: active
                     ? "1px solid rgba(255,255,255,0.10)"
                     : "1px solid transparent",
-                  boxShadow: active ? "0 0 32px rgba(124,58,237,0.18)" : "none",
+                  boxShadow: active ? "0 0 38px rgba(124,58,237,0.22)" : "none",
                   "&:hover": {
                     background: "rgba(255,255,255,0.07)",
                     color: "#FFFFFF",
@@ -193,17 +201,18 @@ const Sidebar = ({ open, setOpen }) => {
           <Box sx={{ px: 2, mt: 1 }}>
             <Box
               sx={{
-                p: 2,
-                borderRadius: "18px",
-                border: "1px solid rgba(255,255,255,0.08)",
+                p: 2.1,
+                borderRadius: "20px",
+                border: "1px solid rgba(103,232,249,0.18)",
                 background:
-                  "linear-gradient(135deg, rgba(124,58,237,0.18), rgba(6,182,212,0.08))",
+                  "linear-gradient(135deg, rgba(124,58,237,0.20), rgba(6,182,212,0.10))",
+                boxShadow: "0 18px 48px rgba(6,182,212,0.10)",
               }}
             >
               <Typography sx={{ fontSize: 12, color: "#94A3B8", mb: 0.5 }}>
                 AI Readiness
               </Typography>
-              <Typography sx={{ fontSize: 20, fontWeight: 900 }}>82%</Typography>
+              <Typography sx={{ fontSize: 24, fontWeight: 950 }}>82%</Typography>
               <Typography sx={{ fontSize: 12, color: "#94A3B8" }}>
                 Keep improving weak topics.
               </Typography>

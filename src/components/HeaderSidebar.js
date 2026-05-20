@@ -36,14 +36,14 @@ const HeaderSidebar = ({ children, sidebarOpen, setSidebarOpen }) => {
         sx={{
           position: "relative",
           zIndex: 1,
-          padding: isLoginPage ? "0" : { xs: "82px 14px 92px", md: "92px 24px 32px" },
+          padding: isLoginPage ? "0" : { xs: "92px 14px 102px", md: "104px 28px 42px" },
           marginLeft: isMobile
             ? "0"
             : isLoginPage
             ? "0"
             : sidebarOpen
-            ? "240px"
-            : "80px",
+            ? "272px"
+            : "84px",
           transition: "margin-left 0.3s ease",
           minHeight: "100vh",
         }}

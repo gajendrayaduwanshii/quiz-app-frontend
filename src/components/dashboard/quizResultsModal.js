@@ -1,416 +1,466 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  IconButton,
-  Typography,
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  LinearProgress,
-  Divider,
-  Paper,
-  Grid,
-  Avatar,
-  Badge,
-  Stack,
-  Chip,
   Accordion,
-  AccordionSummary,
   AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  LinearProgress,
+  Stack,
+  Typography,
 } from "@mui/material";
-import {
-  Close as CloseIcon,
-  ExpandMore as ExpandMoreIcon,
-  CheckCircle as CheckCircleIcon,
-  Cancel as CancelIcon,
-  Quiz as QuizIcon,
-  TrendingUp as TrendingUpIcon,
-  TrendingDown as TrendingDownIcon,
-  EmojiEvents as EmojiEventsIcon,
-  Psychology as PsychologyIcon,
-} from "@mui/icons-material";
 import { alpha, useTheme } from "@mui/material/styles";
+import {
+  Award,
+  BarChart3,
+  CheckCircle2,
+  ChevronDown,
+  CircleHelp,
+  ClipboardCheck,
+  Clock3,
+  Target,
+  X,
+  XCircle,
+} from "lucide-react";
+import PremiumButton from "@/components/premium/PremiumButton";
 
-const QuizResultsModal = ({ open, onClose, quizResults }) => {
+const normalize = (value) => String(value || "").trim().toLowerCase();
+
+const QuizResultsModal = ({ open, onClose, quizResults = [] }) => {
   const theme = useTheme();
-  const [expandedQuiz, setExpandedQuiz] = useState(null);
   const [expandedQuestion, setExpandedQuestion] = useState(null);
 
-  if (!quizResults || quizResults.length === 0) {
-    return (
-      <Dialog 
-        open={open} 
-        onClose={onClose} 
-        maxWidth="md" 
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 3,
-            background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
-          }
+  const quizzes = useMemo(() => (quizResults || []).filter(Boolean), [quizResults]);
+
+  const quizStats = useMemo(() => {
+    return quizzes.map((quiz, quizIndex) => {
+      const questions = quiz.quizQuestion || [];
+      const correctAnswers = questions.filter(
+        (question) => normalize(question.answer) === normalize(question.correctAnswer)
+      ).length;
+      const totalQuestions = questions.length;
+      const percentage = totalQuestions ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+
+      return {
+        quiz,
+        quizIndex,
+        questions,
+        correctAnswers,
+        totalQuestions,
+        wrongAnswers: totalQuestions - correctAnswers,
+        percentage,
+      };
+    });
+  }, [quizzes]);
+
+  const aggregate = useMemo(() => {
+    const totalQuestions = quizStats.reduce((sum, item) => sum + item.totalQuestions, 0);
+    const correctAnswers = quizStats.reduce((sum, item) => sum + item.correctAnswers, 0);
+    const wrongAnswers = totalQuestions - correctAnswers;
+    const percentage = totalQuestions ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+
+    return { totalQuestions, correctAnswers, wrongAnswers, percentage };
+  }, [quizStats]);
+
+  const getPerformance = (percentage) => {
+    if (percentage >= 80) {
+      return { label: "Excellent", color: theme.palette.success.main, icon: <Award size={17} /> };
+    }
+    if (percentage >= 60) {
+      return { label: "On Track", color: theme.palette.warning.main, icon: <Target size={17} /> };
+    }
+    return { label: "Needs Focus", color: theme.palette.error.main, icon: <BarChart3 size={17} /> };
+  };
+
+  const performance = getPerformance(aggregate.percentage);
+
+  const renderAnswerBlock = (label, value, color, icon) => (
+    <Box
+      sx={{
+        p: 1.6,
+        borderRadius: "18px",
+        border: `1px solid ${alpha(color, 0.24)}`,
+        bgcolor: alpha(color, 0.09),
+      }}
+    >
+      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.9, color }}>
+        {icon}
+        <Typography sx={{ fontWeight: 950, fontSize: 13 }}>{label}</Typography>
+      </Stack>
+      <Typography
+        sx={{
+          p: 1.35,
+          borderRadius: "14px",
+          bgcolor: "rgba(5,8,22,0.58)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          color: value ? "#fff" : "text.secondary",
+          fontStyle: value ? "normal" : "italic",
+          lineHeight: 1.55,
+          overflowWrap: "anywhere",
         }}
       >
-        <DialogTitle sx={{ 
-          background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 100%)`,
-          borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2
-        }}>
-          <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
-            <PsychologyIcon />
-          </Avatar>
-          <Typography variant="h6" fontWeight="bold">
-            Detailed Quiz Results
-          </Typography>
-        </DialogTitle>
-        <DialogContent sx={{ textAlign: 'center' }} style={{padding:'20px'}}>
-          <PsychologyIcon sx={{ fontSize: 64, color: theme.palette.info.main, mb: 2 }} />
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            No quiz results available
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Take some quizzes to see your detailed results here
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose} variant="contained" color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-
-  const calculateQuizStats = (quiz) => {
-    const totalQuestions = quiz.quizQuestion?.length || 0;
-    const correctAnswers = quiz.quizQuestion?.filter(q => 
-      q.answer?.trim() === q.correctAnswer?.trim()
-    ).length || 0;
-    const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-    
-    return { totalQuestions, correctAnswers, percentage };
-  };
-
-  const getPerformanceColor = (percentage) => {
-    if (percentage >= 80) return theme.palette.success.main;
-    if (percentage >= 60) return theme.palette.warning.main;
-    return theme.palette.error.main;
-  };
-
-  const getPerformanceIcon = (percentage) => {
-    if (percentage >= 80) return <EmojiEventsIcon />;
-    if (percentage >= 60) return <TrendingUpIcon />;
-    return <TrendingDownIcon />;
-  };
+        {value || "No answer provided"}
+      </Typography>
+    </Box>
+  );
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={onClose} 
-      maxWidth="lg" 
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="lg"
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: 3,
-          background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
-          maxHeight: '90vh'
-        }
+          width: "min(1100px, calc(100vw - 24px))",
+          maxHeight: "92vh",
+          borderRadius: "30px",
+          overflow: "hidden",
+          bgcolor: "rgba(5,8,22,0.98)",
+          background:
+            "linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.028)), radial-gradient(circle at 12% 0%, rgba(124,58,237,0.26), transparent 34%), radial-gradient(circle at 92% 8%, rgba(6,182,212,0.18), transparent 30%)",
+          border: "1px solid rgba(255,255,255,0.12)",
+          boxShadow: "0 34px 140px rgba(0,0,0,0.72)",
+          backdropFilter: "blur(26px)",
+        },
       }}
     >
-      <DialogTitle sx={{ 
-        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.12)} 0%, ${alpha(theme.palette.secondary.main, 0.12)} 100%)`,
-        borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        position: 'relative',
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          bottom: 0,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '60%',
-          height: 2,
-          background: `linear-gradient(90deg, transparent, ${theme.palette.primary.main}, transparent)`,
-          opacity: 0.6
-        }
-      }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Avatar sx={{ 
-            bgcolor: theme.palette.primary.main,
-            width: 48,
-            height: 48,
-            boxShadow: theme.shadows[4]
-          }}>
-            <PsychologyIcon sx={{ fontSize: 28 }} />
-          </Avatar>
+      <DialogTitle
+        sx={{
+          p: { xs: 2.2, md: 3 },
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={2}>
           <Box>
-            <Typography variant="h5" fontWeight="bold" sx={{
-              background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}>
-              Detailed Quiz Results
+            <Chip
+              icon={<ClipboardCheck size={15} />}
+              label="Detailed Quiz Results"
+              sx={{
+                mb: 1.2,
+                color: "#CFFAFE",
+                bgcolor: "rgba(6,182,212,0.12)",
+                border: "1px solid rgba(103,232,249,0.22)",
+                fontWeight: 900,
+              }}
+            />
+            <Typography
+              variant="h4"
+              className="gradient-text"
+              sx={{ fontWeight: 950, lineHeight: 1.05, letterSpacing: 0 }}
+            >
+              Performance Review
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Comprehensive analysis of your quiz performance
+            <Typography sx={{ mt: 0.8, color: "text.secondary" }}>
+              Question-level breakdown with your selected answers and correct answers.
             </Typography>
           </Box>
-        </Box>
-        <IconButton onClick={onClose} sx={{ 
-          bgcolor: alpha(theme.palette.error.main, 0.1),
-          '&:hover': { bgcolor: alpha(theme.palette.error.main, 0.2) }
-        }}>
-          <CloseIcon />
-        </IconButton>
+
+          <IconButton
+            onClick={onClose}
+            sx={{
+              color: "#fff",
+              border: "1px solid rgba(255,255,255,0.10)",
+              bgcolor: "rgba(255,255,255,0.05)",
+              "&:hover": { bgcolor: "rgba(239,68,68,0.16)" },
+            }}
+          >
+            <X size={20} />
+          </IconButton>
+        </Stack>
       </DialogTitle>
 
-      <DialogContent sx={{ p: 3, pt: 5 }}>
-        {quizResults.map((quiz, quizIndex) => {
-          const stats = calculateQuizStats(quiz);
-          
-          return (
-            <Box key={quizIndex} sx={{ mb: 4 }} style={{padding:'20px 0'}}>
-              {/* Quiz Header */}
-              <Card sx={{ 
-                background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.secondary.main, 0.08)} 100%)`,
-                border: `2px solid ${alpha(theme.palette.primary.main, 0.2)}`,
-                borderRadius: 3,
-                mb: 3,
-                overflow: 'hidden'
-              }}>
-                <CardHeader
-                  avatar={
-                    <Avatar sx={{ 
-                      bgcolor: getPerformanceColor(stats.percentage),
-                      width: 48,
-                      height: 48,
-                      boxShadow: `0 4px 12px ${alpha(getPerformanceColor(stats.percentage), 0.3)}`
-                    }}>
-                      <QuizIcon sx={{ fontSize: 24 }} />
-                    </Avatar>
-                  }
-                  title={
-                    <Typography variant="h6" fontWeight="bold" sx={{
-                      background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                      backgroundClip: 'text',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent'
-                    }}>
-                      {quiz.quizTitle || `${quiz.technology} Quiz ${quizIndex + 1}`}
+      <DialogContent sx={{ p: { xs: 2.2, md: 3 } }}>
+        {!quizStats.length ? (
+          <Box
+            sx={{
+              minHeight: 300,
+              display: "grid",
+              placeItems: "center",
+              textAlign: "center",
+              borderRadius: "24px",
+              border: "1px dashed rgba(103,232,249,0.24)",
+              bgcolor: "rgba(6,182,212,0.07)",
+            }}
+          >
+            <Box>
+              <CircleHelp size={52} color={theme.palette.secondary.main} />
+              <Typography variant="h6" sx={{ mt: 1.4, fontWeight: 950 }}>
+                No quiz results available
+              </Typography>
+              <Typography sx={{ color: "text.secondary" }}>
+                Complete a quiz to unlock detailed performance review.
+              </Typography>
+            </Box>
+          </Box>
+        ) : (
+          <Stack spacing={2.4}>
+            <Box
+              sx={{
+                p: { xs: 2, md: 2.4 },
+                borderRadius: "18px",
+                border: `1px solid ${alpha(performance.color, 0.28)}`,
+                bgcolor: alpha(performance.color, 0.09),
+              }}
+            >
+              <Stack direction={{ xs: "column", md: "row" }} spacing={2.2} alignItems={{ xs: "stretch", md: "center" }}>
+                <Box
+                  sx={{
+                    width: { xs: 126, md: 142 },
+                    height: { xs: 126, md: 142 },
+                    mx: { xs: "auto", md: 0 },
+                    flex: "0 0 auto",
+                    borderRadius: "50%",
+                    display: "grid",
+                    placeItems: "center",
+                    background: `conic-gradient(${performance.color} 0deg, ${performance.color} ${aggregate.percentage * 3.6}deg, rgba(255,255,255,0.09) ${aggregate.percentage * 3.6}deg, rgba(255,255,255,0.09) 360deg)`,
+                    boxShadow: `0 22px 60px ${alpha(performance.color, 0.22)}`,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: { xs: 96, md: 108 },
+                      height: { xs: 96, md: 108 },
+                      borderRadius: "50%",
+                      display: "grid",
+                      placeItems: "center",
+                      bgcolor: "rgba(5,8,22,0.96)",
+                      border: "1px solid rgba(255,255,255,0.10)",
+                    }}
+                  >
+                    <Typography sx={{ color: performance.color, fontSize: 34, lineHeight: 1, fontWeight: 950 }}>
+                      {aggregate.percentage}%
                     </Typography>
-                  }
-                  subheader={
-                    <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 1 }}>
-                      <Chip
-                        icon={getPerformanceIcon(stats.percentage)}
-                        label={`${stats.percentage}% Score`}
-                        color={stats.percentage >= 80 ? 'success' : stats.percentage >= 60 ? 'warning' : 'error'}
-                        variant="filled"
-                        sx={{ fontWeight: 'bold' }}
-                      />
-                      <Typography variant="body2" color="text.secondary">
-                        {stats.correctAnswers} of {stats.totalQuestions} correct
-                      </Typography>
-                    </Stack>
-                  }
-                />
-              </Card>
+                    <Typography sx={{ color: "text.secondary", fontSize: 12, mt: -2 }}>
+                      score
+                    </Typography>
+                  </Box>
+                </Box>
 
-              {/* Question Details - Always Expanded */}
-              <Box>
-                <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ mb: 2, color: theme.palette.primary.main }}>
-                  📋 Question Details
-                </Typography>
-                
-                {quiz.quizQuestion?.map((question, qIndex) => {
-                  const isCorrect = question.answer?.trim() === question.correctAnswer?.trim();
-                  const isQuestionExpanded = expandedQuestion === `${quizIndex}-${qIndex}`;
-                  
-                  return (
-                    <Accordion 
-                      key={qIndex} 
-                      sx={{ 
-                        mb: 2,
-                        borderRadius: 3,
-                        border: `2px solid ${alpha(theme.palette.divider, 0.1)}`,
-                        '&:before': { display: 'none' },
-                        '&.Mui-expanded': {
-                          margin: 0,
-                          '&:not(:last-child)': {
-                            borderBottom: 0,
-                          }
-                        },
-                        '&:hover': {
-                          border: `2px solid ${isCorrect ? alpha(theme.palette.success.main, 0.3) : alpha(theme.palette.error.main, 0.3)}`,
-                          boxShadow: `0 4px 12px ${isCorrect ? alpha(theme.palette.success.main, 0.1) : alpha(theme.palette.error.main, 0.1)}`,
-                        }
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Stack direction="row" spacing={1} sx={{ mb: 1, flexWrap: "wrap", rowGap: 1 }}>
+                    <Chip
+                      icon={performance.icon}
+                      label={performance.label}
+                      sx={{
+                        color: performance.color,
+                        bgcolor: alpha(performance.color, 0.14),
+                        border: `1px solid ${alpha(performance.color, 0.30)}`,
+                        fontWeight: 950,
                       }}
-                      expanded={isQuestionExpanded}
-                      onChange={() => setExpandedQuestion(isQuestionExpanded ? null : `${quizIndex}-${qIndex}`)}
-                    >
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
+                    />
+                    <Chip
+                      icon={<Clock3 size={15} />}
+                      label={`${quizStats.length} attempt${quizStats.length > 1 ? "s" : ""}`}
+                      sx={{ color: "#fff", bgcolor: "rgba(255,255,255,0.07)", fontWeight: 850 }}
+                    />
+                  </Stack>
+                  <Typography variant="h5" sx={{ fontWeight: 950, mb: 1 }}>
+                    Overall Quiz Performance
+                  </Typography>
+                  <LinearProgress
+                    variant="determinate"
+                    value={aggregate.percentage}
+                    sx={{
+                      height: 10,
+                      borderRadius: 999,
+                      bgcolor: "rgba(255,255,255,0.08)",
+                      "& .MuiLinearProgress-bar": {
+                        borderRadius: 999,
+                        background: `linear-gradient(90deg, ${performance.color}, ${theme.palette.secondary.main})`,
+                      },
+                    }}
+                  />
+
+                  <Box
+                    sx={{
+                      mt: 2,
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
+                      gap: 1.2,
+                    }}
+                  >
+                    {[
+                      { label: "Questions", value: aggregate.totalQuestions, color: theme.palette.secondary.main, icon: <CircleHelp size={16} /> },
+                      { label: "Correct", value: aggregate.correctAnswers, color: theme.palette.success.main, icon: <CheckCircle2 size={16} /> },
+                      { label: "Wrong", value: aggregate.wrongAnswers, color: theme.palette.error.main, icon: <XCircle size={16} /> },
+                    ].map((item) => (
+                      <Box
+                        key={item.label}
                         sx={{
-                          background: isCorrect 
-                            ? alpha(theme.palette.success.main, 0.08)
-                            : alpha(theme.palette.error.main, 0.08),
-                          borderRadius: isQuestionExpanded ? '12px 12px 0 0' : '12px',
-                          '&.Mui-expanded': {
-                            minHeight: 56,
-                          },
-                          py: 2
+                          p: 1.35,
+                          borderRadius: "16px",
+                          border: `1px solid ${alpha(item.color, 0.23)}`,
+                          bgcolor: alpha(item.color, 0.09),
                         }}
                       >
-                        <Stack direction="row" spacing={2} alignItems="center" sx={{ width: '100%' }}>
-                          <Badge
-                            badgeContent={qIndex + 1}
-                            color="primary"
-                            sx={{
-                              '& .MuiBadge-badge': {
-                                bgcolor: theme.palette.primary.main,
-                                color: 'white',
-                                fontWeight: 'bold',
-                                fontSize: '0.75rem',
-                                width: 20,
-                                height: 20
-                              }
-                            }}
-                          >
-                            <Avatar sx={{ 
-                              bgcolor: isCorrect ? theme.palette.success.main : theme.palette.error.main,
-                              width: 36,
-                              height: 36,
-                              boxShadow: `0 2px 8px ${isCorrect ? alpha(theme.palette.success.main, 0.3) : alpha(theme.palette.error.main, 0.3)}`
-                            }}>
-                              {isCorrect ? <CheckCircleIcon sx={{ fontSize: 20 }} /> : <CancelIcon sx={{ fontSize: 20 }} />}
-                            </Avatar>
-                          </Badge>
-                          
-                          <Box sx={{ flexGrow: 1 }}>
-                            <Typography variant="body1" fontWeight="medium" sx={{ 
-                              color: isCorrect ? theme.palette.success.dark : theme.palette.error.dark,
-                              lineHeight: 1.4,
-                              fontSize: '0.95rem'
-                            }}>
-                              {question.question}
-                            </Typography>
-                          </Box>
-
-                          <Chip
-                            label={isCorrect ? "Correct" : "Incorrect"}
-                            color={isCorrect ? "success" : "error"}
-                            size="small"
-                            variant="filled"
-                            sx={{ 
-                              fontWeight: 'bold', 
-                              fontSize: '0.75rem',
-                              height: 28,
-                              boxShadow: `0 2px 4px ${isCorrect ? alpha(theme.palette.success.main, 0.3) : alpha(theme.palette.error.main, 0.3)}`
-                            }}
-                          />
+                        <Stack direction="row" spacing={0.8} alignItems="center" sx={{ color: item.color }}>
+                          {item.icon}
+                          <Typography sx={{ fontWeight: 950, fontSize: 20 }}>{item.value}</Typography>
                         </Stack>
-                      </AccordionSummary>
+                        <Typography sx={{ mt: 0.35, color: "text.secondary", fontSize: 12 }}>
+                          {item.label}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+              </Stack>
+            </Box>
 
-                      <AccordionDetails sx={{ 
-                        background: alpha(theme.palette.background.paper, 0.6),
-                        borderRadius: '0 0 12px 12px',
-                        p: 3
-                      }}>
-                        <Paper sx={{ 
-                          p: 2, 
-                          mb: 2,
-                          bgcolor: isCorrect 
-                            ? alpha(theme.palette.success.main, 0.1)
-                            : alpha(theme.palette.error.main, 0.1),
-                          border: `2px solid ${isCorrect 
-                            ? alpha(theme.palette.success.main, 0.3)
-                            : alpha(theme.palette.error.main, 0.3)}`,
-                          borderRadius: 2
-                        }}>
-                          <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ 
-                            color: isCorrect ? theme.palette.success.dark : theme.palette.error.dark,
-                            mb: 1
-                          }}>
-                            Your Answer:
-                          </Typography>
-                          <Typography 
-                            variant="body1" 
-                            sx={{ 
-                              color: isCorrect ? theme.palette.success.dark : theme.palette.error.dark,
-                              fontWeight: 'medium',
-                              fontStyle: question.answer ? 'normal' : 'italic',
-                              bgcolor: alpha(theme.palette.background.paper, 0.7),
-                              p: 1.5,
-                              borderRadius: 1,
-                              border: `1px solid ${alpha(theme.palette.divider, 0.2)}`
+            {quizStats.map((item) => {
+              const itemPerformance = getPerformance(item.percentage);
+              const quizTitle = item.quiz.quizTitle || `${item.quiz.technology || "General"} Quiz`;
+
+              return (
+                <Box
+                  key={`${quizTitle}-${item.quizIndex}`}
+                  sx={{
+                    p: { xs: 1.5, md: 2 },
+                    borderRadius: "24px",
+                    border: `1px solid ${alpha(itemPerformance.color, 0.22)}`,
+                    bgcolor: "rgba(255,255,255,0.04)",
+                  }}
+                >
+                  <Stack direction={{ xs: "column", md: "row" }} spacing={1.5} justifyContent="space-between" sx={{ mb: 1.5 }}>
+                    <Box>
+                      <Typography variant="h6" sx={{ fontWeight: 950 }}>
+                        {quizTitle}
+                      </Typography>
+                      <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                        {item.quiz.technology || "General"} assessment review
+                      </Typography>
+                    </Box>
+                    <Chip
+                      label={`${item.percentage}% - ${item.correctAnswers}/${item.totalQuestions}`}
+                      sx={{
+                        color: itemPerformance.color,
+                        bgcolor: alpha(itemPerformance.color, 0.13),
+                        border: `1px solid ${alpha(itemPerformance.color, 0.28)}`,
+                        fontWeight: 950,
+                        alignSelf: { xs: "flex-start", md: "center" },
+                      }}
+                    />
+                  </Stack>
+
+                  <Stack spacing={1.1}>
+                    {item.questions.map((question, qIndex) => {
+                      const isCorrect = normalize(question.answer) === normalize(question.correctAnswer);
+                      const questionColor = isCorrect ? theme.palette.success.main : theme.palette.error.main;
+                      const panelId = `${item.quizIndex}-${qIndex}`;
+                      const isExpanded = expandedQuestion === panelId;
+
+                      return (
+                        <Accordion
+                          key={panelId}
+                          expanded={isExpanded}
+                          onChange={() => setExpandedQuestion(isExpanded ? null : panelId)}
+                          sx={{
+                            borderRadius: "18px !important",
+                            overflow: "hidden",
+                            border: `1px solid ${alpha(questionColor, isExpanded ? 0.38 : 0.20)}`,
+                            bgcolor: alpha(questionColor, isExpanded ? 0.10 : 0.06),
+                            boxShadow: isExpanded ? `0 18px 48px ${alpha(questionColor, 0.13)}` : "none",
+                            "&::before": { display: "none" },
+                          }}
+                        >
+                          <AccordionSummary
+                            expandIcon={<ChevronDown size={19} color="#fff" />}
+                            sx={{
+                              minHeight: 68,
+                              "& .MuiAccordionSummary-content": {
+                                alignItems: "center",
+                                gap: 1.5,
+                              },
                             }}
                           >
-                            {question.answer || "No answer provided"}
-                          </Typography>
-                        </Paper>
-
-                        {!isCorrect && (
-                          <Paper sx={{ 
-                            p: 2,
-                            bgcolor: alpha(theme.palette.info.main, 0.1),
-                            border: `2px solid ${alpha(theme.palette.info.main, 0.3)}`,
-                            borderRadius: 2
-                          }}>
-                            <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ 
-                              color: theme.palette.info.dark,
-                              mb: 1
-                            }}>
-                              Correct Answer:
-                            </Typography>
-                            <Typography 
-                              variant="body1" 
-                              color="info.dark"
-                              fontWeight="medium"
+                            <Box
                               sx={{
-                                bgcolor: alpha(theme.palette.background.paper, 0.7),
-                                p: 1.5,
-                                borderRadius: 1,
-                                border: `1px solid ${alpha(theme.palette.divider, 0.2)}`
+                                width: 34,
+                                height: 34,
+                                flex: "0 0 auto",
+                                borderRadius: "12px",
+                                display: "grid",
+                                placeItems: "center",
+                                color: "#fff",
+                                bgcolor: alpha(questionColor, 0.24),
+                                border: `1px solid ${alpha(questionColor, 0.32)}`,
                               }}
                             >
-                              {question.correctAnswer}
-                            </Typography>
-                          </Paper>
-                        )}
-                      </AccordionDetails>
-                    </Accordion>
-                  );
-                })}
-              </Box>
-            </Box>
-          );
-        })}
+                              {isCorrect ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
+                            </Box>
+                            <Box sx={{ minWidth: 0, flex: 1 }}>
+                              <Typography sx={{ fontWeight: 850, lineHeight: 1.35 }}>
+                                Q{qIndex + 1}. {question.question}
+                              </Typography>
+                            </Box>
+                            <Chip
+                              size="small"
+                              label={isCorrect ? "Correct" : "Incorrect"}
+                              sx={{
+                                display: { xs: "none", sm: "inline-flex" },
+                                color: questionColor,
+                                bgcolor: alpha(questionColor, 0.13),
+                                fontWeight: 900,
+                              }}
+                            />
+                          </AccordionSummary>
+
+                          <AccordionDetails sx={{ p: { xs: 1.5, md: 2 }, pt: 0 }}>
+                            <Box
+                              sx={{
+                                display: "grid",
+                                gridTemplateColumns: { xs: "1fr", md: isCorrect ? "1fr" : "1fr 1fr" },
+                                gap: 1.3,
+                              }}
+                            >
+                              {renderAnswerBlock(
+                                "Your Answer",
+                                question.answer,
+                                isCorrect ? theme.palette.success.main : theme.palette.error.main,
+                                isCorrect ? <CheckCircle2 size={16} /> : <XCircle size={16} />
+                              )}
+                              {!isCorrect &&
+                                renderAnswerBlock(
+                                  "Correct Answer",
+                                  question.correctAnswer,
+                                  theme.palette.secondary.main,
+                                  <CheckCircle2 size={16} />
+                                )}
+                            </Box>
+                          </AccordionDetails>
+                        </Accordion>
+                      );
+                    })}
+                  </Stack>
+                </Box>
+              );
+            })}
+          </Stack>
+        )}
       </DialogContent>
 
-      <DialogActions sx={{ 
-        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, ${alpha(theme.palette.secondary.main, 0.05)} 100%)`,
-        borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-        p: 2
-      }}>
-        <Button onClick={onClose} variant="contained" color="primary" sx={{ 
-          borderRadius: 2,
-          px: 3,
-          py: 1,
-          fontWeight: 'bold'
-        }}>
+      <DialogActions
+        sx={{
+          p: 2,
+          borderTop: "1px solid rgba(255,255,255,0.08)",
+          bgcolor: "rgba(255,255,255,0.035)",
+        }}
+      >
+        <Button onClick={onClose} variant="outlined" sx={{ color: "#fff", borderColor: "rgba(255,255,255,0.14)" }}>
           Close
         </Button>
+        <PremiumButton onClick={onClose} startIcon={<ClipboardCheck size={17} />}>
+          Done
+        </PremiumButton>
       </DialogActions>
     </Dialog>
   );

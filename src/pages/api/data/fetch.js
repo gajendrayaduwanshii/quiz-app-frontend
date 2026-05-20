@@ -1,3 +1,5 @@
+import { extractApiError, readJsonResponse } from "@/utils/readJsonResponse";
+
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -12,11 +14,14 @@ export default async function handler(req, res) {
 
     const response = await fetch(url);
 
+    const data = await readJsonResponse(response);
+
     if (!response.ok) {
-      throw new Error("Failed to fetch data");
+      return res
+        .status(response.status)
+        .json({ error: extractApiError(data, `Failed to fetch data: ${response.status}`) });
     }
 
-    const data = await response.json();
     res.status(200).json({ data: data.data });
   } catch (error) {
     console.error("Error in /api/data/fetch:", error);
