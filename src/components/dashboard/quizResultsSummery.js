@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import { Box, Chip, Grid, LinearProgress, Stack, Typography } from "@mui/material";
 import { alpha, useTheme } from "@mui/material/styles";
-import { BrainCircuit, CheckCircle2, Code2, Target, TrendingDown, TrendingUp, Trophy, XCircle } from "lucide-react";
+import { BrainCircuit, Code2, Target, TrendingDown, TrendingUp, Trophy } from "lucide-react";
 import PremiumCard from "@/components/premium/PremiumCard";
 import SectionHeader from "@/components/premium/SectionHeader";
 
@@ -12,8 +12,8 @@ const normalize = (value) => String(value || "").trim().toLowerCase();
 const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
   const theme = useTheme();
 
-  const summaryBySkill = useMemo(() => {
-    return (skills || []).map((skill) => {
+  const analytics = useMemo(() => {
+    const summaryBySkill = (skills || []).map((skill) => {
       const skillName = skill.skillName || skill.skill || "Skill";
       const attempts = (quizResults || []).filter(
         (quiz) => normalize(quiz?.technology) === normalize(skillName)
@@ -34,7 +34,6 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
         { totalQuestions: 0, totalCorrect: 0 }
       );
 
-      const totalWrong = totals.totalQuestions - totals.totalCorrect;
       const percentage = totals.totalQuestions
         ? Math.round((totals.totalCorrect / totals.totalQuestions) * 100)
         : 0;
@@ -45,10 +44,35 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
         attempts: attempts.length,
         totalQuestions: totals.totalQuestions,
         totalCorrect: totals.totalCorrect,
-        totalWrong,
         percentage,
       };
     });
+
+    const attemptedSkills = summaryBySkill.filter((skill) => skill.totalQuestions > 0);
+    const totals = attemptedSkills.reduce(
+      (acc, skill) => ({
+        attempts: acc.attempts + skill.attempts,
+        totalQuestions: acc.totalQuestions + skill.totalQuestions,
+        totalCorrect: acc.totalCorrect + skill.totalCorrect,
+      }),
+      { attempts: 0, totalQuestions: 0, totalCorrect: 0 }
+    );
+    const overallPercentage = totals.totalQuestions
+      ? Math.round((totals.totalCorrect / totals.totalQuestions) * 100)
+      : 0;
+    const strongestSkill = [...attemptedSkills].sort((a, b) => b.percentage - a.percentage)[0];
+    const focusSkill = [...attemptedSkills].sort((a, b) => a.percentage - b.percentage)[0];
+    const pendingSkills = summaryBySkill.filter((skill) => skill.totalQuestions === 0);
+
+    return {
+      summaryBySkill,
+      attemptedSkills,
+      pendingSkills,
+      totals,
+      overallPercentage,
+      strongestSkill,
+      focusSkill,
+    };
   }, [quizResults, skills]);
 
   const getPerformance = (percentage, totalQuestions) => {
@@ -84,14 +108,87 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
     <Box sx={{ mt: 3 }}>
       <SectionHeader
         eyebrow="Quiz Analytics"
-        title="Quiz Results Summary by Skill"
-        description="Skill-wise performance snapshot from your latest quiz attempts."
+        title="Performance Focus Areas"
+        description="Strengths, weak spots, and the next skills to practice from your quiz data."
       />
 
+      <Grid container spacing={2.3} sx={{ mb: 2.3 }}>
+        {[
+          {
+            label: "Overall Accuracy",
+            value: `${analytics.overallPercentage}%`,
+            detail: `${analytics.totals.totalCorrect}/${analytics.totals.totalQuestions || 0} answers correct`,
+            icon: <Target size={18} />,
+            color: theme.palette.secondary.main,
+          },
+          {
+            label: "Strongest Area",
+            value: analytics.strongestSkill?.skillName || "Pending",
+            detail: analytics.strongestSkill
+              ? `${analytics.strongestSkill.percentage}% accuracy`
+              : "Complete a quiz to identify it",
+            icon: <Trophy size={18} />,
+            color: theme.palette.success.main,
+          },
+          {
+            label: "Practice Priority",
+            value: analytics.focusSkill?.skillName || analytics.pendingSkills[0]?.skillName || "Pending",
+            detail: analytics.focusSkill
+              ? `${analytics.focusSkill.percentage}% accuracy needs attention`
+              : "Start with an unattempted skill",
+            icon: <TrendingUp size={18} />,
+            color: theme.palette.warning.main,
+          },
+        ].map((item) => (
+          <Grid item size={{ xs: 12, md: 4 }} key={item.label}>
+            <PremiumCard
+              hover
+              glow={alpha(item.color, 0.2)}
+              sx={{
+                height: "100%",
+                p: 2.2,
+                borderRadius: "18px",
+                border: `1px solid ${alpha(item.color, 0.24)}`,
+                bgcolor: alpha(item.color, 0.08),
+              }}
+            >
+              <Stack direction="row" spacing={1.2} alignItems="center" sx={{ color: item.color, mb: 1.2 }}>
+                {item.icon}
+                <Typography sx={{ color: "text.secondary", fontSize: 12, fontWeight: 900 }}>
+                  {item.label}
+                </Typography>
+              </Stack>
+              <Typography
+                sx={{
+                  fontSize: 24,
+                  fontWeight: 950,
+                  lineHeight: 1.1,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {item.value}
+              </Typography>
+              <Typography sx={{ color: "text.secondary", mt: 0.8, fontSize: 13 }}>
+                {item.detail}
+              </Typography>
+            </PremiumCard>
+          </Grid>
+        ))}
+      </Grid>
+
       <Grid container spacing={2.3}>
-        {summaryBySkill.map((skill, index) => {
+        {analytics.summaryBySkill.map((skill, index) => {
           const performance = getPerformance(skill.percentage, skill.totalQuestions);
           const ringColor = performance.color;
+          const recommendation = !skill.totalQuestions
+            ? "Take a first quiz to create a baseline for this skill."
+            : skill.percentage >= 80
+              ? "Keep this as a strength and move into harder questions."
+              : skill.percentage >= 60
+                ? "Review missed concepts, then retake after focused practice."
+                : "Prioritize fundamentals before attempting advanced rounds.";
 
           return (
             <Grid item size={{ xs: 12, sm: 6, lg: 4 }} key={skill.id || skill.skillName || index}>
@@ -198,10 +295,10 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
                   <Box>
                     <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.8 }}>
                       <Typography sx={{ color: "text.secondary", fontSize: 13, fontWeight: 800 }}>
-                        Accuracy
+                        Readiness
                       </Typography>
                       <Typography sx={{ color: ringColor, fontSize: 13, fontWeight: 950 }}>
-                        {skill.totalCorrect}/{skill.totalQuestions || 0}
+                        {performance.label}
                       </Typography>
                     </Stack>
                     <LinearProgress
@@ -221,33 +318,18 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
 
                   <Box
                     sx={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                      gap: 1,
+                      p: 1.45,
+                      borderRadius: "16px",
+                      border: `1px solid ${alpha(ringColor, 0.2)}`,
+                      bgcolor: alpha(ringColor, 0.08),
                     }}
                   >
-                    {[
-                      { label: "Attempts", value: skill.attempts, icon: <Target size={15} />, color: theme.palette.secondary.main },
-                      { label: "Correct", value: skill.totalCorrect, icon: <CheckCircle2 size={15} />, color: theme.palette.success.main },
-                      { label: "Wrong", value: skill.totalWrong, icon: <XCircle size={15} />, color: theme.palette.error.main },
-                    ].map((item) => (
-                      <Box
-                        key={item.label}
-                        sx={{
-                          p: 1.25,
-                          minHeight: 76,
-                          borderRadius: "16px",
-                          border: `1px solid ${alpha(item.color, 0.22)}`,
-                          bgcolor: alpha(item.color, 0.09),
-                        }}
-                      >
-                        <Box sx={{ color: item.color, lineHeight: 0, mb: 0.7 }}>{item.icon}</Box>
-                        <Typography sx={{ fontWeight: 950, lineHeight: 1 }}>{item.value}</Typography>
-                        <Typography sx={{ color: "text.secondary", fontSize: 12, mt: 0.35 }}>
-                          {item.label}
-                        </Typography>
-                      </Box>
-                    ))}
+                    <Typography sx={{ color: "text.secondary", fontSize: 12, fontWeight: 850, mb: 0.4 }}>
+                      Next recommendation
+                    </Typography>
+                    <Typography sx={{ fontSize: 13.5, lineHeight: 1.45 }}>
+                      {recommendation}
+                    </Typography>
                   </Box>
 
                   {!skill.totalQuestions && (

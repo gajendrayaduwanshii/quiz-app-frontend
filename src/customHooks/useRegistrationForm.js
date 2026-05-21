@@ -24,6 +24,7 @@ export default function useRegistrationForm() {
     skills: [{ skill: "", level: "", experienceYears: "" }],
     certifications: "",
     resumeFile: null,
+    uploadedResume: null,
     education: [{ degree: "", institution: "", year: "", grade: "" }],
     workExperience: [
       {
@@ -259,7 +260,7 @@ export default function useRegistrationForm() {
     if (!e || !e.target || !e.target.files) return;
 
     const file = e.target.files[0];
-    setFormData((prev) => ({ ...prev, resumeFile: file }));
+    setFormData((prev) => ({ ...prev, resumeFile: file, uploadedResume: null }));
 
     if (errors.resumeFile) {
       setErrors((prev) => ({ ...prev, resumeFile: null }));
@@ -275,5 +276,7 @@ export default function useRegistrationForm() {
     addField,
     removeField,
     handleFileChange,
+    setFormData,
+    setErrors,
   };
 }

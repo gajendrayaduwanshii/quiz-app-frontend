@@ -18,9 +18,10 @@ export default async function handler(req, res) {
       {
         method: "POST",
         body: req,
+        duplex: "half",
         headers: {
           "Authorization": `Bearer ${process.env.STRAPI_API_TOKEN || ""}`,
-          ...req.headers,
+          "Content-Type": req.headers["content-type"] || "",
         },
       }
     );

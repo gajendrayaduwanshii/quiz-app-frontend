@@ -1,6 +1,6 @@
 export const uploadFileToStrapi = async (file) => {
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("files", file);
 
   try {
     const res = await fetch("/api/upload", {

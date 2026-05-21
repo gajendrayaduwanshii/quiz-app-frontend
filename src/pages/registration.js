@@ -12,6 +12,7 @@ import {
   Step,
   StepLabel,
   CircularProgress,
+  Alert,
 } from "@mui/material";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -26,7 +27,6 @@ import CertificationsResumeSection from "../components/registration/certificatio
 import { useAuth } from "../context/AuthContext";
 import useRegistrationForm from "../customHooks/useRegistrationForm";
 
-import axios from "axios";
 import { BrainCircuit, Save, UploadCloud } from "lucide-react";
 
  
@@ -52,12 +52,15 @@ const RegistrationForm = () => {
     handleArrayChange,
     addField,
     removeField,
-    handleFileChange,
+    setFormData,
+    setErrors,
   } = useRegistrationForm();
 
   const [activeStep, setActiveStep] = useState(0);
   const [stepErrors, setStepErrors] = useState({}); // Track error per step
   const [loading, setLoading] = useState(false);
+  const [resumeAutofillLoading, setResumeAutofillLoading] = useState(false);
+  const [resumeAutofillMessage, setResumeAutofillMessage] = useState("");
 
   const errorMap = {
     0: ["name", "email", "phone", "dob", "gender", "password"],
@@ -88,7 +91,7 @@ const RegistrationForm = () => {
   // Upload file to Strapi and get uploaded file object
   const uploadFileToStrapi = async (file) => {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("files", file);
 
     try {
       const res = await fetch("/api/upload", {
@@ -101,12 +104,131 @@ const RegistrationForm = () => {
       if (res.ok && result.file) {
         return result.file; // uploaded file object
       } else {
-        console.error("Upload failed:", result.error);
-        return null;
+        throw new Error(result.error || "Resume upload failed");
       }
     } catch (error) {
       console.error("Error uploading file to Strapi:", error.response || error.message);
-      return null;
+      throw error;
+    }
+  };
+
+  const hasValue = (value) => {
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "boolean") return value;
+    return value !== undefined && value !== null && String(value).trim() !== "";
+  };
+
+  const normalizeEducation = (items = []) =>
+    items
+      .filter((item) => item && (item.degree || item.institution || item.year || item.grade))
+      .map((item) => ({
+        degree: item.degree || "",
+        institution: item.institution || "",
+        year: item.year || "",
+        grade: item.grade || "",
+      }));
+
+  const normalizeWorkExperience = (items = []) =>
+    items
+      .filter((item) => item && (item.company || item.title || item.description))
+      .map((item) => ({
+        company: item.company || "",
+        title: item.title || "",
+        startDate: item.startDate || "",
+        endDate: item.current ? "" : item.endDate || "",
+        current: Boolean(item.current),
+        description: item.description || "",
+      }));
+
+  const normalizeSkills = (items = []) =>
+    items
+      .filter((item) => item && item.skill)
+      .map((item) => ({
+        skill: item.skill || "",
+        level: ["Beginner", "Intermediate", "Expert"].includes(item.level)
+          ? item.level
+          : "",
+        experienceYears: item.experienceYears || "",
+      }));
+
+  const mergeResumeProfile = (currentData, profileData) => {
+    const nextData = { ...currentData };
+    const simpleFields = [
+      "name",
+      "email",
+      "phone",
+      "dob",
+      "gender",
+      "jobTitle",
+      "company",
+      "experienceYears",
+      "jobType",
+      "certifications",
+    ];
+
+    simpleFields.forEach((field) => {
+      if (!hasValue(nextData[field]) && hasValue(profileData[field])) {
+        nextData[field] = profileData[field];
+      }
+    });
+
+    const education = normalizeEducation(profileData.education);
+    const workExperience = normalizeWorkExperience(profileData.workExperience);
+    const skills = normalizeSkills(profileData.skills);
+
+    if (education.length) nextData.education = education;
+    if (workExperience.length) nextData.workExperience = workExperience;
+    if (skills.length) nextData.skills = skills;
+
+    return nextData;
+  };
+
+  const handleResumeAutofillChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      setResumeAutofillMessage("Please upload a PDF resume for automatic field filling.");
+      setFormData((prev) => ({ ...prev, resumeFile: file, uploadedResume: null }));
+      return;
+    }
+
+    setResumeAutofillLoading(true);
+    setResumeAutofillMessage("AI is reading your full resume and filling profile fields...");
+    setFormData((prev) => ({ ...prev, resumeFile: file, uploadedResume: null }));
+    setErrors((prev) => ({ ...prev, resumeFile: null }));
+
+    try {
+      const resumeFormData = new FormData();
+      resumeFormData.append("resume", file);
+
+      const response = await fetch("/api/resume/extract-profile-upload", {
+        method: "POST",
+        body: resumeFormData,
+      });
+      const profileData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(profileData.error || "Could not read resume data.");
+      }
+
+      setFormData((prev) => ({
+        ...mergeResumeProfile(prev, profileData),
+        resumeFile: file,
+        uploadedResume: null,
+      }));
+      setResumeAutofillMessage(
+        "AI read the resume and filled matching fields. Please review and complete any blank fields manually."
+      );
+      setActiveStep(0);
+    } catch (error) {
+      console.error("Resume autofill failed:", error);
+      setResumeAutofillMessage(
+        error.message || "Could not auto-fill from this resume. You can still fill the form manually."
+      );
+    } finally {
+      setResumeAutofillLoading(false);
+      e.target.value = "";
     }
   };
 
@@ -201,12 +323,12 @@ const mapWorkExperience = (workArr) =>
         return;
       }
 
-      if (!formData.uploadResume) {
+      if (!formData.resumeFile) {
         alert("Please upload your resume PDF file");
         return;
       }
 
-      if (formData.uploadResume.type !== "application/pdf") {
+      if (formData.resumeFile.type !== "application/pdf") {
         alert("Please upload a PDF file for your resume");
         return;
       }
@@ -214,8 +336,8 @@ const mapWorkExperience = (workArr) =>
       setLoading(true);
 
       try {
-        // 1. Upload resume file
-        const uploadedFile = await uploadFileToStrapi(formData.uploadResume);
+        const uploadedFile =
+          formData.uploadedResume || (await uploadFileToStrapi(formData.resumeFile));
 
         if (!uploadedFile) {
           alert("File upload failed. Please try again.");
@@ -226,17 +348,16 @@ const mapWorkExperience = (workArr) =>
         // 2. Submit form data with uploaded file ID
         await submitFormData(uploadedFile.id);
 
-         // ✅ 2. Show form data in console before submitting
-      console.log("Form data being submitted:", {
-        ...formData,
-        uploadResume: uploadedFile,
-      });
+        console.log("Form data being submitted:", {
+          ...formData,
+          uploadedResume: uploadedFile,
+        });
 
         setLoading(false);
         setRegistrationCompleted(true);
         router.push("/dashboard");
       } catch (error) {
-        alert("An error occurred during submission. Please try again.");
+        alert(error.message || "An error occurred during submission. Please try again.");
         setLoading(false);
       }
     } else {
@@ -302,15 +423,15 @@ const mapWorkExperience = (workArr) =>
         );
       case 5:
         return (
-         <CertificationsResumeSection
-          formData={formData}
-          handleChange={handleChange}
-          handleFileChange={handleFileChange}
-          errors={{
-            certifications: errors.certifications,
-            uploadResume: errors.uploadResume,
-          }}
-        />
+          <CertificationsResumeSection
+            formData={formData}
+            handleChange={handleChange}
+            handleFileChange={handleResumeAutofillChange}
+            errors={{
+              certifications: errors.certifications,
+              resumeFile: errors.resumeFile,
+            }}
+          />
         );
       default:
         return null;
@@ -375,6 +496,63 @@ const mapWorkExperience = (workArr) =>
             </Box>
 
             <Box sx={{ width: "120px" }} />
+          </Box>
+
+          <Alert
+            severity={resumeAutofillMessage.toLowerCase().includes("failed") || resumeAutofillMessage.toLowerCase().includes("could not") ? "warning" : "info"}
+            sx={{ mb: 2 }}
+          >
+            First upload your PDF resume. AI will read the complete resume, fill matching fields, and leave missing details for manual entry.
+          </Alert>
+
+          <Box
+            sx={{
+              mb: 2,
+              p: 2,
+              borderRadius: "18px",
+              border: "1px solid rgba(255,255,255,0.10)",
+              bgcolor: "rgba(255,255,255,0.045)",
+              display: "flex",
+              alignItems: { xs: "stretch", sm: "center" },
+              justifyContent: "space-between",
+              gap: 2,
+              flexDirection: { xs: "column", sm: "row" },
+            }}
+          >
+            <Box>
+              <Typography sx={{ fontWeight: 800 }}>AI Resume Auto-Fill</Typography>
+              <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                {formData.resumeFile?.name
+                  ? `Selected: ${formData.resumeFile.name}`
+                  : "Upload your resume first so AI can read it before registration."}
+              </Typography>
+              {resumeAutofillMessage && (
+                <Typography sx={{ color: "text.secondary", fontSize: 13, mt: 0.5 }}>
+                  {resumeAutofillMessage}
+                </Typography>
+              )}
+            </Box>
+            <Button
+              variant="outlined"
+              component="label"
+              disabled={resumeAutofillLoading}
+              startIcon={
+                resumeAutofillLoading ? (
+                  <CircularProgress size={16} color="inherit" />
+                ) : (
+                  <UploadCloud size={17} />
+                )
+              }
+              sx={{ borderColor: "rgba(255,255,255,0.18)", color: "#fff" }}
+            >
+              {resumeAutofillLoading ? "Reading..." : "Upload Resume"}
+              <input
+                type="file"
+                accept="application/pdf"
+                hidden
+                onChange={handleResumeAutofillChange}
+              />
+            </Button>
           </Box>
 
           <Stepper

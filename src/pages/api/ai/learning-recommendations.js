@@ -6,64 +6,80 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { user } = req.body;
+    const { user, latestQuestions = [] } = req.body;
     
     if (!user) {
       return res.status(400).json({ error: 'User data is required' });
     }
 
-    const skills = user.skills || [];
+    const skills = Array.isArray(user.skills) ? user.skills : [];
     const experience = user.yearsExperience || 0;
-    const quizResults = user.quizResult || [];
-    const educations = user.educations || [];
+    const quizResults = Array.isArray(user.quizResult) ? user.quizResult : [];
+    const educations = Array.isArray(user.educations) ? user.educations : [];
+    const skillSummary = skills.slice(0, 12).map((skill) => ({
+      name: skill.skillName || skill.skill || "Skill",
+      level: skill.level || "Intermediate",
+      yearsExperience: Number(skill.yearsExperience || skill.experienceYears || 0),
+    }));
+    const quizSummary = quizResults.slice(-5).map((quiz, index) => {
+      const questions = Array.isArray(quiz?.quizQuestion) ? quiz.quizQuestion : [];
+      const correct = questions.filter(
+        (question) =>
+          String(question?.answer || "").trim().toLowerCase() ===
+          String(question?.correctAnswer || "").trim().toLowerCase()
+      ).length;
+
+      return {
+        no: index + 1,
+        technology: quiz?.technology || "Unknown",
+        totalQuestions: questions.length,
+        correct,
+        accuracy: questions.length ? Math.round((correct / questions.length) * 100) : 0,
+      };
+    });
+    const latestQuizQuestions = Array.isArray(latestQuestions)
+      ? latestQuestions.slice(0, 10)
+      : [];
+    const latestQuizSummary = latestQuizQuestions.map((question, index) => ({
+      no: index + 1,
+      question: question?.question || "",
+      userAnswer: question?.answer || "",
+      correctAnswer: question?.correctAnswer || "",
+      isCorrect:
+        String(question?.answer || "").trim().toLowerCase() ===
+        String(question?.correctAnswer || "").trim().toLowerCase(),
+    }));
 
     const prompt = `
-You are an AI-powered learning advisor. Analyze the following developer profile and generate personalized learning recommendations:
+You are an expert AI learning coach for software developers.
+Create a detailed, practical learning plan using only the profile data below. Avoid generic advice.
 
-**Developer Profile:**
-- Years of Experience: ${experience}
-- Skills: ${skills.map(s => `${s.skillName} (${s.yearsExperience || 0} years, ${s.level || 'Intermediate'})`).join(', ')}
-- Education: ${educations.length} degrees/certifications
-- Quiz Performance: ${quizResults.length} completed quizzes
-- Learning History: Active on platform
+Developer profile:
+- Years of experience: ${experience}
+- Saved skills: ${JSON.stringify(skillSummary)}
+- Education count: ${educations.length}
+- Recent quiz performance: ${JSON.stringify(quizSummary)}
+- Latest quiz answer review: ${JSON.stringify(latestQuizSummary)}
 
-**Generate comprehensive learning recommendations including:**
+Rules:
+- Be specific to the saved skills and quiz mistakes.
+- If a skill has weak quiz accuracy, prioritize remediation before advanced topics.
+- If quiz data is missing, create a baseline plan and ask the learner to take a quiz for measurement.
+- Do not invent exact course prices, badges, streaks, or completed achievements.
+- Prefer actionable steps, mini projects, practice drills, and measurable outcomes.
+- Keep each card useful as a dashboard card: detailed but not essay-length.
 
-1. **Personalized Learning Path:**
-   - Custom learning journey title
-   - Detailed description
-   - Estimated duration
-   - Difficulty level
-   - Progress tracking
-   - Key skills to develop
+Return valid JSON only. Include 5 to 7 recommendationCards. Each card should contain:
+- title: concise
+- category: one of "Roadmap", "Weak Topics", "Project", "Practice", "Interview", "Resources", "Milestone"
+- priority: "High", "Medium", or "Low"
+- timeCommitment: realistic weekly or total estimate
+- detail: 2-3 sentence explanation personalized to the user
+- steps: 3-5 concrete actions
+- resources: 2-4 resource types or search terms, not fake links
+- successMetric: one measurable way to know this item is done
 
-2. **Recommended Courses:**
-   - Top 4 courses with details
-   - Course provider, rating, duration
-   - Difficulty and price information
-   - Skills covered in each course
-   - Recommendation priority
-
-3. **Skill Gap Analysis:**
-   - Critical skills missing
-   - Importance percentage for each gap
-   - Current vs target skill levels
-   - Recommended learning resources
-
-4. **Learning Streak & Achievements:**
-   - Current learning streak
-   - Longest streak achieved
-   - Total learning hours
-   - Weekly learning goals
-   - Achievement badges earned
-
-5. **Achievement System:**
-   - Completed achievements
-   - Pending achievements
-   - Achievement descriptions
-   - Progress tracking
-
-**Respond with valid JSON only:**
+JSON schema:
 {
   "personalizedPath": {
     "title": "string",
@@ -111,11 +127,23 @@ You are an AI-powered learning advisor. Analyze the following developer profile 
       "earned": boolean,
       "date": "string|null"
     }
+  ],
+  "recommendationCards": [
+    {
+      "title": "string",
+      "category": "Roadmap|Weak Topics|Project|Practice|Interview|Resources|Milestone",
+      "priority": "High|Medium|Low",
+      "timeCommitment": "string",
+      "detail": "string",
+      "steps": ["string"],
+      "resources": ["string"],
+      "successMetric": "string"
+    }
   ]
 }
 `;
 
-    const output = await generateAIText(prompt, { temperature: 0.4 });
+    const output = await generateAIText(prompt, { temperature: 0.35, maxTokens: 2200 });
     
     const jsonMatch = output.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
@@ -127,6 +155,10 @@ You are an AI-powered learning advisor. Analyze the following developer profile 
     res.status(200).json({ recommendations });
   } catch (error) {
     console.error('Error in /api/ai/learning-recommendations:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({
+      error:
+        error?.message ||
+        'Unable to generate AI learning recommendations right now',
+    });
   }
 }

@@ -12,7 +12,11 @@ const levelMap = { Beginner: 33, Intermediate: 66, Expert: 100 };
 const ChartsRow = ({ skills = [] }) => {
   const safeSkills = Array.isArray(skills) ? skills : [];
   const labels = safeSkills.map((s) => s.skillName || "Skill");
-  const totalExperience = safeSkills.reduce((sum, skill) => sum + (Number(skill.yearsExperience) || 0), 0);
+  const strongestExperience = Math.max(
+    ...safeSkills.map((skill) => Number(skill.yearsExperience) || 0)
+  );
+  const experienceLabel =
+    strongestExperience > 0 ? `${strongestExperience} yrs` : "N/A";
   const expertCount = safeSkills.filter((skill) => skill.level === "Expert").length;
   const topSkill = [...safeSkills].sort(
     (a, b) => (Number(b.yearsExperience) || 0) - (Number(a.yearsExperience) || 0)
@@ -139,7 +143,7 @@ const ChartsRow = ({ skills = [] }) => {
         >
           {[
             { icon: <BrainCircuit size={18} />, label: "Mapped Skills", value: safeSkills.length, color: "#06B6D4" },
-            { icon: <Gauge size={18} />, label: "Experience Signal", value: `${totalExperience}+ yrs`, color: "#22C55E" },
+            { icon: <Gauge size={18} />, label: "Experience Signal", value: experienceLabel, color: "#22C55E" },
             { icon: <Award size={18} />, label: "Expert Skills", value: expertCount, color: "#F59E0B" },
           ].map((stat) => (
             <Box

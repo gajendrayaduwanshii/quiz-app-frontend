@@ -34,7 +34,10 @@ const CertificationsResumeSection = ({
               value={formData.certifications}
               onChange={handleChange}
               error={Boolean(errors?.certifications)}
-              helperText={errors?.certifications || ""}
+              helperText={
+                errors?.certifications ||
+                "Add each certification separately with a comma after every certificate."
+              }
               sx={{ width: "100%" }}
             />
           </Grid>
@@ -45,14 +48,14 @@ const CertificationsResumeSection = ({
       <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
         <Box sx={{ padding: "20px 0 28px" }}>
           <Typography variant="body1" className="form-sub-title">
-            Upload Resume (PDF/DOC)
+            Upload Resume (PDF)
           </Typography>
 
           <Button variant="outlined" component="label">
             Choose File
             <input
               type="file"
-              accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              accept="application/pdf"
               hidden
               onChange={handleFileChange}
             />

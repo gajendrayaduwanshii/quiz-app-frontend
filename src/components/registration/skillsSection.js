@@ -10,6 +10,10 @@ import {
 import { AddCircle, RemoveCircle } from "@mui/icons-material";
 import skillsData from "./../../data/skills"; 
 
+const skillOptions = Array.from(new Set(skillsData.map((s) => s.skillName).filter(Boolean))).sort((a, b) =>
+  a.localeCompare(b)
+);
+
 const levelOptions = [
   { value: "Beginner", label: "Beginner" },
   { value: "Intermediate", label: "Intermediate" },
@@ -43,21 +47,26 @@ const SkillsSection = ({
           {/* Searchable Skill Autocomplete */}
           <Grid item size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
             <Autocomplete
-              options={skillsData.map((s) => s.skillName)}
+              options={skillOptions}
               value={skill.skill || ""}
               onChange={(event, newValue) =>
                 handleArrayChange("skills", index, "skill", newValue || "")
               }
+              onInputChange={(event, newInputValue, reason) => {
+                if (reason === "input") {
+                  handleArrayChange("skills", index, "skill", newInputValue || "");
+                }
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Select Skill"
+                  label="Select or Type Skill"
                   fullWidth
                   error={Boolean(errors?.[index]?.skill)}
                   helperText={errors?.[index]?.skill}
                 />
               )}
-              freeSolo={false}
+              freeSolo
             />
           </Grid>
 
