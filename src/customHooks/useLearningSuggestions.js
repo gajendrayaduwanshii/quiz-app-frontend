@@ -92,14 +92,46 @@ const buildAISuggestionCards = (recommendations) => {
   return cards;
 };
 
+const normalizeDetailedPlan = (recommendations) => {
+  const plan = recommendations?.detailedLearningPlan;
+  if (!plan || typeof plan !== "object") return null;
+
+  return {
+    title: plan.title || "Personalized AI Learning Plan",
+    aiGeneratedContent: plan.aiGeneratedContent || "",
+    summary: plan.summary || "",
+    profileSignals: Array.isArray(plan.profileSignals)
+      ? plan.profileSignals.filter(Boolean)
+      : [],
+    priorityFocus: Array.isArray(plan.priorityFocus)
+      ? plan.priorityFocus.filter(Boolean)
+      : [],
+    roadmap: Array.isArray(plan.roadmap) ? plan.roadmap.filter(Boolean) : [],
+    projectPlan: plan.projectPlan && typeof plan.projectPlan === "object" ? plan.projectPlan : null,
+    quizImprovementPlan:
+      plan.quizImprovementPlan && typeof plan.quizImprovementPlan === "object"
+        ? plan.quizImprovementPlan
+        : null,
+    resources: Array.isArray(plan.resources) ? plan.resources.filter(Boolean) : [],
+    weeklySchedule: Array.isArray(plan.weeklySchedule)
+      ? plan.weeklySchedule.filter(Boolean)
+      : [],
+    successMetrics: Array.isArray(plan.successMetrics)
+      ? plan.successMetrics.filter(Boolean)
+      : [],
+  };
+};
+
 export const useLearningSuggestions = (user, questions) => {
   const [suggestions, setSuggestions] = useState([]);
+  const [detailedPlan, setDetailedPlan] = useState(null);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [suggestionError, setSuggestionError] = useState("");
 
   useEffect(() => {
     if (!user) {
       setSuggestions([]);
+      setDetailedPlan(null);
       setSuggestionError("");
       return;
     }
@@ -128,16 +160,19 @@ export const useLearningSuggestions = (user, questions) => {
           return;
         }
 
-        const aiCards = buildAISuggestionCards(data.recommendations);
+        const aiPlan = normalizeDetailedPlan(data.recommendations);
+        const aiCards = aiPlan ? [] : buildAISuggestionCards(data.recommendations);
         if (!cancelled) {
           setSuggestions(aiCards);
+          setDetailedPlan(aiPlan);
           setSuggestionError(
-            aiCards.length ? "" : "AI response did not include learning suggestions."
+            aiPlan || aiCards.length ? "" : "AI response did not include learning suggestions."
           );
         }
       } catch (error) {
         if (!cancelled) {
           setSuggestions([]);
+          setDetailedPlan(null);
           setSuggestionError(
             error?.message || "AI learning suggestions could not be generated."
           );
@@ -158,8 +193,9 @@ export const useLearningSuggestions = (user, questions) => {
 
   return {
     suggestions,
+    detailedPlan,
     loadingSuggestions,
-    isAIGenerated: suggestions.length > 0 && !suggestionError,
+    isAIGenerated: Boolean(detailedPlan || suggestions.length) && !suggestionError,
     suggestionError,
   };
 };

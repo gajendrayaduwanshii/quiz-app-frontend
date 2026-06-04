@@ -6,10 +6,12 @@ import { useMediaQuery } from "@mui/material";
 import HeaderSidebar from "./HeaderSidebar";
 import AICopilot from "./premium/AICopilot";
 import CommandPalette from "./premium/CommandPalette";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Layout({ children }) {
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width:992px)");
+  const { user } = useAuth();
 
   // Initialize sidebar open state based on screen size
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
@@ -20,7 +22,7 @@ export default function Layout({ children }) {
   }, [isMobile]);
 
   // Routes that should NOT use the layout
-  const noLayoutRoutes = ['/login', '/registration', '/forgot-password', '/otp-verification'];
+  const noLayoutRoutes = ['/', '/login', '/registration', '/forgot-password', '/otp-verification'];
 
   if (noLayoutRoutes.includes(pathname)) {
     return <>{children}</>;
@@ -33,7 +35,7 @@ export default function Layout({ children }) {
       <HeaderSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}>
         {children}
       </HeaderSidebar>
-      <AICopilot />
+      {user && <AICopilot />}
     </div>
   );
 }

@@ -33,6 +33,23 @@ import {
 } from '@mui/icons-material';
 import { alpha, useTheme } from '@mui/material/styles';
 
+const parseApiResponse = async (response) => {
+  const contentType = response.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    return response.json();
+  }
+
+  const text = await response.text();
+  const isHtml = text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html');
+
+  return {
+    error: isHtml
+      ? 'Resume analyzer API returned an HTML error page. Please restart the frontend server and try again.'
+      : text || `HTTP ${response.status}: Failed to fetch resume analysis data`,
+  };
+};
+
 const ResumeDataFromAnalysis = ({ user, resumeData }) => {
   const theme = useTheme();
   const [resumeAnalysisData, setResumeAnalysisData] = useState(null);
@@ -74,12 +91,12 @@ const ResumeDataFromAnalysis = ({ user, resumeData }) => {
       console.log('Response ok:', response.ok);
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        const errorData = await parseApiResponse(response);
         console.error('API Error:', errorData);
         throw new Error(errorData.error || `HTTP ${response.status}: Failed to fetch resume analysis data`);
       }
 
-      const data = await response.json();
+      const data = await parseApiResponse(response);
       console.log('Resume analysis data:', data);
       setResumeAnalysisData(data);
     } catch (err) {

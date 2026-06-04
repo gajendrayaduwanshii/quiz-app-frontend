@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { TextField, Button, Typography, Box, Grid, Paper, Chip, Stack } from "@mui/material";
-import { BrainCircuit, Globe, LockKeyhole, Mail, Sparkles } from "lucide-react";
+import { TextField, Typography, Box, Grid, Paper, Chip, Stack } from "@mui/material";
+import { BrainCircuit, LockKeyhole, Mail, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import FetchData from "./../customHooks/fetchData";
 import PremiumButton from "@/components/premium/PremiumButton";
+import ThreeDScene from "@/components/premium/ThreeDScene";
 
 const Login = () => {
   const router = useRouter();
@@ -67,10 +68,6 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleGoogleLogin = () => {
-    console.log("Google login clicked");
-  };
-
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!validateForm()) return;
@@ -122,6 +119,7 @@ const Login = () => {
   return (
     <Box className="login-wrapper">
       <Box className="skillsync-glow-grid" />
+      <ThreeDScene variant="login" className="login-3d-background" />
       <Paper
         component={motion.div}
         initial={{ opacity: 0, y: 20, scale: 0.98 }}
@@ -288,20 +286,6 @@ const Login = () => {
                     Forgot password?
                   </Link>
                 </Box>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<Globe size={18} />}
-                  onClick={handleGoogleLogin}
-                  sx={{
-                    mt: 2,
-                    color: "#fff",
-                    borderColor: "rgba(255,255,255,0.12)",
-                    bgcolor: "rgba(255,255,255,0.03)",
-                  }}
-                >
-                  Continue with Google
-                </Button>
                 <Typography variant="body2" sx={{ mt: 2 }}>
                   Don't have an account?{" "}
                   <Link href="/registration" style={{ color: "#06B6D4", textDecoration: "none", fontWeight: 800 }}>

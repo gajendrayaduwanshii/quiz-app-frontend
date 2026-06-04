@@ -67,90 +67,43 @@ Rules:
 - If quiz data is missing, create a baseline plan and ask the learner to take a quiz for measurement.
 - Do not invent exact course prices, badges, streaks, or completed achievements.
 - Prefer actionable steps, mini projects, practice drills, and measurable outcomes.
-- Keep each card useful as a dashboard card: detailed but not essay-length.
+- Keep each card useful as a dashboard card: detailed, practical, and easy to scan.
 
-Return valid JSON only. Include 5 to 7 recommendationCards. Each card should contain:
-- title: concise
-- category: one of "Roadmap", "Weak Topics", "Project", "Practice", "Interview", "Resources", "Milestone"
-- priority: "High", "Medium", or "Low"
-- timeCommitment: realistic weekly or total estimate
-- detail: 2-3 sentence explanation personalized to the user
-- steps: 3-5 concrete actions
-- resources: 2-4 resource types or search terms, not fake links
-- successMetric: one measurable way to know this item is done
+Return one detailed AI-generated learning plan as plain text only.
+Do not return JSON. Do not wrap the answer in markdown code fences.
+Use these exact section headings:
+Title
+Personalized Summary
+Profile Signals Used
+Priority Focus Areas
+Detailed Roadmap
+Portfolio Project Plan
+Quiz Improvement Plan
+Recommended Resources
+Weekly Schedule
+Success Metrics
 
-JSON schema:
-{
-  "personalizedPath": {
-    "title": "string",
-    "description": "string",
-    "duration": "string",
-    "difficulty": "string",
-    "progress": number,
-    "skills": ["string"]
-  },
-  "courses": [
-    {
-      "id": number,
-      "title": "string",
-      "provider": "string",
-      "rating": number,
-      "duration": "string",
-      "difficulty": "string",
-      "type": "string",
-      "price": "string",
-      "skills": ["string"],
-      "description": "string",
-      "progress": number,
-      "recommended": boolean
-    }
-  ],
-  "skillGaps": [
-    {
-      "skill": "string",
-      "importance": number,
-      "currentLevel": number,
-      "targetLevel": number,
-      "courses": ["string"]
-    }
-  ],
-  "learningStreak": {
-    "current": number,
-    "longest": number,
-    "totalHours": number,
-    "weeklyGoal": number
-  },
-  "achievements": [
-    {
-      "title": "string",
-      "description": "string",
-      "earned": boolean,
-      "date": "string|null"
-    }
-  ],
-  "recommendationCards": [
-    {
-      "title": "string",
-      "category": "Roadmap|Weak Topics|Project|Practice|Interview|Resources|Milestone",
-      "priority": "High|Medium|Low",
-      "timeCommitment": "string",
-      "detail": "string",
-      "steps": ["string"],
-      "resources": ["string"],
-      "successMetric": "string"
-    }
-  ]
-}
+Make every section specific to the profile. Use bullets and numbered lists where helpful.
 `;
 
-    const output = await generateAIText(prompt, { temperature: 0.35, maxTokens: 2200 });
-    
-    const jsonMatch = output.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error('No valid JSON found in response');
+    const output = await generateAIText(prompt, {
+      temperature: 0.2,
+      maxTokens: 3200,
+    });
+
+    const aiGeneratedContent = String(output || "").trim();
+
+    if (!aiGeneratedContent) {
+      throw new Error("AI response was empty");
     }
 
-    const recommendations = JSON.parse(jsonMatch[0]);
+    const titleMatch = aiGeneratedContent.match(/(?:^|\n)\s*Title\s*:?\s*\n?(.+)/i);
+    const recommendations = {
+      detailedLearningPlan: {
+        title: titleMatch?.[1]?.trim() || "AI-Based Detailed Learning Plan",
+        aiGeneratedContent,
+      },
+    };
     
     res.status(200).json({ recommendations });
   } catch (error) {
