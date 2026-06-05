@@ -42,14 +42,24 @@ const buildGeminiContents = (prompt, messages = []) => {
   };
 };
 
+const unique = (items) => [...new Set(items.filter(Boolean))];
+
+const getGoogleApiKeys = () =>
+  unique([
+    process.env.GOOGLE_API_KEY,
+    process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
+    process.env.NEXT_PUBLIC_GOOGLE_API_KEY1,
+    process.env.NEXT_PUBLIC_GOOGLE_API_KEY2,
+  ]);
+
 const getAIConfig = () => {
   const provider = (process.env.AI_PROVIDER || "").toLowerCase();
   const explicitBaseURL = process.env.AI_BASE_URL || process.env.OPENAI_BASE_URL;
   const googleBaseURL =
     process.env.GOOGLE_GENERATIVE_LANGUAGE_BASE_URL ||
     GOOGLE_GENERATIVE_LANGUAGE_BASE_URL;
-  const googleApiKey =
-    process.env.GOOGLE_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+  const googleApiKeys = getGoogleApiKeys();
+  const googleApiKey = googleApiKeys[0];
   const openaiApiKey = process.env.OPENAI_API_KEY;
 
   const shouldUseGoogleDefaults =
@@ -61,6 +71,7 @@ const getAIConfig = () => {
 
   return {
     apiKey,
+    googleApiKeys,
     provider,
     useGoogleNative,
     baseURL: explicitBaseURL,
@@ -95,47 +106,66 @@ const getClient = () => {
 };
 
 const generateGeminiText = async (prompt, options, config) => {
-  assertApiKey(config);
+  if (!config.googleApiKeys?.length) {
+    assertApiKey(config);
+  }
 
   const { contents, systemInstruction } = buildGeminiContents(
     prompt,
     options.messages || []
   );
 
-  const response = await fetch(
-    `${config.googleBaseURL}/models/${options.model || config.model}:generateContent`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-goog-api-key": config.apiKey,
-      },
-      body: JSON.stringify({
-        contents,
-        ...(systemInstruction ? { systemInstruction } : {}),
-        generationConfig: {
-          temperature: options.temperature ?? 0.4,
-          ...(options.responseMimeType
-            ? { responseMimeType: options.responseMimeType }
-            : {}),
-          ...(options.maxTokens ? { maxOutputTokens: options.maxTokens } : {}),
-        },
-      }),
-    }
-  );
+  const apiKeys = config.googleApiKeys?.length
+    ? config.googleApiKeys
+    : [config.apiKey];
+  let lastErrorText = "";
+  let lastStatus = 0;
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Gemini API request failed: ${response.status} ${errorText}`);
+  for (const [index, apiKey] of apiKeys.entries()) {
+    const response = await fetch(
+      `${config.googleBaseURL}/models/${options.model || config.model}:generateContent`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-goog-api-key": apiKey,
+        },
+        body: JSON.stringify({
+          contents,
+          ...(systemInstruction ? { systemInstruction } : {}),
+          generationConfig: {
+            temperature: options.temperature ?? 0.4,
+            ...(options.responseMimeType
+              ? { responseMimeType: options.responseMimeType }
+              : {}),
+            ...(options.maxTokens ? { maxOutputTokens: options.maxTokens } : {}),
+          },
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      lastStatus = response.status;
+      lastErrorText = await response.text();
+      const shouldTryNextKey =
+        [403, 429, 500, 503].includes(response.status) &&
+        index < apiKeys.length - 1;
+
+      if (shouldTryNextKey) continue;
+
+      throw new Error(`Gemini API request failed: ${response.status} ${lastErrorText}`);
+    }
+
+    const data = await response.json();
+
+    return (
+      data?.candidates?.[0]?.content?.parts
+        ?.map((part) => part.text || "")
+        .join("") || ""
+    );
   }
 
-  const data = await response.json();
-
-  return (
-    data?.candidates?.[0]?.content?.parts
-      ?.map((part) => part.text || "")
-      .join("") || ""
-  );
+  throw new Error(`Gemini API request failed: ${lastStatus} ${lastErrorText}`);
 };
 
 export const generateAIText = async (prompt, options = {}) => {
