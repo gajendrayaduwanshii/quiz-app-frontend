@@ -154,13 +154,13 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
             >
               <Stack direction="row" spacing={1.2} alignItems="center" sx={{ color: item.color, mb: 1.2 }}>
                 {item.icon}
-                <Typography sx={{ color: "text.secondary", fontSize: 12, fontWeight: 900 }}>
+                <Typography sx={{ color: "text.secondary", fontSize: "0.75rem", fontWeight: 900 }}>
                   {item.label}
                 </Typography>
               </Stack>
               <Typography
                 sx={{
-                  fontSize: 24,
+                  fontSize: "1.5rem",
                   fontWeight: 950,
                   lineHeight: 1.1,
                   overflowWrap: "anywhere",
@@ -168,7 +168,7 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
               >
                 {item.value}
               </Typography>
-              <Typography sx={{ color: "text.secondary", mt: 0.8, fontSize: 13 }}>
+              <Typography sx={{ color: "text.secondary", mt: 0.8, fontSize: "0.8125rem" }}>
                 {item.detail}
               </Typography>
             </PremiumCard>
@@ -281,7 +281,7 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
                           border: "1px solid rgba(255,255,255,0.08)",
                         }}
                       >
-                        <Typography sx={{ color: ringColor, fontWeight: 950, fontSize: 18 }}>
+                        <Typography sx={{ color: ringColor, fontWeight: 950, fontSize: "1.125rem" }}>
                           {skill.percentage}%
                         </Typography>
                       </Box>
@@ -290,10 +290,10 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
 
                   <Box>
                     <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.8 }}>
-                      <Typography sx={{ color: "text.secondary", fontSize: 13, fontWeight: 800 }}>
+                      <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem", fontWeight: 800 }}>
                         Readiness
                       </Typography>
-                      <Typography sx={{ color: ringColor, fontSize: 13, fontWeight: 950 }}>
+                      <Typography sx={{ color: ringColor, fontSize: "0.8125rem", fontWeight: 950 }}>
                         {performance.label}
                       </Typography>
                     </Stack>
@@ -320,10 +320,10 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
                       bgcolor: alpha(ringColor, 0.08),
                     }}
                   >
-                    <Typography sx={{ color: "text.secondary", fontSize: 12, fontWeight: 850, mb: 0.4 }}>
+                    <Typography sx={{ color: "text.secondary", fontSize: "0.75rem", fontWeight: 850, mb: 0.4 }}>
                       Next recommendation
                     </Typography>
-                    <Typography sx={{ fontSize: 13.5, lineHeight: 1.45 }}>
+                    <Typography sx={{ fontSize: "0.84375rem", lineHeight: 1.45 }}>
                       {recommendation}
                     </Typography>
                   </Box>
@@ -338,7 +338,7 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
                         bgcolor: "rgba(6,182,212,0.08)",
                       }}
                     >
-                      <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                      <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem" }}>
                         Start one quiz for this skill to unlock performance signals.
                       </Typography>
                     </Box>

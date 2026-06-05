@@ -56,7 +56,7 @@ const MetricCard = ({
                 fontWeight: 950,
                 lineHeight: 1.08,
                 overflowWrap: "anywhere",
-                fontSize: { xs: 20, md: 22 },
+                fontSize: { xs: "1.25rem", md: "1.375rem" },
               }}
             >
               {value}
@@ -89,10 +89,10 @@ const MetricCard = ({
       {typeof progress === "number" && (
         <Box sx={{ mt: 2.2 }}>
           <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.8 }}>
-            <Typography sx={{ color: "text.secondary", fontSize: 12, fontWeight: 800 }}>
+            <Typography sx={{ color: "text.secondary", fontSize: "0.75rem", fontWeight: 800 }}>
               Signal strength
             </Typography>
-            <Typography sx={{ color: accent, fontSize: 12, fontWeight: 950 }}>
+            <Typography sx={{ color: accent, fontSize: "0.75rem", fontWeight: 950 }}>
               {cappedProgress}/100
             </Typography>
           </Stack>

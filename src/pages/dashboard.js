@@ -285,10 +285,10 @@ const Dashboard = () => {
                           bgcolor: `${color}12`,
                         }}
                       >
-                        <Typography sx={{ color: "text.secondary", fontSize: 12, fontWeight: 850 }}>
+                        <Typography sx={{ color: "text.secondary", fontSize: "0.75rem", fontWeight: 850 }}>
                           {label}
                         </Typography>
-                        <Typography sx={{ color: "#fff", fontSize: 24, fontWeight: 950, lineHeight: 1.15 }}>
+                        <Typography sx={{ color: "#fff", fontSize: "1.5rem", fontWeight: 950, lineHeight: 1.15 }}>
                           {value}
                         </Typography>
                       </Box>
@@ -516,17 +516,17 @@ const Dashboard = () => {
                             border: "1px solid rgba(255,255,255,0.08)",
                           }}
                         >
-                          <Typography sx={{ color: performanceColor, fontWeight: 950, fontSize: { xs: 15, sm: 18 } }}>
+                          <Typography sx={{ color: performanceColor, fontWeight: 950, fontSize: { xs: "0.9375rem", sm: "1.125rem" } }}>
                             {percentage}%
                           </Typography>
                         </Box>
                       </Box>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
                         <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.8 }}>
-                          <Typography sx={{ color: "text.secondary", fontSize: 13, fontWeight: 800 }}>
+                          <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem", fontWeight: 800 }}>
                             Accuracy
                           </Typography>
-                          <Typography sx={{ color: performanceColor, fontSize: 13, fontWeight: 950 }}>
+                          <Typography sx={{ color: performanceColor, fontSize: "0.8125rem", fontWeight: 950 }}>
                             {correctAnswers}/{totalQuestions}
                           </Typography>
                         </Stack>
@@ -569,8 +569,8 @@ const Dashboard = () => {
                         }}
                       >
                         <Box sx={{ color: item.color, lineHeight: 0, mb: 0.7 }}>{item.icon}</Box>
-                        <Typography sx={{ fontWeight: 950, lineHeight: 1, fontSize: { xs: 14, sm: 16 } }}>{item.value}</Typography>
-                        <Typography sx={{ color: "text.secondary", fontSize: { xs: 10.5, sm: 12 }, mt: 0.35 }}>
+                        <Typography sx={{ fontWeight: 950, lineHeight: 1, fontSize: { xs: "0.875rem", sm: "1rem" } }}>{item.value}</Typography>
+                        <Typography sx={{ color: "text.secondary", fontSize: { xs: "0.65625rem", sm: "0.75rem" }, mt: 0.35 }}>
                           {item.label}
                         </Typography>
                       </Box>
@@ -593,7 +593,7 @@ const Dashboard = () => {
                     }}
                   >
                     <Eye size={16} />
-                    <Typography variant="body2" fontWeight={900} sx={{ fontSize: { xs: 12, sm: 14 } }}>
+                    <Typography variant="body2" fontWeight={900} sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}>
                       Open review
                     </Typography>
                   </Box>

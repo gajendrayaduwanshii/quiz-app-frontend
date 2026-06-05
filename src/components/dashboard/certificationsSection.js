@@ -105,7 +105,7 @@ const CertificationsSection = ({ certifications, parseCertifications }) => {
                         height: 48,
                         boxShadow: `0 4px 12px ${alpha(certColor, 0.3)}`
                       }}>
-                        <EmojiEventsIcon sx={{ fontSize: 24 }} />
+                        <EmojiEventsIcon sx={{ fontSize: "1.5rem" }} />
                       </Avatar>
                       <Box sx={{ flexGrow: 1 }}>
                         <Typography variant="h6" fontWeight="bold" sx={{
@@ -156,14 +156,14 @@ const CertificationsSection = ({ certifications, parseCertifications }) => {
                     {/* Details */}
                     <Stack spacing={2}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <CheckCircleIcon sx={{ fontSize: 16, color: theme.palette.success.main }} />
+                        <CheckCircleIcon sx={{ fontSize: "1rem", color: theme.palette.success.main }} />
                         <Typography variant="body2" color="text.secondary">
                           Verified Professional Credential
                         </Typography>
                       </Box>
                       
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <StarIcon sx={{ fontSize: 16, color: theme.palette.warning.main }} />
+                        <StarIcon sx={{ fontSize: "1rem", color: theme.palette.warning.main }} />
                         <Typography variant="body2" color="text.secondary">
                           Industry Recognized
                         </Typography>
@@ -180,7 +180,7 @@ const CertificationsSection = ({ certifications, parseCertifications }) => {
                       textAlign: 'center'
                     }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                        <MilitaryTechIcon sx={{ fontSize: 16, color: certColor }} />
+                        <MilitaryTechIcon sx={{ fontSize: "1rem", color: certColor }} />
                         <Typography variant="body2" fontWeight="bold" sx={{ color: certColor }}>
                           Certified Professional
                         </Typography>
@@ -211,7 +211,7 @@ const CertificationsSection = ({ certifications, parseCertifications }) => {
             mb: 2,
             mx: 'auto'
           }}>
-            <EmojiEventsIcon sx={{ fontSize: 40, color: theme.palette.grey[500] }} />
+            <EmojiEventsIcon sx={{ fontSize: "2.5rem", color: theme.palette.grey[500] }} />
           </Box>
           <Typography variant="h6" color="text.secondary" fontWeight="bold" sx={{ mb: 1 }}>
             No Certifications Listed

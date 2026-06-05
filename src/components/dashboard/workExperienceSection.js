@@ -104,7 +104,7 @@ const WorkExperienceSection = ({ workExperiences }) => {
                       height: 48,
                       boxShadow: `0 4px 12px ${alpha(experienceColor, 0.3)}`
                     }}>
-                      <BusinessIcon sx={{ fontSize: 24 }} />
+                      <BusinessIcon sx={{ fontSize: "1.5rem" }} />
                     </Avatar>
                     <Box sx={{ flexGrow: 1 }}>
                       <Typography variant="h6" fontWeight="bold" sx={{
@@ -147,7 +147,7 @@ const WorkExperienceSection = ({ workExperiences }) => {
                   {/* Details */}
                   <Stack spacing={2}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <CalendarTodayIcon sx={{ fontSize: 16, color: theme.palette.text.secondary }} />
+                      <CalendarTodayIcon sx={{ fontSize: "1rem", color: theme.palette.text.secondary }} />
                       <Typography variant="body2" color="text.secondary">
                         {job.startDate || 'N/A'} - {job.endDate || 'Present'}
                       </Typography>
@@ -155,7 +155,7 @@ const WorkExperienceSection = ({ workExperiences }) => {
                     
                     {job.location && (
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <LocationOnIcon sx={{ fontSize: 16, color: theme.palette.text.secondary }} />
+                        <LocationOnIcon sx={{ fontSize: "1rem", color: theme.palette.text.secondary }} />
                         <Typography variant="body2" color="text.secondary">
                           {job.location}
                         </Typography>
@@ -188,14 +188,14 @@ const WorkExperienceSection = ({ workExperiences }) => {
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
                       {isCurrent ? (
                         <>
-                          <TrendingUpIcon sx={{ fontSize: 16, color: theme.palette.success.main }} />
+                          <TrendingUpIcon sx={{ fontSize: "1rem", color: theme.palette.success.main }} />
                           <Typography variant="body2" fontWeight="bold" sx={{ color: theme.palette.success.main }}>
                             Current Position
                           </Typography>
                         </>
                       ) : (
                         <>
-                          <StarIcon sx={{ fontSize: 16, color: experienceColor }} />
+                          <StarIcon sx={{ fontSize: "1rem", color: experienceColor }} />
                           <Typography variant="body2" fontWeight="bold" sx={{ color: experienceColor }}>
                             Previous Experience
                           </Typography>

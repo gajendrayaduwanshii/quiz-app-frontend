@@ -27,18 +27,16 @@ export const skillSyncTheme = createTheme({
     divider: "rgba(255,255,255,0.08)",
   },
   typography: {
-    htmlFontSize: 16,
-    fontSize: 16,
     fontFamily:
       "Inter, Geist, Satoshi, Outfit, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
     h1: { fontWeight: 900, letterSpacing: 0, fontSize: 'clamp(2.4rem, 4vw, 3.6rem)' },
     h2: { fontWeight: 900, letterSpacing: 0, fontSize: 'clamp(2rem, 3.2vw, 3rem)' },
     h3: { fontWeight: 850, letterSpacing: 0, fontSize: 'clamp(1.75rem, 2.4vw, 2.4rem)' },
     h4: { fontWeight: 850, letterSpacing: 0, fontSize: 'clamp(1.45rem, 1.95vw, 2rem)' },
-    h5: { fontWeight: 800, letterSpacing: 0, fontSize: 'clamp(1.2rem, 1.45vw, 1.6rem)' },
-    h6: { fontWeight: 800, letterSpacing: 0, fontSize: 'clamp(1.05rem, 1.1vw, 1.25rem)' },
-    body1: { fontSize: 'clamp(1rem, 1.25vw, 1.05rem)', lineHeight: 1.65 },
-    body2: { fontSize: 'clamp(0.95rem, 1.05vw, 1rem)', lineHeight: 1.6 },
+    h5: { fontWeight: 800, letterSpacing: 0, fontSize: 'clamp(1.08rem, 1.35vw, 1.55rem)', overflowWrap: "anywhere" },
+    h6: { fontWeight: 800, letterSpacing: 0, fontSize: 'clamp(1rem, 1.05vw, 1.2rem)', overflowWrap: "anywhere" },
+    body1: { fontSize: 'clamp(0.94rem, 1.05vw, 1.03rem)', lineHeight: 1.62, overflowWrap: "anywhere" },
+    body2: { fontSize: 'clamp(0.88rem, 0.95vw, 0.98rem)', lineHeight: 1.58, overflowWrap: "anywhere" },
     button: { textTransform: "none", fontWeight: 700, fontSize: 'clamp(0.95rem, 1vw, 1rem)' },
   },
   shape: {
@@ -74,7 +72,7 @@ export const skillSyncTheme = createTheme({
         head: {
           color: "#94A3B8",
           fontWeight: 850,
-          fontSize: 12,
+          fontSize: "0.75rem",
           textTransform: "uppercase",
         },
       },
@@ -181,6 +179,8 @@ export const skillSyncTheme = createTheme({
         root: {
           borderRadius: 14,
           minHeight: 42,
+          minWidth: 0,
+          whiteSpace: "normal",
         },
         containedPrimary: {
           background:

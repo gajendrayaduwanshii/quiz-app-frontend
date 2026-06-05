@@ -78,10 +78,10 @@ const SummaryCards = ({ user, strongest, weakest, years }) => {
                   }}
                 >
                   <Box sx={{ textAlign: "center" }}>
-                    <Typography sx={{ fontSize: 28, fontWeight: 950, lineHeight: 1 }}>
+                    <Typography sx={{ fontSize: "1.75rem", fontWeight: 950, lineHeight: 1 }}>
                       {profileSignal}
                     </Typography>
-                    <Typography sx={{ color: "text.secondary", fontSize: 12, fontWeight: 800 }}>
+                    <Typography sx={{ color: "text.secondary", fontSize: "0.75rem", fontWeight: 800 }}>
                       signal
                     </Typography>
                   </Box>

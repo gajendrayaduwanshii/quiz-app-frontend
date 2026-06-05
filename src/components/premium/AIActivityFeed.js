@@ -18,8 +18,8 @@ const AIActivityFeed = ({ items = [] }) => {
     <PremiumCard hover={false} glow="rgba(6,182,212,0.16)" sx={{ p: 2.4, height: "100%" }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
         <Box>
-          <Typography sx={{ fontWeight: 950, fontSize: 18 }}>AI Activity Feed</Typography>
-          <Typography sx={{ color: "text.secondary", fontSize: 13 }}>Live product signals and recommendations</Typography>
+          <Typography sx={{ fontWeight: 950, fontSize: "1.125rem" }}>AI Activity Feed</Typography>
+          <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem" }}>Live product signals and recommendations</Typography>
         </Box>
         <Chip label="Live" size="small" sx={{ color: "#86EFAC", bgcolor: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.24)", fontWeight: 900 }} />
       </Stack>
@@ -57,10 +57,10 @@ const AIActivityFeed = ({ items = [] }) => {
               </Box>
               <Box sx={{ minWidth: 0 }}>
                 <Stack direction="row" spacing={0.8} alignItems="center">
-                  <Typography sx={{ fontWeight: 900, fontSize: 13.5 }}>{item.title}</Typography>
-                  <Chip label={item.tag || "AI"} size="small" sx={{ height: 20, fontSize: 10, bgcolor: "rgba(6,182,212,0.10)", color: "#CFFAFE" }} />
+                  <Typography sx={{ fontWeight: 900, fontSize: "0.84375rem" }}>{item.title}</Typography>
+                  <Chip label={item.tag || "AI"} size="small" sx={{ height: 20, fontSize: "0.625rem", bgcolor: "rgba(6,182,212,0.10)", color: "#CFFAFE" }} />
                 </Stack>
-                <Typography sx={{ color: "text.secondary", fontSize: 12.5 }}>{item.detail}</Typography>
+                <Typography sx={{ color: "text.secondary", fontSize: "0.78125rem" }}>{item.detail}</Typography>
               </Box>
             </Box>
           );

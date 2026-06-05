@@ -72,13 +72,13 @@ const DashboardHeader = memo(({ user, onLearningQuiz }) => {
               fontWeight: 950,
               lineHeight: 1.06,
               mb: 1.5,
-              fontSize: { xs: 28, sm: 34, md: 46 },
+              fontSize: { xs: "1.75rem", sm: "2.125rem", md: "2.875rem" },
               overflowWrap: "anywhere",
             }}
           >
             Welcome back, {user.name || 'Future-ready talent'}
           </Typography>
-          <Typography sx={{ color: 'text.secondary', fontSize: { xs: 15, md: 17 } }}>
+          <Typography sx={{ color: 'text.secondary', fontSize: { xs: "0.9375rem", md: "1.0625rem" } }}>
             Your career cockpit for skill signal, quiz performance, resume strength, and AI-guided growth momentum.
           </Typography>
 
@@ -107,11 +107,11 @@ const DashboardHeader = memo(({ user, onLearningQuiz }) => {
               >
                 <Stack direction="row" spacing={0.9} alignItems="center" sx={{ color: item.color, mb: 0.7 }}>
                   {item.icon}
-                  <Typography sx={{ color: 'text.secondary', fontSize: 12, fontWeight: 800 }}>
+                  <Typography sx={{ color: 'text.secondary', fontSize: "0.75rem", fontWeight: 800 }}>
                     {item.label}
                   </Typography>
                 </Stack>
-                <Typography sx={{ fontSize: 24, fontWeight: 950, lineHeight: 1 }}>
+                <Typography sx={{ fontSize: "1.5rem", fontWeight: 950, lineHeight: 1 }}>
                   {item.value}
                 </Typography>
               </Box>
@@ -148,9 +148,9 @@ const DashboardHeader = memo(({ user, onLearningQuiz }) => {
               }}
             />
           </Stack>
-          <Typography sx={{ fontSize: 44, lineHeight: 1, fontWeight: 950, mb: 1 }}>
+          <Typography sx={{ fontSize: "2.75rem", lineHeight: 1, fontWeight: 950, mb: 1 }}>
             {commandScore}
-            <Typography component="span" sx={{ color: 'text.secondary', fontSize: 18, fontWeight: 900 }}>
+            <Typography component="span" sx={{ color: 'text.secondary', fontSize: "1.125rem", fontWeight: 900 }}>
               /100
             </Typography>
           </Typography>
@@ -167,7 +167,7 @@ const DashboardHeader = memo(({ user, onLearningQuiz }) => {
               },
             }}
           />
-          <Typography sx={{ color: 'text.secondary', mt: 1.4, mb: 2, fontSize: 13 }}>
+          <Typography sx={{ color: 'text.secondary', mt: 1.4, mb: 2, fontSize: "0.8125rem" }}>
             Blends skills, resume, experience, and latest assessment performance.
           </Typography>
 

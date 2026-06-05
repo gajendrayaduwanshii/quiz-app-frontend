@@ -74,7 +74,7 @@ const CommandPalette = () => {
               placeholder="Search actions, pages, tools..."
               sx={{ flex: 1, minWidth: 0, color: "#fff" }}
             />
-            <Typography sx={{ color: "text.secondary", fontSize: 12 }}>Esc</Typography>
+            <Typography sx={{ color: "text.secondary", fontSize: "0.75rem" }}>Esc</Typography>
           </Box>
           <List disablePadding sx={{ p: 1 }}>
             {filtered.map((item) => {
@@ -88,7 +88,7 @@ const CommandPalette = () => {
                     primary={item.title}
                     secondary={item.description}
                     primaryTypographyProps={{ color: "#fff", fontWeight: 900, overflowWrap: "anywhere" }}
-                    secondaryTypographyProps={{ color: "#94A3B8", fontSize: 12, overflowWrap: "anywhere" }}
+                    secondaryTypographyProps={{ color: "#94A3B8", fontSize: "0.75rem", overflowWrap: "anywhere" }}
                   />
                 </ListItemButton>
               );

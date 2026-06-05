@@ -268,7 +268,7 @@ const Profile = () => {
               sx={{
                 width: 74,
                 height: 74,
-                fontSize: 30,
+                fontSize: "1.875rem",
                 fontWeight: 900,
                 background: "linear-gradient(135deg, #7C3AED, #06B6D4)",
                 boxShadow: "0 0 42px rgba(124,58,237,0.34)",
@@ -294,7 +294,7 @@ const Profile = () => {
                 sx={{
                   fontWeight: 900,
                   lineHeight: 1.08,
-                  fontSize: { xs: 30, sm: 36, md: 48 },
+                  fontSize: { xs: "1.875rem", sm: "2.25rem", md: "3rem" },
                   overflowWrap: "anywhere",
                 }}
               >

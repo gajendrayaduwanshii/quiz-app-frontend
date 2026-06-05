@@ -184,7 +184,7 @@ const AICopilot = () => {
                 </Box>
                 <Box sx={{ minWidth: 0 }}>
                   <Typography sx={{ fontWeight: 950 }}>SkillSync Chatbot</Typography>
-                  <Typography sx={{ color: "text.secondary", fontSize: 12, overflowWrap: "anywhere" }}>
+                  <Typography sx={{ color: "text.secondary", fontSize: "0.75rem", overflowWrap: "anywhere" }}>
                     {loadingUser ? "Loading your data..." : "Answers from your profile, resume, and quizzes"}
                   </Typography>
                 </Box>
@@ -211,7 +211,7 @@ const AICopilot = () => {
                         color: isUser ? "#ECFEFF" : "text.secondary",
                         whiteSpace: "pre-wrap",
                         overflowWrap: "anywhere",
-                        fontSize: 13,
+                        fontSize: "0.8125rem",
                         lineHeight: 1.55,
                       }}
                     >
@@ -221,7 +221,7 @@ const AICopilot = () => {
                 })}
 
                 {sending && (
-                  <Stack direction="row" spacing={1} alignItems="center" sx={{ color: "text.secondary", fontSize: 13 }}>
+                  <Stack direction="row" spacing={1} alignItems="center" sx={{ color: "text.secondary", fontSize: "0.8125rem" }}>
                     <CircularProgress size={16} />
                     <span>AI thinking...</span>
                   </Stack>
@@ -231,7 +231,7 @@ const AICopilot = () => {
 
             <Stack spacing={1.25} sx={{ p: 2, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
               {error && (
-                <Alert severity={error.includes("copy") ? "success" : "warning"} sx={{ py: 0.25, fontSize: 12 }}>
+                <Alert severity={error.includes("copy") ? "success" : "warning"} sx={{ py: 0.25, fontSize: "0.75rem" }}>
                   {error}
                 </Alert>
               )}
@@ -252,7 +252,7 @@ const AICopilot = () => {
                       borderRadius: "999px",
                       px: 1.2,
                       py: 0.75,
-                      fontSize: 12,
+                      fontSize: "0.75rem",
                       cursor: "pointer",
                     }}
                   >

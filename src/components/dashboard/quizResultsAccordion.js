@@ -43,7 +43,7 @@ const QuizResultsAccordion = ({ quizResults }) => {
         border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`
       }}>
         <CardContent sx={{ textAlign: 'center', py: 4 }}>
-          <PsychologyIcon sx={{ fontSize: 48, color: theme.palette.info.main, mb: 2 }} />
+          <PsychologyIcon sx={{ fontSize: "3rem", color: theme.palette.info.main, mb: 2 }} />
           <Typography variant="h6" color="text.secondary">
             No quiz results available
           </Typography>
@@ -101,7 +101,7 @@ const QuizResultsAccordion = ({ quizResults }) => {
             height: 48,
             boxShadow: theme.shadows[4]
           }}>
-            <PsychologyIcon sx={{ fontSize: 28 }} />
+            <PsychologyIcon sx={{ fontSize: "1.75rem" }} />
           </Avatar>
           <Box>
             <Typography variant="h4" fontWeight="bold" sx={{ 
@@ -181,7 +181,7 @@ const QuizResultsAccordion = ({ quizResults }) => {
                           boxShadow: `0 12px 32px ${alpha(getPerformanceColor(stats.percentage), 0.4)}`,
                         }
                       }}>
-                        <QuizIcon sx={{ fontSize: 32 }} />
+                        <QuizIcon sx={{ fontSize: "2rem" }} />
                       </Avatar>
                       <Box sx={{
                         position: 'absolute',

@@ -55,7 +55,7 @@ const WorkExperienceSectionPremium = ({ workExperiences = [] }) => {
                       <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900, lineHeight: 1.2 }}>
                         {title}
                       </Typography>
-                      <Typography sx={{ color: "text.secondary", fontSize: 14, mt: 0.4 }}>
+                      <Typography sx={{ color: "text.secondary", fontSize: "0.875rem", mt: 0.4 }}>
                         {job.company || "Company"}
                       </Typography>
                     </Box>
@@ -78,10 +78,10 @@ const WorkExperienceSectionPremium = ({ workExperiences = [] }) => {
                       mb: 2,
                     }}
                   >
-                    <Typography sx={{ color: accent, fontWeight: 900, fontSize: 25 }}>
+                    <Typography sx={{ color: accent, fontWeight: 900, fontSize: "1.5625rem" }}>
                       {calculateDuration(job.startDate, job.endDate)}
                     </Typography>
-                    <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                    <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem" }}>
                       {isCurrent ? "Active role duration" : "Completed role duration"}
                     </Typography>
                   </Box>
@@ -107,7 +107,7 @@ const WorkExperienceSectionPremium = ({ workExperiences = [] }) => {
                   </Stack>
 
                   {description && (
-                    <Typography sx={{ color: "text.secondary", mt: 2, fontSize: 14, lineHeight: 1.6 }}>
+                    <Typography sx={{ color: "text.secondary", mt: 2, fontSize: "0.875rem", lineHeight: 1.6 }}>
                       {description}
                     </Typography>
                   )}

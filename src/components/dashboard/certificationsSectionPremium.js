@@ -54,7 +54,7 @@ const CertificationsSectionPremium = ({ certifications, parseCertifications }) =
                       <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900, lineHeight: 1.25 }}>
                         {cert}
                       </Typography>
-                      <Typography sx={{ color: "text.secondary", fontSize: 14, mt: 0.5 }}>
+                      <Typography sx={{ color: "text.secondary", fontSize: "0.875rem", mt: 0.5 }}>
                         Professional credential
                       </Typography>
                     </Box>
@@ -71,10 +71,10 @@ const CertificationsSectionPremium = ({ certifications, parseCertifications }) =
                   >
                     <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
                       <Box>
-                        <Typography sx={{ color: accent, fontWeight: 900, fontSize: 22 }}>
+                        <Typography sx={{ color: accent, fontWeight: 900, fontSize: "1.375rem" }}>
                           {certType}
                         </Typography>
-                        <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                        <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem" }}>
                           Certification category
                         </Typography>
                       </Box>

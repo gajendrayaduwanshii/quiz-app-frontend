@@ -28,7 +28,7 @@ const QuizStepper = memo(({ activeStep, questions, answers = {}, submitted = fal
               ? "rgba(34,197,94,0.14)"
               : "rgba(255,255,255,0.045)",
             boxShadow: active ? "0 12px 28px rgba(34,211,238,0.18)" : "none",
-            fontSize: { xs: 12, sm: 13 },
+            fontSize: { xs: "0.75rem", sm: "0.8125rem" },
             fontWeight: 900,
           }}
         >
@@ -51,10 +51,10 @@ const QuizStepper = memo(({ activeStep, questions, answers = {}, submitted = fal
       }}
     >
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.25 }}>
-        <Typography sx={{ color: "text.secondary", fontWeight: 850, fontSize: 13 }}>
+        <Typography sx={{ color: "text.secondary", fontWeight: 850, fontSize: "0.8125rem" }}>
           Question Map
         </Typography>
-        <Typography sx={{ color: "#fff", fontWeight: 900, fontSize: 13 }}>
+        <Typography sx={{ color: "#fff", fontWeight: 900, fontSize: "0.8125rem" }}>
           {submitted ? "Submitted" : `${Math.round(progress)}%`}
         </Typography>
       </Stack>

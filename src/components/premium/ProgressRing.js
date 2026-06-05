@@ -40,7 +40,7 @@ const ProgressRing = ({
           <Typography sx={{ color: "#fff", fontSize: size > 90 ? 28 : 20, fontWeight: 950, lineHeight: 1 }}>
             {safeValue}%
           </Typography>
-          <Typography sx={{ color: "text.secondary", fontSize: 11, fontWeight: 850 }}>
+          <Typography sx={{ color: "text.secondary", fontSize: "0.6875rem", fontWeight: 850 }}>
             {label}
           </Typography>
         </Box>

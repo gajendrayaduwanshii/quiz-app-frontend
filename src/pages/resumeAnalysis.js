@@ -82,7 +82,7 @@ const ResumeAnalysis = () => {
           >
             <UploadCloud size={34} color="#fff" />
           </Box>
-          <Typography variant="h5" sx={{ color: "#fff", fontWeight: 900, mb: 1, fontSize: { xs: 22, md: 28 }, overflowWrap: "anywhere" }}>
+          <Typography variant="h5" sx={{ color: "#fff", fontWeight: 900, mb: 1, fontSize: { xs: "1.375rem", md: "1.75rem" }, overflowWrap: "anywhere" }}>
             No Resume Found
           </Typography>
           <Typography sx={{ color: "text.secondary", mb: 3, overflowWrap: "anywhere" }}>
@@ -133,7 +133,7 @@ const ResumeAnalysis = () => {
                   <Target size={23} color="#fff" />
                 </Box>
                 <Box>
-                  <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                  <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem" }}>
                     Resume Readiness
                   </Typography>
                   <Typography variant="h4" sx={{ color: "#fff", fontWeight: 950 }}>
@@ -192,7 +192,7 @@ const ResumeAnalysis = () => {
             {aiInsights.map((item) => (
               <Grid item size={{ xs: 12, md: 4 }} key={item.title}>
                 <PremiumCard sx={{ p: 2.4 }} glow="rgba(124,58,237,0.14)">
-                  <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                  <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem" }}>
                     {item.title}
                   </Typography>
                   <Typography variant="h4" sx={{ color: "#fff", fontWeight: 950 }}>

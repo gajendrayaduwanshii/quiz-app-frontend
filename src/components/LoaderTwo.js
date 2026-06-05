@@ -14,10 +14,12 @@ const LoaderTwo = ({ text }) => (
         align-items: center;
         z-index: 9999;
         flex-direction: column;
+        padding: 24px;
       }
       .loader-container {
         text-align: center;
         color: #fff;
+        max-width: min(520px, 100%);
       }
       .spinner {
         margin: 0 auto 20px;
@@ -29,9 +31,11 @@ const LoaderTwo = ({ text }) => (
         animation: spin 1s linear infinite;
       }
       .loader-text {
-        font-size: 1.5rem;
+        font-size: clamp(1rem, 4vw, 1.35rem);
         font-weight: 600;
-        letter-spacing: 0.05em;
+        letter-spacing: 0;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
         animation: blink 1.5s infinite;
       }
       @keyframes spin {

@@ -93,7 +93,7 @@ const QuizResultsModal = ({ open, onClose, quizResults = [] }) => {
     >
       <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.9, color }}>
         {icon}
-        <Typography sx={{ fontWeight: 950, fontSize: 13 }}>{label}</Typography>
+        <Typography sx={{ fontWeight: 950, fontSize: "0.8125rem" }}>{label}</Typography>
       </Stack>
       <Typography
         sx={{
@@ -155,7 +155,7 @@ const QuizResultsModal = ({ open, onClose, quizResults = [] }) => {
             <Typography
               variant="h4"
               className="gradient-text"
-              sx={{ fontWeight: 950, lineHeight: 1.08, letterSpacing: 0, fontSize: { xs: 28, md: 34 }, overflowWrap: "anywhere" }}
+              sx={{ fontWeight: 950, lineHeight: 1.08, letterSpacing: 0, fontSize: { xs: "1.75rem", md: "2.125rem" }, overflowWrap: "anywhere" }}
             >
               Performance Review
             </Typography>
@@ -236,10 +236,10 @@ const QuizResultsModal = ({ open, onClose, quizResults = [] }) => {
                       border: "1px solid rgba(255,255,255,0.10)",
                     }}
                   >
-                    <Typography sx={{ color: performance.color, fontSize: 34, lineHeight: 1, fontWeight: 950 }}>
+                    <Typography sx={{ color: performance.color, fontSize: "2.125rem", lineHeight: 1, fontWeight: 950 }}>
                       {aggregate.percentage}%
                     </Typography>
-                    <Typography sx={{ color: "text.secondary", fontSize: 12, mt: -2 }}>
+                    <Typography sx={{ color: "text.secondary", fontSize: "0.75rem", mt: -2 }}>
                       score
                     </Typography>
                   </Box>
@@ -304,9 +304,9 @@ const QuizResultsModal = ({ open, onClose, quizResults = [] }) => {
                       >
                         <Stack direction="row" spacing={0.8} alignItems="center" sx={{ color: item.color }}>
                           {item.icon}
-                          <Typography sx={{ fontWeight: 950, fontSize: 20 }}>{item.value}</Typography>
+                          <Typography sx={{ fontWeight: 950, fontSize: "1.25rem" }}>{item.value}</Typography>
                         </Stack>
-                        <Typography sx={{ mt: 0.35, color: "text.secondary", fontSize: 12 }}>
+                        <Typography sx={{ mt: 0.35, color: "text.secondary", fontSize: "0.75rem" }}>
                           {item.label}
                         </Typography>
                       </Box>
@@ -335,7 +335,7 @@ const QuizResultsModal = ({ open, onClose, quizResults = [] }) => {
                       <Typography variant="h6" sx={{ fontWeight: 950 }}>
                         {quizTitle}
                       </Typography>
-                      <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                      <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem" }}>
                         {item.quiz.technology || "General"} assessment review
                       </Typography>
                     </Box>

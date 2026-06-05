@@ -44,9 +44,10 @@ const QuizQuestion = memo(({
           control={
             <Radio
               disabled={submitted}
-              icon={<Circle size={18} />}
-              checkedIcon={correct ? <CheckCircle2 size={20} /> : wrong ? <XCircle size={20} /> : <CircleDot size={20} />}
+              icon={<Circle size={16} />}
+              checkedIcon={correct ? <CheckCircle2 size={18} /> : wrong ? <XCircle size={18} /> : <CircleDot size={18} />}
               sx={{
+                p: { xs: 0.45, sm: 0.9 },
                 color: "rgba(226,232,240,0.52)",
                 "&.Mui-checked": {
                   color: correct ? "#22C55E" : wrong ? "#EF4444" : "#22D3EE",
@@ -59,12 +60,13 @@ const QuizQuestion = memo(({
               sx={{
                 display: "flex",
                 alignItems: { xs: "flex-start", sm: "center" },
-                gap: 1.2,
+                gap: { xs: 0.8, sm: 1.2 },
                 width: "100%",
                 minWidth: 0,
+                maxWidth: "100%",
               }}
             >
-              <Typography sx={{ fontWeight: 850, color: selected ? "#fff" : "rgba(226,232,240,0.88)", flex: "0 0 auto" }}>
+              <Typography sx={{ fontWeight: 850, color: selected ? "#fff" : "rgba(226,232,240,0.88)", flex: "0 0 auto", fontSize: { xs: "0.8125rem", sm: "0.9375rem" } }}>
                 {String.fromCharCode(65 + index)}
               </Typography>
               <Typography
@@ -72,9 +74,10 @@ const QuizQuestion = memo(({
                   flex: 1,
                   minWidth: 0,
                   color: "inherit",
-                  lineHeight: 1.45,
-                  fontSize: { xs: 14, sm: 15 },
+                  lineHeight: { xs: 1.35, sm: 1.45 },
+                  fontSize: { xs: "0.8rem", sm: "0.9375rem" },
                   overflowWrap: "anywhere",
+                  wordBreak: "break-word",
                 }}
               >
                 {optionText}
@@ -85,11 +88,11 @@ const QuizQuestion = memo(({
           }
           sx={{
             m: 0,
-            px: { xs: 1.2, sm: 1.6 },
-            py: 1.45,
-            minHeight: 66,
-            alignItems: "center",
-            borderRadius: "18px",
+            px: { xs: 0.85, sm: 1.6 },
+            py: { xs: 0.95, sm: 1.45 },
+            minHeight: { xs: "auto", sm: 66 },
+            alignItems: "flex-start",
+            borderRadius: { xs: "14px", sm: "18px" },
             border: selected
               ? "1px solid rgba(34,211,238,0.50)"
               : "1px solid rgba(255,255,255,0.09)",
@@ -110,6 +113,10 @@ const QuizQuestion = memo(({
             "& .MuiFormControlLabel-label": {
               width: "100%",
               minWidth: 0,
+              maxWidth: "100%",
+            },
+            "& .MuiFormControlLabel-label > .MuiBox-root": {
+              maxWidth: "100%",
             },
             color: wrong ? "#FECACA" : correct ? "#BBF7D0" : "inherit",
           }}
@@ -135,8 +142,8 @@ const QuizQuestion = memo(({
       hover={false}
       sx={{
         mt: 2,
-        p: { xs: 2.2, md: 3.2 },
-        borderRadius: "20px",
+        p: { xs: 1.45, sm: 2.2, md: 3.2 },
+        borderRadius: { xs: "16px", sm: "20px" },
         background:
           "linear-gradient(145deg, rgba(255,255,255,0.085), rgba(255,255,255,0.030)), radial-gradient(circle at 100% 0%, rgba(34,211,238,0.11), transparent 34%)",
       }}
@@ -160,18 +167,19 @@ const QuizQuestion = memo(({
       <Typography
         variant="h5"
         sx={{
-          mb: 2.6,
+          mb: { xs: 1.5, sm: 2.6 },
           fontWeight: 900,
-          lineHeight: 1.28,
-          fontSize: { xs: 20, sm: 24 },
+          lineHeight: { xs: 1.32, sm: 1.28 },
+          fontSize: { xs: "1.03125rem", sm: "1.25rem", md: "1.5rem" },
           overflowWrap: "anywhere",
+          wordBreak: "break-word",
         }}
       >
         {question}
       </Typography>
       <FormControl component="fieldset" sx={{ width: "100%" }}>
         <RadioGroup value={value || ""} onChange={handleChange}>
-          <Box sx={{ display: "grid", gap: 1.25 }}>
+          <Box sx={{ display: "grid", gap: { xs: 0.8, sm: 1.25 }, minWidth: 0 }}>
             {optionElements}
           </Box>
         </RadioGroup>

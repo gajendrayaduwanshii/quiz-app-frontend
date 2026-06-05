@@ -96,7 +96,7 @@ const Sidebar = ({ open, setOpen }) => {
             width: "100%",
             height: 84,
             display: "flex",
-            justifyContent: "center",
+            justifyContent: open && isMobile ? "space-between" : "center",
             alignItems: "center",
             borderBottom: "1px solid rgba(255,255,255,0.08)",
             px: open ? 2 : 1,
@@ -121,7 +121,7 @@ const Sidebar = ({ open, setOpen }) => {
                 <Typography sx={{ color: "#fff", fontWeight: 950, lineHeight: 1 }}>
                   SkillSync AI
                 </Typography>
-                <Typography sx={{ color: "#94A3B8", fontSize: 11 }}>
+                <Typography sx={{ color: "#94A3B8", fontSize: "0.6875rem" }}>
                   Career intelligence
                 </Typography>
               </Box>
@@ -140,6 +140,27 @@ const Sidebar = ({ open, setOpen }) => {
             >
               <Home size={19} color="#fff" />
             </Box>
+          )}
+          {open && isMobile && (
+            <IconButton
+              aria-label="Close side menu"
+              onClick={() => setOpen(false)}
+              sx={{
+                ml: 1,
+                flex: "0 0 auto",
+                width: 38,
+                height: 38,
+                color: "#fff",
+                border: "1px solid rgba(255,255,255,0.14)",
+                bgcolor: "rgba(255,255,255,0.07)",
+                "&:hover": {
+                  bgcolor: "rgba(239,68,68,0.16)",
+                  borderColor: "rgba(248,113,113,0.36)",
+                },
+              }}
+            >
+              <X size={19} />
+            </IconButton>
           )}
         </Box>
 
@@ -192,7 +213,7 @@ const Sidebar = ({ open, setOpen }) => {
                     primary={item.label}
                     primaryTypographyProps={{
                       fontWeight: active ? 800 : 650,
-                      fontSize: 14,
+                      fontSize: "0.875rem",
                     }}
                   />
                 )}
@@ -213,11 +234,11 @@ const Sidebar = ({ open, setOpen }) => {
                 boxShadow: "0 18px 48px rgba(6,182,212,0.10)",
               }}
             >
-              <Typography sx={{ fontSize: 12, color: "#94A3B8", mb: 0.5 }}>
+              <Typography sx={{ fontSize: "0.75rem", color: "#94A3B8", mb: 0.5 }}>
                 AI Readiness
               </Typography>
-              <Typography sx={{ fontSize: 24, fontWeight: 950 }}>82%</Typography>
-              <Typography sx={{ fontSize: 12, color: "#94A3B8" }}>
+              <Typography sx={{ fontSize: "1.5rem", fontWeight: 950 }}>82%</Typography>
+              <Typography sx={{ fontSize: "0.75rem", color: "#94A3B8" }}>
                 Keep improving weak topics.
               </Typography>
             </Box>

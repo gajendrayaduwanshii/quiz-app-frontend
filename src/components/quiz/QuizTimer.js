@@ -42,7 +42,7 @@ const QuizTimer = ({ timeLeft, totalSeconds = 300, answeredCount = 0, totalQuest
           <Typography
             sx={{
               mt: 1.4,
-              fontSize: { xs: 34, md: 42 },
+              fontSize: { xs: "2.125rem", md: "2.625rem" },
               lineHeight: 1,
               fontWeight: 950,
               color: isUrgent ? "#F87171" : "#fff",
@@ -53,7 +53,7 @@ const QuizTimer = ({ timeLeft, totalSeconds = 300, answeredCount = 0, totalQuest
         </Box>
 
         <Box>
-          <Typography sx={{ mb: 0.8, color: "text.secondary", fontSize: 13, fontWeight: 800 }}>
+          <Typography sx={{ mb: 0.8, color: "text.secondary", fontSize: "0.8125rem", fontWeight: 800 }}>
             Timer Progress
           </Typography>
           <LinearProgress
@@ -108,7 +108,7 @@ const QuizTimer = ({ timeLeft, totalSeconds = 300, answeredCount = 0, totalQuest
             textAlign: "center",
           }}
         >
-          <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+          <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem" }}>
             Keep moving. Unanswered questions count as wrong after submit.
           </Typography>
         </Box>

@@ -157,11 +157,11 @@ const ChartsRow = ({ skills = [] }) => {
             >
               <Stack direction="row" spacing={1} alignItems="center" sx={{ color: stat.color, mb: 0.8 }}>
                 {stat.icon}
-                <Typography sx={{ color: "text.secondary", fontSize: 12, fontWeight: 850 }}>
+                <Typography sx={{ color: "text.secondary", fontSize: "0.75rem", fontWeight: 850 }}>
                   {stat.label}
                 </Typography>
               </Stack>
-              <Typography sx={{ fontSize: 26, fontWeight: 950, lineHeight: 1 }}>
+              <Typography sx={{ fontSize: "1.625rem", fontWeight: 950, lineHeight: 1 }}>
                 {stat.value}
               </Typography>
             </Box>
@@ -191,7 +191,7 @@ const ChartsRow = ({ skills = [] }) => {
                   <Typography variant="h6" sx={{ fontWeight: 950 }}>
                     Skill Mix
                   </Typography>
-                  <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                  <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem" }}>
                     Experience weight by technology
                   </Typography>
                 </Box>
@@ -209,7 +209,7 @@ const ChartsRow = ({ skills = [] }) => {
                   border: "1px solid rgba(34,197,94,0.18)",
                 }}
               >
-                <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem" }}>
                   Strongest depth
                 </Typography>
                 <Typography sx={{ fontWeight: 950 }}>
@@ -241,7 +241,7 @@ const ChartsRow = ({ skills = [] }) => {
                   <Typography variant="h6" sx={{ fontWeight: 950 }}>
                     Proficiency Radar
                   </Typography>
-                  <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                  <Typography sx={{ color: "text.secondary", fontSize: "0.8125rem" }}>
                     Beginner to expert calibration
                   </Typography>
                 </Box>
@@ -260,10 +260,10 @@ const ChartsRow = ({ skills = [] }) => {
                   {rankedSkills.map((skill) => (
                     <Box key={skill.id || skill.skillName}>
                       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 0.6 }}>
-                        <Typography sx={{ fontSize: 13, fontWeight: 850, overflowWrap: "anywhere" }}>
+                        <Typography sx={{ fontSize: "0.8125rem", fontWeight: 850, overflowWrap: "anywhere" }}>
                           {skill.skillName}
                         </Typography>
-                        <Typography sx={{ color: skill.accent, fontSize: 12, fontWeight: 950 }}>
+                        <Typography sx={{ color: skill.accent, fontSize: "0.75rem", fontWeight: 950 }}>
                           {skill.score}/100
                         </Typography>
                       </Stack>

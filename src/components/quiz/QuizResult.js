@@ -26,10 +26,10 @@ const QuizResult = ({ correctAnswers, incorrectAnswers }) => {
           boxShadow: "0 0 40px rgba(6,182,212,0.14)",
         }}
       >
-        <Typography sx={{ color: "#fff", fontWeight: 900, fontSize: 30 }}>
+        <Typography sx={{ color: "#fff", fontWeight: 900, fontSize: "1.875rem" }}>
           {score}%
         </Typography>
-        <Typography sx={{ color: "#94A3B8", fontSize: 11, mt: -1.5 }}>
+        <Typography sx={{ color: "#94A3B8", fontSize: "0.6875rem", mt: -1.5 }}>
           Score
         </Typography>
       </Box>

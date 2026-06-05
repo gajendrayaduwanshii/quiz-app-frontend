@@ -92,7 +92,7 @@ const Learning = () => {
         <Stack spacing={2.2}>
           {detailedPlan.aiGeneratedContent ? (
             <PremiumCard glow="rgba(6,182,212,0.25)" sx={{ p: { xs: 2.2, md: 3 } }}>
-              <Typography variant="h5" sx={{ color: "#fff", fontWeight: 950, mb: 1.6, fontSize: { xs: 22, md: 28 }, overflowWrap: "anywhere" }}>
+              <Typography variant="h5" sx={{ color: "#fff", fontWeight: 950, mb: 1.6, fontSize: { xs: "1.375rem", md: "1.75rem" }, overflowWrap: "anywhere" }}>
                 {detailedPlan.title}
               </Typography>
               <Typography
@@ -110,7 +110,7 @@ const Learning = () => {
           <>
           <PremiumCard glow="rgba(6,182,212,0.25)" sx={{ p: { xs: 2.2, md: 3 } }}>
             <Stack spacing={1.4}>
-              <Typography variant="h5" sx={{ color: "#fff", fontWeight: 950, fontSize: { xs: 22, md: 28 }, overflowWrap: "anywhere" }}>
+              <Typography variant="h5" sx={{ color: "#fff", fontWeight: 950, fontSize: { xs: "1.375rem", md: "1.75rem" }, overflowWrap: "anywhere" }}>
                 {detailedPlan.title}
               </Typography>
               <Typography sx={{ color: "text.secondary", lineHeight: 1.8, overflowWrap: "anywhere" }}>

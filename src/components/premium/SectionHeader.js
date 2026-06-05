@@ -30,7 +30,7 @@ const SectionHeader = ({ eyebrow, title, description, action }) => {
           variant="h5"
           sx={{
             fontWeight: 800,
-            fontSize: { xs: 24, sm: 28, md: 32 },
+            fontSize: { xs: "1.5rem", sm: "1.75rem", md: "2rem" },
             lineHeight: 1.14,
             overflowWrap: "anywhere",
           }}
