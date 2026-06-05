@@ -91,17 +91,10 @@ const Login = () => {
 
       if (matchedUser) {
         if (formData.password === matchedUser.password) {
-          login({ email: formData.email });
-
-          localStorage.setItem(
-            "user",
-            JSON.stringify({
-              email: formData.email,
-              documentId: matchedUser.documentId,
-            })
-          );
-
-          router.push("/dashboard");
+          login({
+            email: formData.email,
+            documentId: matchedUser.documentId,
+          });
           setRegistrationCompleted(false);
         } else {
           setErrors({ apiError: "Invalid password" });

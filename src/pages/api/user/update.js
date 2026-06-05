@@ -1,4 +1,5 @@
 import { extractApiError, readJsonResponse } from "@/utils/readJsonResponse";
+import { getStrapiAuthHeaders, getStrapiUrl } from "@/lib/strapiConfig";
 
 export default async function handler(req, res) {
   if (req.method !== "PUT") {
@@ -12,7 +13,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Document ID and data are required" });
     }
 
-    const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+    const strapiUrl = getStrapiUrl();
 
     const response = await fetch(
       `${strapiUrl}/api/userlists/${documentId}`,
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.STRAPI_API_TOKEN || ""}`,
+          ...getStrapiAuthHeaders(),
         },
         body: JSON.stringify({ data }),
       }

@@ -29,9 +29,6 @@ import useRegistrationForm from "../customHooks/useRegistrationForm";
 
 import { BrainCircuit, Save, UploadCloud } from "lucide-react";
 
- 
-const STRAPI_URL = "http://localhost:1337";
-
 const steps = [
   "Personal Info",
   "Professional Summary",
@@ -43,7 +40,7 @@ const steps = [
 
 const RegistrationForm = () => {
   const router = useRouter();
-  const { setRegistrationCompleted } = useAuth(); 
+  const { login, setRegistrationCompleted } = useAuth(); 
   const {
     formData,
     errors,
@@ -296,7 +293,7 @@ const mapWorkExperience = (workArr) =>
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          endpoint: "/api/userlists",
+          endpoint: "/api/userlists?status=published",
           data: payload,
         }),
       });
@@ -346,7 +343,7 @@ const mapWorkExperience = (workArr) =>
         }
 
         // 2. Submit form data with uploaded file ID
-        await submitFormData(uploadedFile.id);
+        const createdUser = await submitFormData(uploadedFile.id);
 
         console.log("Form data being submitted:", {
           ...formData,
@@ -355,7 +352,10 @@ const mapWorkExperience = (workArr) =>
 
         setLoading(false);
         setRegistrationCompleted(true);
-        router.push("/dashboard");
+        login({
+          email: formData.email,
+          documentId: createdUser?.documentId,
+        });
       } catch (error) {
         alert(error.message || "An error occurred during submission. Please try again.");
         setLoading(false);

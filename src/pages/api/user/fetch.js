@@ -1,5 +1,6 @@
 // NO CACHE - Always fetch fresh data
 import { extractApiError, readJsonResponse } from "@/utils/readJsonResponse";
+import { getStrapiAuthHeaders, getStrapiUrl } from "@/lib/strapiConfig";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -16,10 +17,12 @@ export default async function handler(req, res) {
     // NO CACHE - Always fetch fresh data from Strapi
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}/api/userlists?filters[documentId][$eq]=${documentId}&populate[uploadResume][populate]=*&populate[skills]=*&populate[workExperiences]=*&populate[educations]=*&populate[quizResult][populate]=*`,
+      `${getStrapiUrl()}/api/userlists?filters[documentId][$eq]=${encodeURIComponent(
+        documentId
+      )}&populate[uploadResume][populate]=*&populate[skills]=*&populate[workExperiences]=*&populate[educations]=*&populate[quizResult][populate]=*`,
       {
         headers: {
-          "Authorization": `Bearer ${process.env.STRAPI_API_TOKEN || ""}`,
+          ...getStrapiAuthHeaders(),
         },
       }
     );

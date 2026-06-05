@@ -1,4 +1,5 @@
 import { extractApiError, readJsonResponse } from "@/utils/readJsonResponse";
+import { getStrapiAuthHeaders, getStrapiUrl } from "@/lib/strapiConfig";
 
 export const config = {
   api: {
@@ -14,13 +15,13 @@ export default async function handler(req, res) {
   try {
     // Forward the multipart form data to Strapi
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}/api/upload`,
+      `${getStrapiUrl()}/api/upload`,
       {
         method: "POST",
         body: req,
         duplex: "half",
         headers: {
-          "Authorization": `Bearer ${process.env.STRAPI_API_TOKEN || ""}`,
+          ...getStrapiAuthHeaders(),
           "Content-Type": req.headers["content-type"] || "",
         },
       }

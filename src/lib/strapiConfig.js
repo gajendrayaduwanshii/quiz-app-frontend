@@ -1,0 +1,30 @@
+const DEFAULT_STRAPI_URL = "http://localhost:1337";
+
+export function getStrapiUrl() {
+  return (
+    process.env.STRAPI_URL ||
+    process.env.NEXT_PUBLIC_STRAPI_URL ||
+    DEFAULT_STRAPI_URL
+  ).replace(/\/$/, "");
+}
+
+export function getStrapiAuthHeaders() {
+  const token = process.env.STRAPI_API_TOKEN;
+
+  return token
+    ? {
+        Authorization: `Bearer ${token}`,
+      }
+    : {};
+}
+
+export function assertConfiguredStrapiUrl(url) {
+  const target = new URL(url);
+  const configured = new URL(getStrapiUrl());
+
+  if (target.origin !== configured.origin) {
+    throw new Error("Only the configured Strapi URL is allowed");
+  }
+
+  return target.toString();
+}

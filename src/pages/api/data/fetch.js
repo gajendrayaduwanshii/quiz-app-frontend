@@ -1,4 +1,5 @@
 import { extractApiError, readJsonResponse } from "@/utils/readJsonResponse";
+import { assertConfiguredStrapiUrl, getStrapiAuthHeaders } from "@/lib/strapiConfig";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -12,7 +13,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "URL is required" });
     }
 
-    const response = await fetch(url);
+    const response = await fetch(assertConfiguredStrapiUrl(url), {
+      headers: {
+        ...getStrapiAuthHeaders(),
+      },
+    });
 
     const data = await readJsonResponse(response);
 
