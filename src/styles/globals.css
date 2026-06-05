@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;600;700;800;900&family=Jua&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 :root {
   --background: #030712;
@@ -14,6 +13,9 @@
   --ss-success: #22C55E;
   --ss-danger: #EF4444;
   --ss-warning: #F59E0B;
+  --fluid-type-base: clamp(1rem, 1.25vw, 1.05rem);
+  --fluid-type-sm: clamp(0.88rem, 0.9vw, 0.98rem);
+  --fluid-type-lg: clamp(1.35rem, 2.5vw, 2.25rem);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,28 +25,33 @@
   }
 }
 
-html,
-body {
+html {
+  font-size: clamp(14px, 1.35vw, 18px);
+  scroll-behavior: smooth;
   max-width: 100vw;
   overflow-x: hidden;
+  color-scheme: dark;
 }
 
 body {
+  margin: 0;
+  min-height: 100vh;
   color: var(--foreground);
   background:
     radial-gradient(circle at 18% 0%, rgba(124,58,237,0.18), transparent 30%),
     radial-gradient(circle at 88% 12%, rgba(6,182,212,0.14), transparent 28%),
     linear-gradient(180deg, #030712 0%, #080D19 58%, #030712 100%);
   font-family: Inter, Outfit, Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
 }
 
 * {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
 a {
@@ -52,8 +59,26 @@ a {
   text-decoration: none;
 }
 
-.page-container{
+img,
+video,
+canvas,
+iframe,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.page-container {
   margin: auto;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -64,39 +89,26 @@ a {
 
 
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body, html {
-  font-family: Inter, Outfit, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
-  color: var(--ss-text-primary);
-  background-color: var(--ss-bg-primary);
-}
-
 h1, h2, h3, h4, h5, h6 {
   font-weight: 850;
-  margin-bottom: 10px;
+  margin-bottom: 0.6rem;
   letter-spacing: 0;
 }
 
 p {
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
+  font-size: var(--fluid-type-base);
 }
 
-.main-container{
-  height: calc(100vh - 100px);
+.main-container {
+  min-height: calc(100vh - 6.25rem);
 }
 
-.header-wrapper{
-  padding-right: 5px!important;
+.header-wrapper {
+  padding-right: 0.3rem !important;
 }
 
-.login-wrapper{
+.login-wrapper {
   padding-top: 4rem;
   min-height: 100vh;
   width: 100%;

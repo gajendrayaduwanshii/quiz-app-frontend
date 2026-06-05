@@ -453,7 +453,7 @@ const mapWorkExperience = (workArr) =>
       <Card
         sx={{
           maxWidth: 1240,
-          minHeight: "680px",
+          minHeight: { xs: "auto", md: "680px" },
           width: "100%",
           borderRadius: "30px",
           border: "1px solid rgba(255,255,255,0.08)",
@@ -491,11 +491,18 @@ const mapWorkExperience = (workArr) =>
             <Box sx={{ flexGrow: 1, textAlign: "center", width: "100%" }}>
               <Box sx={{ display: "inline-flex", alignItems: "center", gap: 1, mb: 0.5 }}>
                 <BrainCircuit size={22} color="#06B6D4" />
-                <Typography variant="h5" sx={{ fontWeight: 900, fontSize: { xs: 26, sm: 28, md: 32 } }}>
-                  SkillSync AI Registration
-                </Typography>
-              </Box>
-              <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 900,
+                      fontSize: { xs: "1.4rem", sm: "1.6rem", md: "1.9rem" },
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    SkillSync AI Registration
+                  </Typography>
+                </Box>
+                <Typography sx={{ color: "text.secondary", fontSize: { xs: "0.82rem", sm: "0.9rem" } }}>
                 Build your Naukri-style career profile in guided AI-ready steps.
               </Typography>
             </Box>

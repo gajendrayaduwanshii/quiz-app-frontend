@@ -21,8 +21,8 @@ export default function OtpVerification() {
             sx={{
               mx: "auto",
               mb: 2,
-              width: 54,
-              height: 54,
+              width: { xs: 44, sm: 54 },
+              height: { xs: 44, sm: 54 },
               borderRadius: "18px",
               display: "grid",
               placeItems: "center",
@@ -40,11 +40,12 @@ export default function OtpVerification() {
           </Typography>
         </Box>
 
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ justifyContent: "center" }}>
           {[0, 1, 2, 3, 4, 5].map((item) => (
             <TextField
               key={item}
-              inputProps={{ maxLength: 1, style: { textAlign: "center", fontSize: 22, fontWeight: 800 } }}
+              sx={{ width: { xs: 40, sm: 52 } }}
+              inputProps={{ maxLength: 1, style: { textAlign: "center", fontSize: "1.2rem", fontWeight: 800 } }}
             />
           ))}
         </Stack>

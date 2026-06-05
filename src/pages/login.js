@@ -127,8 +127,8 @@ const Login = () => {
                 <Stack direction="row" spacing={1.2} alignItems="center" sx={{ mb: { xs: 2, md: 5 } }}>
                   <Box
                     sx={{
-                      width: 44,
-                      height: 44,
+                      width: { xs: 38, sm: 44 },
+                      height: { xs: 38, sm: 44 },
                       borderRadius: "16px",
                       display: "grid",
                       placeItems: "center",
@@ -139,10 +139,10 @@ const Login = () => {
                     <BrainCircuit size={22} color="#fff" />
                   </Box>
                   <Box>
-                    <Typography sx={{ fontWeight: 900, fontSize: 20, lineHeight: 1 }}>
+                    <Typography sx={{ fontWeight: 900, fontSize: { xs: "1.05rem", sm: "1.15rem" }, lineHeight: 1 }}>
                       SkillSync AI
                     </Typography>
-                    <Typography sx={{ color: "text.secondary", fontSize: 12 }}>
+                    <Typography sx={{ color: "text.secondary", fontSize: { xs: "0.75rem", sm: "0.85rem" } }}>
                       Career intelligence platform
                     </Typography>
                   </Box>
@@ -170,7 +170,7 @@ const Login = () => {
                 >
                   Build your career edge with AI.
                 </Typography>
-                <Typography sx={{ color: "text.secondary", fontSize: { xs: 14, md: 17 }, maxWidth: 460 }}>
+                <Typography sx={{ color: "text.secondary", fontSize: { xs: "0.92rem", md: "1rem" }, maxWidth: { xs: "100%", md: 460 } }}>
                   Analyze your resume, discover skill gaps, practice quizzes, and follow a smarter learning path.
                 </Typography>
               </Box>
