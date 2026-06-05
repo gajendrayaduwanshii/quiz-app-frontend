@@ -472,21 +472,26 @@ const mapWorkExperience = (workArr) =>
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              flexDirection: { xs: "column", sm: "row" },
+              gap: { xs: 1.5, sm: 2 },
               mb: 2,
             }}
           >
             <Button
               startIcon={<ArrowBackIcon />}
               onClick={handleBackToLogin}
-              sx={{ color: "text.secondary" }}
+              sx={{
+                color: "text.secondary",
+                alignSelf: { xs: "flex-start", sm: "center" },
+              }}
             >
               Back to Login
             </Button>
 
-            <Box sx={{ flexGrow: 1, textAlign: "center" }}>
+            <Box sx={{ flexGrow: 1, textAlign: "center", width: "100%" }}>
               <Box sx={{ display: "inline-flex", alignItems: "center", gap: 1, mb: 0.5 }}>
                 <BrainCircuit size={22} color="#06B6D4" />
-                <Typography variant="h5" sx={{ fontWeight: 900 }}>
+                <Typography variant="h5" sx={{ fontWeight: 900, fontSize: { xs: 26, sm: 28, md: 32 } }}>
                   SkillSync AI Registration
                 </Typography>
               </Box>
@@ -495,7 +500,7 @@ const mapWorkExperience = (workArr) =>
               </Typography>
             </Box>
 
-            <Box sx={{ width: "120px" }} />
+            <Box sx={{ width: { xs: 0, sm: "120px" }, display: { xs: "none", sm: "block" } }} />
           </Box>
 
           <Alert
@@ -560,10 +565,30 @@ const mapWorkExperience = (workArr) =>
             alternativeLabel
             sx={{
               mb: 3,
-              p: 2,
+              p: { xs: 1.4, sm: 2 },
               borderRadius: "22px",
               border: "1px solid rgba(255,255,255,0.08)",
               bgcolor: "rgba(255,255,255,0.035)",
+              overflowX: { xs: "auto", md: "visible" },
+              overflowY: "hidden",
+              justifyContent: { xs: "flex-start", md: "center" },
+              scrollbarWidth: { xs: "none", md: "thin" },
+              "&::-webkit-scrollbar": {
+                display: { xs: "none", md: "block" },
+              },
+              "& .MuiStep-root": {
+                minWidth: { xs: 104, sm: "auto" },
+                px: { xs: 0.5, sm: 1 },
+              },
+              "& .MuiStepLabel-label": {
+                fontSize: { xs: 12, sm: 13 },
+                lineHeight: 1.25,
+                whiteSpace: "normal",
+              },
+              "& .MuiStepConnector-root": {
+                left: { xs: "calc(-50% + 18px)", sm: "calc(-50% + 20px)" },
+                right: { xs: "calc(50% + 18px)", sm: "calc(50% + 20px)" },
+              },
             }}
           >
             {steps.map((label, index) => (

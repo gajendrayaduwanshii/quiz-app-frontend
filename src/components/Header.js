@@ -142,8 +142,14 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
       position="fixed"
       elevation={0}
       sx={{
-        width: isMobile ? "100%" : `calc(100% - ${sidebarOpen ? 272 : 84}px)`,
-        ml: isMobile ? 0 : `${sidebarOpen ? 272 : 84}px`,
+        width: {
+          xs: "100%",
+          md: `calc(100% - ${sidebarOpen ? 272 : 84}px)`,
+        },
+        ml: {
+          xs: 0,
+          md: `${sidebarOpen ? 272 : 84}px`,
+        },
         transition: "width 0.3s ease, margin-left 0.3s ease",
         px: { xs: 1, md: 2.4 },
         pt: { xs: 1, md: 1.5 },

@@ -109,10 +109,10 @@ const Login = () => {
         sx={{ width: "min(1120px, calc(100vw - 28px))" }}
       >
         <Grid container>
-          <Grid item size={{ xs: 12, md: 6 }}>
+          <Grid item size={{ xs: 12, md: 6 }} sx={{ order: { xs: 2, md: 1 } }}>
             <Box
               sx={{
-                minHeight: { xs: 280, md: 620 },
+                minHeight: { xs: "auto", md: 620 },
                 p: { xs: 3, md: 5 },
                 display: "flex",
                 flexDirection: "column",
@@ -124,7 +124,7 @@ const Login = () => {
               }}
             >
               <Box>
-                <Stack direction="row" spacing={1.2} alignItems="center" sx={{ mb: 5 }}>
+                <Stack direction="row" spacing={1.2} alignItems="center" sx={{ mb: { xs: 2, md: 5 } }}>
                   <Box
                     sx={{
                       width: 44,
@@ -161,11 +161,16 @@ const Login = () => {
                 <Typography
                   variant="h2"
                   className="gradient-text"
-                  sx={{ fontWeight: 900, lineHeight: 1.02, mb: 2 }}
+                  sx={{
+                    fontWeight: 900,
+                    lineHeight: 1.02,
+                    mb: 2,
+                    fontSize: { xs: 30, sm: 38, md: 56 },
+                  }}
                 >
                   Build your career edge with AI.
                 </Typography>
-                <Typography sx={{ color: "text.secondary", fontSize: 17, maxWidth: 460 }}>
+                <Typography sx={{ color: "text.secondary", fontSize: { xs: 14, md: 17 }, maxWidth: 460 }}>
                   Analyze your resume, discover skill gaps, practice quizzes, and follow a smarter learning path.
                 </Typography>
               </Box>
@@ -192,11 +197,11 @@ const Login = () => {
             </Box>
           </Grid>
 
-          <Grid item size={{ xs: 12, md: 6 }}>
+          <Grid item size={{ xs: 12, md: 6 }} sx={{ order: { xs: 1, md: 2 } }}>
             <Box
               sx={{
                 minHeight: { xs: "auto", md: 620 },
-                p: { xs: 3, sm: 4, md: 5 },
+                p: { xs: 2.4, sm: 4, md: 5 },
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",

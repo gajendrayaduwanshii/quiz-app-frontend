@@ -75,7 +75,7 @@ const Sidebar = ({ open, setOpen }) => {
       sx={{
         transition: "width 0.3s ease",
         "& .MuiDrawer-paper": {
-          width: isMobile ? (open ? 272 : 0) : open ? 272 : 84,
+          width: { xs: open ? 272 : 0, md: open ? 272 : 84 },
           transition: "width 0.3s ease",
           background:
             "linear-gradient(180deg, rgba(11,17,32,0.82), rgba(3,7,18,0.92))",

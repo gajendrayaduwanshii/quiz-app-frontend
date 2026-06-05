@@ -412,6 +412,25 @@ p {
 }
 
 @media (max-width: 900px) {
+  .login-wrapper {
+    align-items: flex-start;
+    min-height: 100dvh;
+    padding: 14px 0 28px;
+    overflow-y: auto;
+  }
+
+  .login-3d-background,
+  .skillsync-three-scene--login.login-3d-background,
+  .ai-particle-field--login.login-3d-background {
+    display: none !important;
+  }
+
+  .login-wrapper .login-container {
+    width: calc(100vw - 24px) !important;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
   .skillsync-three-scene--login {
     right: -18%;
     bottom: -8%;

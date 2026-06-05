@@ -169,7 +169,16 @@ const VoiceInterviewAI = ({ user, tech }) => {
                 <Chip label={`Question ${currentIndex + 1}/${questions.length}`} />
                 <Chip label={`${progress}% complete`} sx={{ color: "#CFFAFE", bgcolor: "rgba(6,182,212,0.12)" }} />
               </Stack>
-              <Typography variant="h3" className="gradient-text" sx={{ fontWeight: 950, lineHeight: 1.08, mb: 2 }}>
+              <Typography
+                variant="h3"
+                className="gradient-text"
+                sx={{
+                  fontWeight: 950,
+                  lineHeight: 1.08,
+                  mb: 2,
+                  fontSize: { xs: 34, sm: 44, md: 56 },
+                }}
+              >
                 {currentQuestion.question}
               </Typography>
               <LinearProgress

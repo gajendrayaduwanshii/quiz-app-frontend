@@ -14,7 +14,7 @@ export default function Layout({ children }) {
   const { user } = useAuth();
 
   // Initialize sidebar open state based on screen size
-  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Update sidebar state if screen resizes
   useEffect(() => {
