@@ -45,7 +45,8 @@ const menuItems = [
   { label: "Learning Plan", href: "/learning", icon: "learning" },
   { label: "Resource Guide", href: "/courseRecommendations", icon: "resources" },
   { label: "Resume AI", href: "/resumeAnalysis", icon: "resume" },
-  { label: "Voice AI", href: "/voiceInterviewAI", icon: "interview" },
+  // Voice AI is temporarily hidden until the feature is ready again.
+  // { label: "Voice AI", href: "/voiceInterviewAI", icon: "interview" },
   { label: "Profile", href: "/profile", icon: "profile" },
 ];
 

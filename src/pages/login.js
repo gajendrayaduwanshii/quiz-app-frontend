@@ -7,7 +7,6 @@ import { TextField, Typography, Box, Grid, Paper, Chip, Stack } from "@mui/mater
 import { BrainCircuit, LockKeyhole, Mail, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
-import FetchData from "./../customHooks/fetchData";
 import PremiumButton from "@/components/premium/PremiumButton";
 import ThreeDScene from "@/components/premium/ThreeDScene";
 
@@ -19,12 +18,6 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
-
-  const {
-    data: users,
-    error: fetchError,
-    loading: fetchLoading,
-  } = FetchData(`${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}/api/userlists`);
 
   // Check if user is already logged in
   useEffect(() => {
@@ -68,42 +61,36 @@ const Login = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!validateForm()) return;
 
-    if (fetchLoading) {
-      setErrors({ apiError: "Still loading users, please wait..." });
-      return;
-    }
-
-    if (fetchError) {
-      setErrors({ apiError: "Failed to fetch users. Try again later." });
-      return;
-    }
-
     setLoading(true);
+    setErrors({});
 
-    setTimeout(() => {
-      const matchedUser = users?.find(
-        (user) => user.email === formData.email
-      );
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-      if (matchedUser) {
-        if (formData.password === matchedUser.password) {
-          login({
-            email: formData.email,
-            documentId: matchedUser.documentId,
-          });
-          setRegistrationCompleted(false);
-        } else {
-          setErrors({ apiError: "Invalid password" });
-        }
-      } else {
-        setErrors({ apiError: "Email not registered" });
+      const result = await response.json();
+
+      if (!response.ok) {
+        setErrors({ apiError: result.error || "Login failed" });
+        return;
       }
+
+      login(result.user);
+      setRegistrationCompleted(false);
+    } catch (error) {
+      setErrors({ apiError: error.message || "Login failed" });
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   // 🧠 Don't render the login form if already redirecting
