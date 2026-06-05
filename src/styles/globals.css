@@ -789,10 +789,23 @@ p {
   display: flex;
   gap: 16px;
   margin-bottom: 16px;
+  width: 100%;
+  min-width: 0;
 }
 
 .custom-row .custom-col{
-  flex: 1 0 auto;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+@media only screen and (max-width: 767px) {
+  .custom-row {
+    flex-direction: column;
+  }
+
+  .custom-form .section-wrapper {
+    padding: 1rem 0 1.4rem;
+  }
 }
 
 .icon-btn svg{

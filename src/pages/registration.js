@@ -13,6 +13,7 @@ import {
   StepLabel,
   CircularProgress,
   Alert,
+  LinearProgress,
 } from "@mui/material";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -455,7 +456,7 @@ const mapWorkExperience = (workArr) =>
           maxWidth: 1240,
           minHeight: { xs: "auto", md: "680px" },
           width: "100%",
-          borderRadius: "30px",
+          borderRadius: { xs: "22px", sm: "30px" },
           border: "1px solid rgba(255,255,255,0.08)",
           background:
             "linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.03))",
@@ -466,15 +467,15 @@ const mapWorkExperience = (workArr) =>
           overflow: "hidden",
         }}
       >
-        <CardContent sx={{ flexGrow: 1, overflowY: "auto", p: { xs: 2.2, md: 4 } }}>
+        <CardContent sx={{ flexGrow: 1, overflowY: "auto", p: { xs: 1.35, sm: 2.2, md: 4 } }}>
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               flexDirection: { xs: "column", sm: "row" },
-              gap: { xs: 1.5, sm: 2 },
-              mb: 2,
+              gap: { xs: 1, sm: 2 },
+              mb: { xs: 1.25, sm: 2 },
             }}
           >
             <Button
@@ -489,13 +490,13 @@ const mapWorkExperience = (workArr) =>
             </Button>
 
             <Box sx={{ flexGrow: 1, textAlign: "center", width: "100%" }}>
-              <Box sx={{ display: "inline-flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-                <BrainCircuit size={22} color="#06B6D4" />
+              <Box sx={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 0.8, mb: 0.5 }}>
+                <BrainCircuit size={20} color="#06B6D4" />
                   <Typography
                     variant="h5"
                     sx={{
                       fontWeight: 900,
-                      fontSize: { xs: "1.4rem", sm: "1.6rem", md: "1.9rem" },
+                      fontSize: { xs: "1.26rem", sm: "1.6rem", md: "1.9rem" },
                       lineHeight: 1.1,
                     }}
                   >
@@ -512,34 +513,43 @@ const mapWorkExperience = (workArr) =>
 
           <Alert
             severity={resumeAutofillMessage.toLowerCase().includes("failed") || resumeAutofillMessage.toLowerCase().includes("could not") ? "warning" : "info"}
-            sx={{ mb: 2 }}
+            sx={{
+              mb: { xs: 1.25, sm: 2 },
+              borderRadius: { xs: "14px", sm: "18px" },
+              py: { xs: 1, sm: 1.25 },
+              px: { xs: 1.2, sm: 2 },
+              "& .MuiAlert-message": {
+                fontSize: { xs: "0.82rem", sm: "0.95rem" },
+                lineHeight: 1.45,
+              },
+            }}
           >
             First upload your PDF resume. AI will read the complete resume, fill matching fields, and leave missing details for manual entry.
           </Alert>
 
           <Box
             sx={{
-              mb: 2,
-              p: 2,
-              borderRadius: "18px",
+              mb: { xs: 1.25, sm: 2 },
+              p: { xs: 1.35, sm: 2 },
+              borderRadius: { xs: "15px", sm: "18px" },
               border: "1px solid rgba(255,255,255,0.10)",
               bgcolor: "rgba(255,255,255,0.045)",
               display: "flex",
               alignItems: { xs: "stretch", sm: "center" },
               justifyContent: "space-between",
-              gap: 2,
+              gap: { xs: 1.2, sm: 2 },
               flexDirection: { xs: "column", sm: "row" },
             }}
           >
             <Box>
               <Typography sx={{ fontWeight: 800 }}>AI Resume Auto-Fill</Typography>
-              <Typography sx={{ color: "text.secondary", fontSize: 13 }}>
+              <Typography sx={{ color: "text.secondary", fontSize: { xs: "0.8rem", sm: "0.8125rem" }, lineHeight: 1.45 }}>
                 {formData.resumeFile?.name
                   ? `Selected: ${formData.resumeFile.name}`
                   : "Upload your resume first so AI can read it before registration."}
               </Typography>
               {resumeAutofillMessage && (
-                <Typography sx={{ color: "text.secondary", fontSize: 13, mt: 0.5 }}>
+                <Typography sx={{ color: "text.secondary", fontSize: { xs: "0.8rem", sm: "0.8125rem" }, mt: 0.5 }}>
                   {resumeAutofillMessage}
                 </Typography>
               )}
@@ -555,7 +565,7 @@ const mapWorkExperience = (workArr) =>
                   <UploadCloud size={17} />
                 )
               }
-              sx={{ borderColor: "rgba(255,255,255,0.18)", color: "#fff" }}
+              sx={{ borderColor: "rgba(255,255,255,0.18)", color: "#fff", width: { xs: "100%", sm: "auto" } }}
             >
               {resumeAutofillLoading ? "Reading..." : "Upload Resume"}
               <input
@@ -567,34 +577,84 @@ const mapWorkExperience = (workArr) =>
             </Button>
           </Box>
 
+          <Box
+            sx={{
+              display: { xs: "block", sm: "none" },
+              mb: 1,
+              p: 1.15,
+              borderRadius: "14px",
+              border: "1px solid rgba(255,255,255,0.08)",
+              bgcolor: "rgba(255,255,255,0.035)",
+            }}
+          >
+            <Typography sx={{ color: "#67E8F9", fontWeight: 900, fontSize: "0.75rem", mb: 0.4 }}>
+              Step {activeStep + 1} of {steps.length}
+            </Typography>
+            <Typography sx={{ color: "#fff", fontWeight: 900, fontSize: "0.95rem", mb: 0.8 }}>
+              {steps[activeStep]}
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={((activeStep + 1) / steps.length) * 100}
+              sx={{
+                height: "0.42rem",
+                borderRadius: 999,
+                bgcolor: "rgba(255,255,255,0.08)",
+                "& .MuiLinearProgress-bar": {
+                  borderRadius: 999,
+                  background: "linear-gradient(90deg, #7C3AED, #06B6D4)",
+                },
+              }}
+            />
+          </Box>
+
           <Stepper
             activeStep={activeStep}
             alternativeLabel
             sx={{
-              mb: 3,
-              p: { xs: 1.4, sm: 2 },
-              borderRadius: "22px",
+              mb: { xs: 1.8, sm: 3 },
+              p: { xs: 0.85, sm: 1.4, md: 2 },
+              borderRadius: { xs: "16px", sm: "22px" },
               border: "1px solid rgba(255,255,255,0.08)",
               bgcolor: "rgba(255,255,255,0.035)",
-              overflowX: { xs: "auto", md: "visible" },
+              width: "100%",
+              maxWidth: "100%",
+              overflowX: { xs: "auto", lg: "visible" },
               overflowY: "hidden",
-              justifyContent: { xs: "flex-start", md: "center" },
-              scrollbarWidth: { xs: "none", md: "thin" },
+              justifyContent: { xs: "flex-start", lg: "center" },
+              scrollbarWidth: { xs: "none", lg: "thin" },
               "&::-webkit-scrollbar": {
-                display: { xs: "none", md: "block" },
+                display: { xs: "none", lg: "block" },
               },
               "& .MuiStep-root": {
-                minWidth: { xs: 104, sm: "auto" },
-                px: { xs: 0.5, sm: 1 },
+                flex: { xs: "0 0 2.75rem", sm: "0 0 7.2rem", md: "1 1 0" },
+                minWidth: { xs: "2.75rem", sm: "7.2rem", md: 0 },
+                px: { xs: 0.15, sm: 0.5, md: 1 },
               },
               "& .MuiStepLabel-label": {
-                fontSize: { xs: 12, sm: 13 },
-                lineHeight: 1.25,
+                display: { xs: "none", sm: "block" },
+                mt: { xs: 0.55, sm: 0.75 },
+                fontSize: { xs: "0.68rem", sm: "0.75rem", md: "0.8125rem" },
+                lineHeight: 1.18,
                 whiteSpace: "normal",
+                wordBreak: "break-word",
+                overflowWrap: "anywhere",
+                maxWidth: "100%",
+              },
+              "& .MuiStepIcon-root": {
+                width: { xs: "1.55rem", sm: "1.65rem" },
+                height: { xs: "1.55rem", sm: "1.65rem" },
+              },
+              "& .MuiStepLabel-iconContainer": {
+                p: 0,
               },
               "& .MuiStepConnector-root": {
-                left: { xs: "calc(-50% + 18px)", sm: "calc(-50% + 20px)" },
-                right: { xs: "calc(50% + 18px)", sm: "calc(50% + 20px)" },
+                left: { xs: "calc(-50% + 0.9rem)", sm: "calc(-50% + 1rem)" },
+                right: { xs: "calc(50% + 0.9rem)", sm: "calc(50% + 1rem)" },
+                top: { xs: "0.8rem", sm: "0.85rem" },
+              },
+              "& .MuiStepConnector-line": {
+                borderColor: "rgba(255,255,255,0.16)",
               },
             }}
           >
@@ -621,6 +681,7 @@ const mapWorkExperience = (workArr) =>
             display: "flex",
             justifyContent: "space-between",
             gap: 2,
+            flexDirection: { xs: "column", sm: "row" },
             background: "rgba(5,8,22,0.76)",
             backdropFilter: "blur(18px)",
             position: "sticky",
@@ -632,7 +693,7 @@ const mapWorkExperience = (workArr) =>
             disabled={activeStep === 0 || loading}
             onClick={handleBack}
             variant="outlined"
-            sx={{ borderColor: "rgba(255,255,255,0.14)", color: "#fff" }}
+            sx={{ borderColor: "rgba(255,255,255,0.14)", color: "#fff", width: { xs: "100%", sm: "auto" } }}
           >
             Back
           </Button>
@@ -643,6 +704,7 @@ const mapWorkExperience = (workArr) =>
             onClick={handleNext}
             disabled={loading}
             startIcon={activeStep === steps.length - 1 ? <UploadCloud size={17} /> : <Save size={17} />}
+            sx={{ width: { xs: "100%", sm: "auto" } }}
           >
             {loading ? (
               <CircularProgress size={24} color="inherit" />
