@@ -13,8 +13,10 @@ const PremiumPage = ({ children, dense = false, sx = {}, ...props }) => (
       position: "relative",
       width: "100%",
       maxWidth: "1560px",
+      minWidth: 0,
       mx: "auto",
       pb: dense ? 2 : 5,
+      overflowX: "hidden",
       "&::before": {
         content: '""',
         position: "fixed",

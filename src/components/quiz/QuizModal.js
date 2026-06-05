@@ -30,7 +30,8 @@ const QuizModal = ({
           transform: "translate(-50%, -50%)",
           width: onRestart ? { xs: "calc(100vw - 28px)", sm: 560 } : { xs: "calc(100vw - 28px)", sm: 440 },
           maxHeight: "88vh",
-          overflow: "hidden",
+          overflowY: "auto",
+          overflowX: "hidden",
           bgcolor: "rgba(11,17,32,0.94)",
           background:
             "linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.035)), radial-gradient(circle at 30% 0%, rgba(124,58,237,0.22), transparent 36%)",
@@ -130,7 +131,16 @@ const QuizModal = ({
             <Typography variant="body1" sx={{ mt: 2, color: "text.secondary" }}>
               {description}
             </Typography>
-            <Box sx={{ mt: 3, display: "flex", justifyContent: "center", gap: 2 }}>
+            <Box
+              sx={{
+                mt: 3,
+                display: "flex",
+                justifyContent: "center",
+                gap: 1.2,
+                flexDirection: { xs: "column", sm: "row" },
+                "& > button": { width: { xs: "100%", sm: "auto" } },
+              }}
+            >
               <PremiumButton onClick={onStart} startIcon={<Play size={17} />}>
                 Start Quiz
               </PremiumButton>

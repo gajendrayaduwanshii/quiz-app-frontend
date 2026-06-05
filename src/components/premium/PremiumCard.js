@@ -19,6 +19,9 @@ const PremiumCard = ({
       sx={{
         position: "relative",
         overflow: "hidden",
+        width: "100%",
+        maxWidth: "100%",
+        minWidth: 0,
         borderRadius: "18px",
         border: "1px solid rgba(148,163,184,0.16)",
         background:
@@ -38,6 +41,7 @@ const PremiumCard = ({
         "& > *": {
           position: "relative",
           zIndex: 1,
+          minWidth: 0,
         },
         ...sx,
       }}

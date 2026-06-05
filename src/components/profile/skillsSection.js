@@ -44,6 +44,12 @@ const SkillsSection = ({
             alignItems="center"
             justifyContent="space-between"
             marginBottom={2}
+            sx={{
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: { xs: "stretch", sm: "center" },
+              gap: 1.2,
+              "& button": { width: { xs: "100%", sm: "auto" } },
+            }}
           >
             <h3 style={{ marginBottom: "0" }}>Skills</h3>
             <Button
@@ -133,7 +139,7 @@ const SkillsSection = ({
           {skills.length === 0 ? (
             <Typography>No skills added.</Typography>
           ) : (
-            <TableContainer component={Paper} sx={{ mb: 5 }}>
+            <TableContainer component={Paper} sx={{ mb: 5, maxWidth: "100%" }}>
               <Table>
                 <TableHead>
                   <TableRow>

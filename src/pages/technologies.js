@@ -89,7 +89,7 @@ const Technologies = () => {
                         mb: 2.4,
                       }}
                     >
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, minWidth: 0 }}>
                         <Box
                           sx={{
                             width: 50,
@@ -103,7 +103,7 @@ const Technologies = () => {
                         >
                           <Code2 size={23} color="#fff" />
                         </Box>
-                        <Box>
+                        <Box sx={{ minWidth: 0 }}>
                           <Typography
                             variant="h5"
                             sx={{
@@ -111,6 +111,8 @@ const Technologies = () => {
                               fontWeight: 900,
                               lineHeight: 1.15,
                               textTransform: "uppercase",
+                              fontSize: { xs: 22, sm: 24 },
+                              overflowWrap: "anywhere",
                             }}
                           >
                             {skill.skillName}
@@ -140,7 +142,7 @@ const Technologies = () => {
                     component={NextLink}
                     href={`/quiz/${encodeURIComponent(skill.skillName.toLowerCase())}`}
                     endIcon={<ArrowRight size={17} />}
-                    sx={{ alignSelf: "flex-start", minWidth: 150 }}
+                    sx={{ alignSelf: "flex-start", width: { xs: "100%", sm: "auto" }, minWidth: 150 }}
                   >
                     Start Quiz
                   </PremiumButton>

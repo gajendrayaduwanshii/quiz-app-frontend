@@ -52,7 +52,7 @@ const CertificationsSection = ({
           {certificationList.length === 0 ? (
             <Typography>No certifications or awards added.</Typography>
           ) : (
-            <TableContainer component={Paper} sx={{ mb: 5 }}>
+            <TableContainer component={Paper} sx={{ mb: 5, maxWidth: "100%" }}>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -64,7 +64,7 @@ const CertificationsSection = ({
                 <TableBody>
                   {certificationList.map((cert, index) => (
                     <TableRow key={index}>
-                      <TableCell>{cert}</TableCell>
+                      <TableCell sx={{ overflowWrap: "anywhere" }}>{cert}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

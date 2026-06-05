@@ -103,7 +103,16 @@ const InteractiveLearningHub = () => {
         >
           <Sparkles size={25} color="#fff" />
         </Box>
-        <Typography variant="h3" className="gradient-text" sx={{ fontWeight: 900, mb: 1 }}>
+        <Typography
+          variant="h3"
+          className="gradient-text"
+          sx={{
+            fontWeight: 900,
+            mb: 1,
+            fontSize: { xs: 34, sm: 42, md: 56 },
+            lineHeight: 1.08,
+          }}
+        >
           AI Learning Hub
         </Typography>
         <Typography sx={{ color: "text.secondary", fontSize: { xs: 15, md: 17 } }}>
@@ -163,14 +172,14 @@ const InteractiveLearningHub = () => {
                 <PremiumButton
                   component={Link}
                   href={card.href}
-                  sx={{ minWidth: 220 }}
+                  sx={{ width: { xs: "100%", sm: "auto" }, minWidth: { sm: 220 } }}
                 >
                   {card.buttonText}
                 </PremiumButton>
               ) : (
                 <PremiumButton
                   onClick={card.onClick}
-                  sx={{ minWidth: 220 }}
+                  sx={{ width: { xs: "100%", sm: "auto" }, minWidth: { sm: 220 } }}
                 >
                   {card.buttonText}
                 </PremiumButton>

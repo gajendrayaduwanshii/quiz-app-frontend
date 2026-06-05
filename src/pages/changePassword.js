@@ -6,15 +6,15 @@ import {
   Button,
   IconButton,
   InputAdornment,
-  Box,
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import axios from "axios";
 import { useUser } from "@/customHooks/useUser";
 import { validatePassword } from "./../helper/formValidationHelpers"; 
 import { useAuth } from "../context/AuthContext"; 
 import { authService } from "@/services/authService";
+import PremiumCard from "@/components/premium/PremiumCard";
+import PremiumPage from "@/components/premium/PremiumPage";
 
 const ChangePassword = () => {
   const router = useRouter();
@@ -197,8 +197,15 @@ const ChangePassword = () => {
   if (loadingUser) return <div>Loading...</div>;
 
   return (
-    <Box style={{ height: "calc(100vh - 180px)" }}>
-      <h3 style={{ marginBottom: "10px" }}>Change Password</h3>
+    <PremiumPage dense sx={{ maxWidth: 980, mx: "auto" }}>
+      <PremiumCard hover={false} sx={{ p: { xs: 2.2, md: 3 }, mt: { xs: 1, md: 0 } }}>
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{ mb: 2, fontWeight: 950, fontSize: { xs: 28, md: 34 } }}
+      >
+        Change Password
+      </Typography>
 
       {message.text && (
         <Typography
@@ -296,13 +303,15 @@ const ChangePassword = () => {
               variant="contained"
               color="primary"
               disabled={loading}
+              sx={{ width: { xs: "100%", sm: "auto" } }}
             >
               {loading ? "Updating..." : "Update Password"}
             </Button>
           </Grid>
         </Grid>
       </form>
-    </Box>
+      </PremiumCard>
+    </PremiumPage>
   );
 };
 

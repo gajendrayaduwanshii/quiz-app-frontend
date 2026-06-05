@@ -122,7 +122,7 @@ const QuizResultsModal = ({ open, onClose, quizResults = [] }) => {
         sx: {
           width: "min(1100px, calc(100vw - 24px))",
           maxHeight: "92vh",
-          borderRadius: "30px",
+          borderRadius: { xs: "18px", md: "30px" },
           overflow: "hidden",
           bgcolor: "rgba(5,8,22,0.98)",
           background:
@@ -139,8 +139,8 @@ const QuizResultsModal = ({ open, onClose, quizResults = [] }) => {
           borderBottom: "1px solid rgba(255,255,255,0.08)",
         }}
       >
-        <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={2}>
-          <Box>
+        <Stack direction={{ xs: "column", sm: "row" }} alignItems="flex-start" justifyContent="space-between" spacing={2}>
+          <Box sx={{ minWidth: 0 }}>
             <Chip
               icon={<ClipboardCheck size={15} />}
               label="Detailed Quiz Results"
@@ -155,7 +155,7 @@ const QuizResultsModal = ({ open, onClose, quizResults = [] }) => {
             <Typography
               variant="h4"
               className="gradient-text"
-              sx={{ fontWeight: 950, lineHeight: 1.05, letterSpacing: 0 }}
+              sx={{ fontWeight: 950, lineHeight: 1.08, letterSpacing: 0, fontSize: { xs: 28, md: 34 }, overflowWrap: "anywhere" }}
             >
               Performance Review
             </Typography>

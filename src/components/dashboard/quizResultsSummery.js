@@ -163,9 +163,7 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
                   fontSize: 24,
                   fontWeight: 950,
                   lineHeight: 1.1,
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
+                  overflowWrap: "anywhere",
                 }}
               >
                 {item.value}
@@ -229,9 +227,7 @@ const QuizResultsSummaryBySkill = ({ quizResults = [], skills = [] }) => {
                           sx={{
                             fontWeight: 950,
                             lineHeight: 1.15,
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
+                            overflowWrap: "anywhere",
                           }}
                         >
                           {skill.skillName}

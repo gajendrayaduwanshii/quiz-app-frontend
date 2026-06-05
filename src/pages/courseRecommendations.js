@@ -138,12 +138,12 @@ const CourseRecommendations = () => {
             py: 1.8,
           }}
         >
-          <Typography sx={{ color: "#FCA5A5", fontWeight: 850, lineHeight: 1.6 }}>
+          <Typography sx={{ color: "#FCA5A5", fontWeight: 850, lineHeight: 1.6, overflowWrap: "anywhere" }}>
             {error}
           </Typography>
         </Box>
       ) : (
-        <Box sx={{ maxWidth: 980 }}>
+        <Box sx={{ maxWidth: 980, minWidth: 0 }}>
           {recommendations?.notice ? (
             <Box
               sx={{
@@ -154,7 +154,7 @@ const CourseRecommendations = () => {
                 mb: 2.5,
               }}
             >
-              <Typography sx={{ color: "#FDE68A", fontWeight: 800, lineHeight: 1.55 }}>
+              <Typography sx={{ color: "#FDE68A", fontWeight: 800, lineHeight: 1.55, overflowWrap: "anywhere" }}>
                 {recommendations.notice}
               </Typography>
             </Box>

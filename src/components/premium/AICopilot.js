@@ -167,6 +167,7 @@ const AICopilot = () => {
               right: { xs: 14, md: 24 },
               bottom: { xs: 82, md: 94 },
               width: { xs: "calc(100vw - 28px)", sm: 420 },
+              maxHeight: { xs: "calc(100dvh - 106px)", sm: "none" },
               zIndex: 1500,
               borderRadius: "20px",
               border: "1px solid rgba(255,255,255,0.14)",
@@ -176,14 +177,14 @@ const AICopilot = () => {
               overflow: "hidden",
             }}
           >
-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-              <Stack direction="row" spacing={1.2} alignItems="center">
+            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: { xs: 1.5, sm: 2 }, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+              <Stack direction="row" spacing={1.2} alignItems="center" sx={{ minWidth: 0 }}>
                 <Box sx={{ width: 38, height: 38, borderRadius: "14px", display: "grid", placeItems: "center", background: "linear-gradient(135deg, #2563EB, #14B8A6)" }}>
                   <Bot size={19} color="#fff" />
                 </Box>
-                <Box>
+                <Box sx={{ minWidth: 0 }}>
                   <Typography sx={{ fontWeight: 950 }}>SkillSync Chatbot</Typography>
-                  <Typography sx={{ color: "text.secondary", fontSize: 12 }}>
+                  <Typography sx={{ color: "text.secondary", fontSize: 12, overflowWrap: "anywhere" }}>
                     {loadingUser ? "Loading your data..." : "Answers from your profile, resume, and quizzes"}
                   </Typography>
                 </Box>
@@ -193,7 +194,7 @@ const AICopilot = () => {
               </IconButton>
             </Stack>
 
-            <Box ref={scrollRef} sx={{ p: 2, height: 350, overflowY: "auto" }}>
+            <Box ref={scrollRef} sx={{ p: { xs: 1.5, sm: 2 }, height: { xs: "min(350px, calc(100dvh - 318px))", sm: 350 }, overflowY: "auto" }}>
               <Stack spacing={1.2}>
                 {messages.map((message, index) => {
                   const isUser = message.role === "user";
@@ -209,6 +210,7 @@ const AICopilot = () => {
                         border: "1px solid rgba(255,255,255,0.08)",
                         color: isUser ? "#ECFEFF" : "text.secondary",
                         whiteSpace: "pre-wrap",
+                        overflowWrap: "anywhere",
                         fontSize: 13,
                         lineHeight: 1.55,
                       }}

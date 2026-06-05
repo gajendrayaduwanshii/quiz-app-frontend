@@ -408,10 +408,10 @@ const Dashboard = () => {
                   hover
                   sx={{
                     height: "100%",
-                    minHeight: 276,
+                    minHeight: { xs: "auto", sm: 276 },
                     border: `1px solid ${alpha(performanceColor, 0.26)}`,
                     borderRadius: "18px",
-                    p: 2.2,
+                    p: { xs: 1.6, sm: 2.2 },
                     cursor: "pointer",
                     background: `linear-gradient(145deg, rgba(255,255,255,0.070), rgba(255,255,255,0.026)), radial-gradient(circle at 100% 0%, ${alpha(performanceColor, 0.16)}, transparent 35%)`,
                     "&::before": {
@@ -430,15 +430,20 @@ const Dashboard = () => {
                     setQuizModalOpen(true);
                   }}
                 >
-                  <Stack spacing={2} sx={{ height: "100%" }}>
-                    <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={1.5}>
-                      <Stack direction="row" spacing={1.4} alignItems="center" sx={{ minWidth: 0 }}>
+                  <Stack spacing={{ xs: 1.4, sm: 2 }} sx={{ height: "100%" }}>
+                    <Stack
+                      direction={{ xs: "column", sm: "row" }}
+                      alignItems={{ xs: "stretch", sm: "flex-start" }}
+                      justifyContent="space-between"
+                      spacing={{ xs: 1.2, sm: 1.5 }}
+                    >
+                      <Stack direction="row" spacing={{ xs: 1, sm: 1.4 }} alignItems="center" sx={{ minWidth: 0 }}>
                         <Box
                           sx={{
-                            width: 48,
-                            height: 48,
+                            width: { xs: 40, sm: 48 },
+                            height: { xs: 40, sm: 48 },
                             flex: "0 0 auto",
-                            borderRadius: "14px",
+                            borderRadius: { xs: "12px", sm: "14px" },
                             display: "grid",
                             placeItems: "center",
                             color: "#fff",
@@ -447,7 +452,7 @@ const Dashboard = () => {
                             border: "1px solid rgba(255,255,255,0.16)",
                           }}
                         >
-                          <BrainCircuit size={22} />
+                          <BrainCircuit size={20} />
                         </Box>
                         <Box sx={{ minWidth: 0 }}>
                       <Typography
@@ -455,11 +460,9 @@ const Dashboard = () => {
                         sx={{
                           color: "#fff",
                           fontWeight: 950,
-                          fontSize: "1.04rem",
+                          fontSize: { xs: "0.96rem", sm: "1.04rem" },
                           lineHeight: 1.2,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
+                          overflowWrap: "anywhere",
                         }}
                       >
                         {quiz.quizTitle || `${quiz.technology} Quiz`}
@@ -467,7 +470,7 @@ const Dashboard = () => {
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        sx={{ fontSize: "0.85rem" }}
+                        sx={{ fontSize: { xs: "0.78rem", sm: "0.85rem" } }}
                       >
                         {quiz.technology || "General Quiz"}
                       </Typography>
@@ -483,16 +486,18 @@ const Dashboard = () => {
                           border: `1px solid ${alpha(performanceColor, 0.24)}`,
                           fontWeight: 900,
                           flex: "0 0 auto",
+                          alignSelf: { xs: "flex-start", sm: "auto" },
+                          maxWidth: "100%",
                           "& .MuiChip-icon": { color: performanceColor },
                         }}
                       />
                     </Stack>
 
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1.3, sm: 2 } }}>
                       <Box
                         sx={{
-                          width: 86,
-                          height: 86,
+                          width: { xs: 68, sm: 86 },
+                          height: { xs: 68, sm: 86 },
                           flex: "0 0 auto",
                           borderRadius: "50%",
                           display: "grid",
@@ -502,8 +507,8 @@ const Dashboard = () => {
                       >
                         <Box
                           sx={{
-                            width: 64,
-                            height: 64,
+                            width: { xs: 50, sm: 64 },
+                            height: { xs: 50, sm: 64 },
                             borderRadius: "50%",
                             display: "grid",
                             placeItems: "center",
@@ -511,7 +516,7 @@ const Dashboard = () => {
                             border: "1px solid rgba(255,255,255,0.08)",
                           }}
                         >
-                          <Typography sx={{ color: performanceColor, fontWeight: 950, fontSize: 18 }}>
+                          <Typography sx={{ color: performanceColor, fontWeight: 950, fontSize: { xs: 15, sm: 18 } }}>
                             {percentage}%
                           </Typography>
                         </Box>
@@ -544,8 +549,8 @@ const Dashboard = () => {
                   <Box
                     sx={{
                       display: "grid",
-                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                      gap: 1,
+                      gridTemplateColumns: { xs: "repeat(3, minmax(0, 1fr))", sm: "repeat(3, minmax(0, 1fr))" },
+                      gap: { xs: 0.65, sm: 1 },
                     }}
                   >
                     {[
@@ -556,16 +561,16 @@ const Dashboard = () => {
                       <Box
                         key={item.label}
                         sx={{
-                          p: 1.15,
-                          minHeight: 70,
-                          borderRadius: "14px",
+                          p: { xs: 0.85, sm: 1.15 },
+                          minHeight: { xs: 58, sm: 70 },
+                          borderRadius: { xs: "12px", sm: "14px" },
                           border: `1px solid ${alpha(item.color, 0.20)}`,
                           bgcolor: alpha(item.color, 0.08),
                         }}
                       >
                         <Box sx={{ color: item.color, lineHeight: 0, mb: 0.7 }}>{item.icon}</Box>
-                        <Typography sx={{ fontWeight: 950, lineHeight: 1 }}>{item.value}</Typography>
-                        <Typography sx={{ color: "text.secondary", fontSize: 12, mt: 0.35 }}>
+                        <Typography sx={{ fontWeight: 950, lineHeight: 1, fontSize: { xs: 14, sm: 16 } }}>{item.value}</Typography>
+                        <Typography sx={{ color: "text.secondary", fontSize: { xs: 10.5, sm: 12 }, mt: 0.35 }}>
                           {item.label}
                         </Typography>
                       </Box>
@@ -580,15 +585,15 @@ const Dashboard = () => {
                       justifyContent: "center",
                       gap: 1,
                       py: 1,
-                      px: 2,
-                      borderRadius: "14px",
+                      px: { xs: 1.4, sm: 2 },
+                      borderRadius: { xs: "12px", sm: "14px" },
                       bgcolor: alpha(performanceColor, 0.11),
                       border: `1px solid ${alpha(performanceColor, 0.22)}`,
                       color: performanceColor,
                     }}
                   >
                     <Eye size={16} />
-                    <Typography variant="body2" fontWeight={900}>
+                    <Typography variant="body2" fontWeight={900} sx={{ fontSize: { xs: 12, sm: 14 } }}>
                       Open review
                     </Typography>
                   </Box>
@@ -605,6 +610,7 @@ const Dashboard = () => {
             onClick={() => setShowAllResults(!showAllResults)}
             sx={{
               px: 2.6,
+              width: { xs: "100%", sm: "auto" },
               borderRadius: "14px",
               background: "linear-gradient(135deg, #7C3AED, #06B6D4)",
               boxShadow: "0 16px 34px rgba(124,58,237,0.28)",

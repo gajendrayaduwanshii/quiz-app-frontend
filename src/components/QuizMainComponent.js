@@ -365,8 +365,11 @@ const QuizMainComponent = memo(({ questions, documentId, tech }) => {
         <Box
           sx={{
             minHeight: "calc(100vh - 160px)",
-            px: { xs: 1, md: 2 },
+            px: { xs: 0, sm: 1, md: 2 },
             py: { xs: 1.5, md: 2.5 },
+            width: "100%",
+            maxWidth: "100%",
+            overflowX: "hidden",
           }}
         >
           <PremiumCard
@@ -397,7 +400,16 @@ const QuizMainComponent = memo(({ questions, documentId, tech }) => {
                     fontWeight: 800,
                   }}
                 />
-                <Typography variant="h4" sx={{ fontWeight: 950, letterSpacing: 0 }}>
+                <Typography
+                  variant="h4"
+                  sx={{
+                    fontWeight: 950,
+                    letterSpacing: 0,
+                    fontSize: { xs: 24, sm: 30, md: 34 },
+                    lineHeight: 1.12,
+                    overflowWrap: "anywhere",
+                  }}
+                >
                   {quizTitle}
                 </Typography>
                 <Typography sx={{ mt: 0.75, color: "text.secondary", maxWidth: 680 }}>
@@ -408,7 +420,14 @@ const QuizMainComponent = memo(({ questions, documentId, tech }) => {
               <Stack
                 direction={{ xs: "row", sm: "row" }}
                 spacing={1}
-                sx={{ width: { xs: "100%", md: "auto" }, flexWrap: "wrap" }}
+                useFlexGap
+                sx={{
+                  width: { xs: "100%", md: "auto" },
+                  flexWrap: "wrap",
+                  "& .MuiChip-root": {
+                    maxWidth: { xs: "100%", sm: "none" },
+                  },
+                }}
               >
                 <Chip
                   icon={<BrainCircuit size={16} />}

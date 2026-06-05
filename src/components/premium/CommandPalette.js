@@ -54,7 +54,9 @@ const CommandPalette = () => {
             animate: { opacity: 1, y: 0, scale: 1 },
             exit: { opacity: 0, y: 18, scale: 0.98 },
             sx: {
-              borderRadius: "24px",
+              width: { xs: "calc(100vw - 24px)", sm: "100%" },
+              m: { xs: 1.5, sm: 4 },
+              borderRadius: { xs: "18px", sm: "24px" },
               border: "1px solid rgba(255,255,255,0.14)",
               background: "rgba(5,8,22,0.96)",
               boxShadow: "0 34px 100px rgba(0,0,0,0.62), 0 0 60px rgba(124,58,237,0.18)",
@@ -63,14 +65,14 @@ const CommandPalette = () => {
             },
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, p: 2, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, p: { xs: 1.5, sm: 2 }, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
             <Search size={19} color="#06B6D4" />
             <InputBase
               autoFocus
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search actions, pages, tools..."
-              sx={{ flex: 1, color: "#fff" }}
+              sx={{ flex: 1, minWidth: 0, color: "#fff" }}
             />
             <Typography sx={{ color: "text.secondary", fontSize: 12 }}>Esc</Typography>
           </Box>
@@ -85,8 +87,8 @@ const CommandPalette = () => {
                   <ListItemText
                     primary={item.title}
                     secondary={item.description}
-                    primaryTypographyProps={{ color: "#fff", fontWeight: 900 }}
-                    secondaryTypographyProps={{ color: "#94A3B8", fontSize: 12 }}
+                    primaryTypographyProps={{ color: "#fff", fontWeight: 900, overflowWrap: "anywhere" }}
+                    secondaryTypographyProps={{ color: "#94A3B8", fontSize: 12, overflowWrap: "anywhere" }}
                   />
                 </ListItemButton>
               );

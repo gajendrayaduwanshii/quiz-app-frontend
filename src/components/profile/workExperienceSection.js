@@ -65,6 +65,12 @@ const WorkExperienceSection = ({
             alignItems="center"
             justifyContent="space-between"
             marginBottom={2}
+            sx={{
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: { xs: "stretch", sm: "center" },
+              gap: 1.2,
+              "& button": { width: { xs: "100%", sm: "auto" } },
+            }}
           >
             <h3 style={{margin:'0'}}>Work Experience</h3>
             <Button
@@ -161,7 +167,8 @@ const WorkExperienceSection = ({
                       sx={{
                         display: "inline-flex",
                         alignItems: "center",
-                        marginLeft: "auto",
+                        marginLeft: { xs: 0, sm: "auto" },
+                        width: { xs: "100%", sm: "auto" },
                       }}
                     >
                       Remove
@@ -179,7 +186,7 @@ const WorkExperienceSection = ({
             {workExperiences.length === 0 ? (
               <Typography>No work experiences added.</Typography>
             ) : (
-              <TableContainer component={Paper} sx={{ mb: 5 }}>
+              <TableContainer component={Paper} sx={{ mb: 5, maxWidth: "100%" }}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -203,8 +210,8 @@ const WorkExperienceSection = ({
                   <TableBody>
                     {workExperiences.map((work, index) => (
                       <TableRow key={work.id || index}>
-                        <TableCell>{work.company || "N/A"}</TableCell>
-                        <TableCell>{work.jobTitle || "N/A"}</TableCell>
+                        <TableCell sx={{ overflowWrap: "anywhere" }}>{work.company || "N/A"}</TableCell>
+                        <TableCell sx={{ overflowWrap: "anywhere" }}>{work.jobTitle || "N/A"}</TableCell>
                         <TableCell>
                           {calculateDuration(
                             work.startDate,
@@ -213,7 +220,7 @@ const WorkExperienceSection = ({
                           )}
                         </TableCell>
                         <TableCell>{work.current ? "Yes" : "No"}</TableCell>
-                        <TableCell>{work.jobDescription || "N/A"}</TableCell>
+                        <TableCell sx={{ minWidth: 220, overflowWrap: "anywhere" }}>{work.jobDescription || "N/A"}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

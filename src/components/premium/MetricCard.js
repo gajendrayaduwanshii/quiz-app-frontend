@@ -55,9 +55,7 @@ const MetricCard = ({
                 mt: 0.45,
                 fontWeight: 950,
                 lineHeight: 1.08,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
+                overflowWrap: "anywhere",
                 fontSize: { xs: 20, md: 22 },
               }}
             >
@@ -83,7 +81,7 @@ const MetricCard = ({
       </Stack>
 
       {helper && (
-        <Typography variant="body2" sx={{ color: "text.secondary", minHeight: 22 }}>
+        <Typography variant="body2" sx={{ color: "text.secondary", minHeight: 22, overflowWrap: "anywhere" }}>
           {helper}
         </Typography>
       )}

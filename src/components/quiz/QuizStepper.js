@@ -12,8 +12,8 @@ const QuizStepper = memo(({ activeStep, questions, answers = {}, submitted = fal
         <Box
           key={question.id || index}
           sx={{
-            width: 34,
-            height: 34,
+            width: { xs: 30, sm: 34 },
+            height: { xs: 30, sm: 34 },
             flex: "0 0 auto",
             display: "grid",
             placeItems: "center",
@@ -28,7 +28,7 @@ const QuizStepper = memo(({ activeStep, questions, answers = {}, submitted = fal
               ? "rgba(34,197,94,0.14)"
               : "rgba(255,255,255,0.045)",
             boxShadow: active ? "0 12px 28px rgba(34,211,238,0.18)" : "none",
-            fontSize: 13,
+            fontSize: { xs: 12, sm: 13 },
             fontWeight: 900,
           }}
         >
@@ -58,7 +58,14 @@ const QuizStepper = memo(({ activeStep, questions, answers = {}, submitted = fal
           {submitted ? "Submitted" : `${Math.round(progress)}%`}
         </Typography>
       </Stack>
-      <Box sx={{ overflowX: "auto", pb: 0.6 }}>
+      <Box
+        sx={{
+          overflowX: "auto",
+          pb: 0.6,
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+        }}
+      >
         <Stack direction="row" spacing={0.8} sx={{ minWidth: "max-content" }}>
           {steps}
         </Stack>

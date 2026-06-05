@@ -135,7 +135,7 @@ const BasicInfo = ({
                 </TextField>
               </Grid>
               <Grid item size={{ xs: 12, sm: 6, lg: 4 }}>
-                <Button variant="outlined" component="label">
+                <Button variant="outlined" component="label" sx={{ width: { xs: "100%", sm: "auto" } }}>
                   Upload Resume
                   <input
                     type="file"
@@ -145,7 +145,7 @@ const BasicInfo = ({
                   />
                 </Button>
                 {profileData.uploadResume && (
-                  <Typography variant="body2" mt={1}>
+                  <Typography variant="body2" mt={1} sx={{ overflowWrap: "anywhere" }}>
                     Selected file: {profileData.uploadResume.name}
                   </Typography>
                 )}
@@ -157,7 +157,7 @@ const BasicInfo = ({
         <>
           <Grid size={{ xs: 12 }}>
             <h3 style={{ marginBottom: "16px" }}>Basic Information</h3>
-            <TableContainer component={Paper} sx={{ mb: 5 }}>
+            <TableContainer component={Paper} sx={{ mb: 5, maxWidth: "100%" }}>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -176,7 +176,7 @@ const BasicInfo = ({
                   </TableRow>
                   <TableRow>
                     <TableCell>Email</TableCell>
-                    <TableCell>{profileData.email || "N/A"}</TableCell>
+                    <TableCell sx={{ overflowWrap: "anywhere" }}>{profileData.email || "N/A"}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Phone</TableCell>
@@ -204,7 +204,7 @@ const BasicInfo = ({
                   </TableRow>
                   <TableRow>
                     <TableCell>Current Company</TableCell>
-                    <TableCell>{profileData.currentCompany || "N/A"}</TableCell>
+                    <TableCell sx={{ overflowWrap: "anywhere" }}>{profileData.currentCompany || "N/A"}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Years of Experience</TableCell>
@@ -235,6 +235,7 @@ const BasicInfo = ({
                           target="_blank"
                           rel="noopener noreferrer"
                           download
+                          sx={{ width: { xs: "100%", sm: "auto" } }}
                         >
                           Download Resume
                         </Button>

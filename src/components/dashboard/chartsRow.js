@@ -180,8 +180,14 @@ const ChartsRow = ({ skills = [] }) => {
                 bgcolor: "rgba(255,255,255,0.035)",
               }}
             >
-              <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.5 }}>
-                <Box>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                alignItems={{ xs: "flex-start", sm: "center" }}
+                justifyContent="space-between"
+                spacing={1}
+                sx={{ mb: 1.5 }}
+              >
+                <Box sx={{ minWidth: 0 }}>
                   <Typography variant="h6" sx={{ fontWeight: 950 }}>
                     Skill Mix
                   </Typography>
@@ -191,7 +197,7 @@ const ChartsRow = ({ skills = [] }) => {
                 </Box>
                 <PieChart size={22} color="#06B6D4" />
               </Stack>
-              <Box sx={{ height: 300 }}>
+              <Box sx={{ height: { xs: 250, sm: 300 } }}>
                 <Pie data={pieData} options={commonOptions} />
               </Box>
               <Box
@@ -224,8 +230,14 @@ const ChartsRow = ({ skills = [] }) => {
                 bgcolor: "rgba(255,255,255,0.035)",
               }}
             >
-              <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.5 }}>
-                <Box>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                alignItems={{ xs: "flex-start", sm: "center" }}
+                justifyContent="space-between"
+                spacing={1}
+                sx={{ mb: 1.5 }}
+              >
+                <Box sx={{ minWidth: 0 }}>
                   <Typography variant="h6" sx={{ fontWeight: 950 }}>
                     Proficiency Radar
                   </Typography>
@@ -235,7 +247,7 @@ const ChartsRow = ({ skills = [] }) => {
                 </Box>
                 <BarChart3 size={22} color="#7C3AED" />
               </Stack>
-              <Box sx={{ height: 248 }}>
+              <Box sx={{ height: { xs: 230, sm: 248 } }}>
                 <Bar data={barData} options={barOptions} />
               </Box>
 
@@ -248,7 +260,7 @@ const ChartsRow = ({ skills = [] }) => {
                   {rankedSkills.map((skill) => (
                     <Box key={skill.id || skill.skillName}>
                       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 0.6 }}>
-                        <Typography sx={{ fontSize: 13, fontWeight: 850 }}>
+                        <Typography sx={{ fontSize: 13, fontWeight: 850, overflowWrap: "anywhere" }}>
                           {skill.skillName}
                         </Typography>
                         <Typography sx={{ color: skill.accent, fontSize: 12, fontWeight: 950 }}>

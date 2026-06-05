@@ -104,7 +104,7 @@ const SummaryCards = ({ user, strongest, weakest, years }) => {
                 <Typography variant="h5" sx={{ fontWeight: 950, lineHeight: 1.15, mb: 1 }}>
                   {user?.currentJobTitle || "Developer"} profile is {profileSignal >= 75 ? "strong" : "building momentum"}
                 </Typography>
-                <Typography sx={{ color: "text.secondary", maxWidth: 620 }}>
+                <Typography sx={{ color: "text.secondary", maxWidth: 620, overflowWrap: "anywhere" }}>
                   {skills.length} skills, {quizResults.length} quiz attempts, and {completedQuestions} answered questions are combined into a quick readiness signal for your next review.
                 </Typography>
               </Box>

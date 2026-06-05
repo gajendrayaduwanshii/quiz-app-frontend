@@ -47,8 +47,8 @@ const QuizReportPage = () => {
           spacing={2}
           sx={{ mb: 2 }}
         >
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 950 }}>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography variant="h4" sx={{ fontWeight: 950, fontSize: { xs: 28, md: 34 }, overflowWrap: "anywhere" }}>
               {reportData?.title || "SkillSync Quiz Report"}
             </Typography>
             {reportData?.generatedAt && (
@@ -59,14 +59,14 @@ const QuizReportPage = () => {
           </Box>
           {reportData && (
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ width: { xs: "100%", md: "auto" } }}>
-              <PremiumButton onClick={handlePrint} startIcon={<Download size={17} />}>
+              <PremiumButton onClick={handlePrint} startIcon={<Download size={17} />} sx={{ width: { xs: "100%", sm: "auto" } }}>
                 PDF Download
               </PremiumButton>
               <Button
                 variant="outlined"
                 onClick={handleEmail}
                 startIcon={<Mail size={17} />}
-                sx={{ color: "#fff", borderColor: "rgba(255,255,255,0.14)" }}
+                sx={{ color: "#fff", borderColor: "rgba(255,255,255,0.14)", width: { xs: "100%", sm: "auto" } }}
               >
                 Email Report
               </Button>
@@ -85,6 +85,7 @@ const QuizReportPage = () => {
               bgcolor: "rgba(255,255,255,0.045)",
               color: "#E5E7EB",
               whiteSpace: "pre-wrap",
+              overflowWrap: "anywhere",
               fontFamily: "inherit",
               lineHeight: 1.7,
             }}

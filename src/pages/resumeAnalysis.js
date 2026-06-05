@@ -82,13 +82,13 @@ const ResumeAnalysis = () => {
           >
             <UploadCloud size={34} color="#fff" />
           </Box>
-          <Typography variant="h5" sx={{ color: "#fff", fontWeight: 900, mb: 1 }}>
+          <Typography variant="h5" sx={{ color: "#fff", fontWeight: 900, mb: 1, fontSize: { xs: 22, md: 28 }, overflowWrap: "anywhere" }}>
             No Resume Found
           </Typography>
-          <Typography sx={{ color: "text.secondary", mb: 3 }}>
+          <Typography sx={{ color: "text.secondary", mb: 3, overflowWrap: "anywhere" }}>
             Please upload your resume from profile to see AI-generated analysis.
           </Typography>
-          <PremiumButton onClick={() => router.push("/profile")} endIcon={<ArrowRight size={17} />}>
+          <PremiumButton onClick={() => router.push("/profile")} endIcon={<ArrowRight size={17} />} sx={{ width: { xs: "100%", sm: "auto" } }}>
             Go to Profile
           </PremiumButton>
         </PremiumCard>
@@ -103,7 +103,7 @@ const ResumeAnalysis = () => {
         title="AI Resume Analyzer"
         description="Premium ATS-style analysis with profile summary, improvement areas, and career learning signals."
         action={
-          <PremiumButton onClick={refetch} startIcon={<RefreshCw size={16} />} sx={{ py: 1 }}>
+          <PremiumButton onClick={refetch} startIcon={<RefreshCw size={16} />} sx={{ py: 1, width: { xs: "100%", sm: "auto" } }}>
             Re-analyze
           </PremiumButton>
         }
@@ -167,14 +167,14 @@ const ResumeAnalysis = () => {
           <PremiumCard sx={{ p: 3, height: "100%" }} glow="rgba(124,58,237,0.24)">
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.3, mb: 2 }}>
               <BrainCircuit size={22} color="#06B6D4" />
-              <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900 }}>
+              <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900, overflowWrap: "anywhere" }}>
                 Profile Summary
               </Typography>
             </Box>
             {profileSummary ? (
-              <Box sx={{ color: "text.secondary", lineHeight: 1.8, whiteSpace: "pre-wrap" }}>
+              <Box sx={{ color: "text.secondary", lineHeight: 1.8, whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
                 {profileSummary.split("\n").map((line, idx) => (
-                  <Typography key={idx} sx={{ color: "text.secondary", mb: 0.6 }}>
+                  <Typography key={idx} sx={{ color: "text.secondary", mb: 0.6, overflowWrap: "anywhere" }}>
                     {line}
                   </Typography>
                 ))}
@@ -208,7 +208,7 @@ const ResumeAnalysis = () => {
           <PremiumCard sx={{ p: 2.6, height: "100%" }} glow="rgba(34,197,94,0.14)">
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, mb: 1.6 }}>
               <Sparkles size={20} color="#22C55E" />
-              <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900 }}>
+              <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900, overflowWrap: "anywhere" }}>
                 AI Strongest Skills
               </Typography>
             </Box>
@@ -228,7 +228,7 @@ const ResumeAnalysis = () => {
           <PremiumCard sx={{ p: 2.6, height: "100%" }} glow="rgba(245,158,11,0.14)">
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, mb: 1.6 }}>
               <ListChecks size={20} color="#F59E0B" />
-              <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900 }}>
+              <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900, overflowWrap: "anywhere" }}>
                 AI Missing Keywords
               </Typography>
             </Box>
@@ -253,10 +253,10 @@ const ResumeAnalysis = () => {
             ].map(([title, detail]) => (
               <Grid item size={{ xs: 12, md: 4 }} key={title}>
                 <PremiumCard sx={{ p: 2.6, height: "100%" }} glow="rgba(6,182,212,0.12)">
-                  <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900, mb: 1 }}>
+                  <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900, mb: 1, overflowWrap: "anywhere" }}>
                     {title}
                   </Typography>
-                  <Typography sx={{ color: "text.secondary", lineHeight: 1.7 }}>
+                  <Typography sx={{ color: "text.secondary", lineHeight: 1.7, overflowWrap: "anywhere" }}>
                     {detail || "AI did not return this insight yet. Re-analyze after updating the resume."}
                   </Typography>
                 </PremiumCard>
@@ -277,10 +277,10 @@ const ResumeAnalysis = () => {
               {learningSuggestions.map(({ area, recommendation }, idx) => (
                 <Grid item size={{ xs: 12, md: 6 }} key={`${area}-${idx}`}>
                   <PremiumCard sx={{ p: 2.6, height: "100%" }} glow="rgba(6,182,212,0.16)">
-                    <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900, mb: 1 }}>
+                    <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900, mb: 1, overflowWrap: "anywhere" }}>
                       {area || `Focus Area ${idx + 1}`}
                     </Typography>
-                    <Typography sx={{ color: "text.secondary", lineHeight: 1.75, whiteSpace: "pre-wrap" }}>
+                    <Typography sx={{ color: "text.secondary", lineHeight: 1.75, whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
                       {recommendation}
                     </Typography>
                   </PremiumCard>

@@ -91,8 +91,8 @@ const Learning = () => {
       {detailedPlan ? (
         <Stack spacing={2.2}>
           {detailedPlan.aiGeneratedContent ? (
-            <PremiumCard glow="rgba(6,182,212,0.25)" sx={{ p: 3 }}>
-              <Typography variant="h5" sx={{ color: "#fff", fontWeight: 950, mb: 1.6 }}>
+            <PremiumCard glow="rgba(6,182,212,0.25)" sx={{ p: { xs: 2.2, md: 3 } }}>
+              <Typography variant="h5" sx={{ color: "#fff", fontWeight: 950, mb: 1.6, fontSize: { xs: 22, md: 28 }, overflowWrap: "anywhere" }}>
                 {detailedPlan.title}
               </Typography>
               <Typography
@@ -100,6 +100,7 @@ const Learning = () => {
                   color: "text.secondary",
                   lineHeight: 1.85,
                   whiteSpace: "pre-wrap",
+                  overflowWrap: "anywhere",
                 }}
               >
                 {detailedPlan.aiGeneratedContent}
@@ -107,12 +108,12 @@ const Learning = () => {
             </PremiumCard>
           ) : (
           <>
-          <PremiumCard glow="rgba(6,182,212,0.25)" sx={{ p: 3 }}>
+          <PremiumCard glow="rgba(6,182,212,0.25)" sx={{ p: { xs: 2.2, md: 3 } }}>
             <Stack spacing={1.4}>
-              <Typography variant="h5" sx={{ color: "#fff", fontWeight: 950 }}>
+              <Typography variant="h5" sx={{ color: "#fff", fontWeight: 950, fontSize: { xs: 22, md: 28 }, overflowWrap: "anywhere" }}>
                 {detailedPlan.title}
               </Typography>
-              <Typography sx={{ color: "text.secondary", lineHeight: 1.8 }}>
+              <Typography sx={{ color: "text.secondary", lineHeight: 1.8, overflowWrap: "anywhere" }}>
                 {detailedPlan.summary}
               </Typography>
               {!!detailedPlan.profileSignals.length && (
@@ -142,17 +143,17 @@ const Learning = () => {
               <Grid container spacing={1.6}>
                 {detailedPlan.priorityFocus.map((focus, index) => (
                   <Grid item size={{ xs: 12, md: 6 }} key={`${focus.skill || "focus"}-${index}`}>
-                    <Box sx={{ p: 2, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 2 }}>
-                      <Typography sx={{ color: "#fff", fontWeight: 900, mb: 0.8 }}>
+                    <Box sx={{ p: 2, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 2, minWidth: 0 }}>
+                      <Typography sx={{ color: "#fff", fontWeight: 900, mb: 0.8, overflowWrap: "anywhere" }}>
                         {focus.skill || "Focus Area"}
                       </Typography>
-                      <Typography sx={{ color: "text.secondary", lineHeight: 1.7 }}>
+                      <Typography sx={{ color: "text.secondary", lineHeight: 1.7, overflowWrap: "anywhere" }}>
                         {focus.whyItMatters}
                       </Typography>
-                      <Typography sx={{ color: "#FDE68A", mt: 1, lineHeight: 1.7 }}>
+                      <Typography sx={{ color: "#FDE68A", mt: 1, lineHeight: 1.7, overflowWrap: "anywhere" }}>
                         Gap: {focus.currentGap}
                       </Typography>
-                      <Typography sx={{ color: "#BBF7D0", mt: 0.7, lineHeight: 1.7 }}>
+                      <Typography sx={{ color: "#BBF7D0", mt: 0.7, lineHeight: 1.7, overflowWrap: "anywhere" }}>
                         Target: {focus.targetOutcome}
                       </Typography>
                     </Box>
@@ -169,25 +170,25 @@ const Learning = () => {
               </Typography>
               <Stack spacing={1.6}>
                 {detailedPlan.roadmap.map((phase, index) => (
-                  <Box key={`${phase.phase || "phase"}-${index}`} sx={{ p: 2, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 2 }}>
-                    <Typography sx={{ color: "#67E8F9", fontWeight: 900 }}>
+                  <Box key={`${phase.phase || "phase"}-${index}`} sx={{ p: 2, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 2, minWidth: 0 }}>
+                    <Typography sx={{ color: "#67E8F9", fontWeight: 900, overflowWrap: "anywhere" }}>
                       {phase.phase || `Phase ${index + 1}`}
                     </Typography>
-                    <Typography sx={{ color: "#fff", fontWeight: 850, mt: 0.7 }}>
+                    <Typography sx={{ color: "#fff", fontWeight: 850, mt: 0.7, overflowWrap: "anywhere" }}>
                       {phase.goal}
                     </Typography>
                     {!!phase.topics?.length && (
-                      <Typography sx={{ color: "text.secondary", mt: 1, lineHeight: 1.7 }}>
+                      <Typography sx={{ color: "text.secondary", mt: 1, lineHeight: 1.7, overflowWrap: "anywhere" }}>
                         Topics: {phase.topics.join(", ")}
                       </Typography>
                     )}
                     {!!phase.practiceTasks?.length && (
-                      <Typography sx={{ color: "text.secondary", mt: 1, whiteSpace: "pre-wrap", lineHeight: 1.7 }}>
+                      <Typography sx={{ color: "text.secondary", mt: 1, whiteSpace: "pre-wrap", lineHeight: 1.7, overflowWrap: "anywhere" }}>
                         {phase.practiceTasks.map((task, taskIndex) => `${taskIndex + 1}. ${task}`).join("\n")}
                       </Typography>
                     )}
                     {phase.deliverable && (
-                      <Typography sx={{ color: "#BBF7D0", mt: 1, lineHeight: 1.7 }}>
+                      <Typography sx={{ color: "#BBF7D0", mt: 1, lineHeight: 1.7, overflowWrap: "anywhere" }}>
                         Deliverable: {phase.deliverable}
                       </Typography>
                     )}
@@ -201,19 +202,19 @@ const Learning = () => {
             {detailedPlan.projectPlan && (
               <Grid item size={{ xs: 12, md: 6 }}>
                 <PremiumCard sx={{ p: 3, height: "100%" }}>
-                  <Typography variant="h6" sx={{ color: "#fff", fontWeight: 950, mb: 1 }}>
+                  <Typography variant="h6" sx={{ color: "#fff", fontWeight: 950, mb: 1, overflowWrap: "anywhere" }}>
                     {detailedPlan.projectPlan.name || "Project Plan"}
                   </Typography>
-                  <Typography sx={{ color: "text.secondary", lineHeight: 1.75 }}>
+                  <Typography sx={{ color: "text.secondary", lineHeight: 1.75, overflowWrap: "anywhere" }}>
                     {detailedPlan.projectPlan.description}
                   </Typography>
                   {!!detailedPlan.projectPlan.features?.length && (
-                    <Typography sx={{ color: "text.secondary", mt: 1.4, whiteSpace: "pre-wrap", lineHeight: 1.75 }}>
+                    <Typography sx={{ color: "text.secondary", mt: 1.4, whiteSpace: "pre-wrap", lineHeight: 1.75, overflowWrap: "anywhere" }}>
                       {detailedPlan.projectPlan.features.map((feature, index) => `${index + 1}. ${feature}`).join("\n")}
                     </Typography>
                   )}
                   {!!detailedPlan.projectPlan.acceptanceCriteria?.length && (
-                    <Typography sx={{ color: "#BBF7D0", mt: 1.4, whiteSpace: "pre-wrap", lineHeight: 1.75 }}>
+                    <Typography sx={{ color: "#BBF7D0", mt: 1.4, whiteSpace: "pre-wrap", lineHeight: 1.75, overflowWrap: "anywhere" }}>
                       {detailedPlan.projectPlan.acceptanceCriteria.map((item, index) => `${index + 1}. ${item}`).join("\n")}
                     </Typography>
                   )}
@@ -224,19 +225,19 @@ const Learning = () => {
             {detailedPlan.quizImprovementPlan && (
               <Grid item size={{ xs: 12, md: 6 }}>
                 <PremiumCard sx={{ p: 3, height: "100%" }}>
-                  <Typography variant="h6" sx={{ color: "#fff", fontWeight: 950, mb: 1 }}>
+                  <Typography variant="h6" sx={{ color: "#fff", fontWeight: 950, mb: 1, overflowWrap: "anywhere" }}>
                     Quiz Improvement Plan
                   </Typography>
-                  <Typography sx={{ color: "text.secondary", lineHeight: 1.75 }}>
+                  <Typography sx={{ color: "text.secondary", lineHeight: 1.75, overflowWrap: "anywhere" }}>
                     {detailedPlan.quizImprovementPlan.reviewStrategy}
                   </Typography>
                   {!!detailedPlan.quizImprovementPlan.drills?.length && (
-                    <Typography sx={{ color: "text.secondary", mt: 1.4, whiteSpace: "pre-wrap", lineHeight: 1.75 }}>
+                    <Typography sx={{ color: "text.secondary", mt: 1.4, whiteSpace: "pre-wrap", lineHeight: 1.75, overflowWrap: "anywhere" }}>
                       {detailedPlan.quizImprovementPlan.drills.map((drill, index) => `${index + 1}. ${drill}`).join("\n")}
                     </Typography>
                   )}
                   {detailedPlan.quizImprovementPlan.nextQuizTarget && (
-                    <Typography sx={{ color: "#BBF7D0", mt: 1.4, lineHeight: 1.75 }}>
+                    <Typography sx={{ color: "#BBF7D0", mt: 1.4, lineHeight: 1.75, overflowWrap: "anywhere" }}>
                       Target: {detailedPlan.quizImprovementPlan.nextQuizTarget}
                     </Typography>
                   )}
@@ -249,16 +250,16 @@ const Learning = () => {
             {!!detailedPlan.resources.length && (
               <Grid item size={{ xs: 12, md: 6 }}>
                 <PremiumCard sx={{ p: 3, height: "100%" }}>
-                  <Typography variant="h6" sx={{ color: "#fff", fontWeight: 950, mb: 2 }}>
+                  <Typography variant="h6" sx={{ color: "#fff", fontWeight: 950, mb: 2, overflowWrap: "anywhere" }}>
                     Resources
                   </Typography>
                   <Stack spacing={1.2}>
                     {detailedPlan.resources.map((resource, index) => (
                       <Box key={`${resource.searchTerm || "resource"}-${index}`}>
-                        <Typography sx={{ color: "#67E8F9", fontWeight: 900 }}>
+                        <Typography sx={{ color: "#67E8F9", fontWeight: 900, overflowWrap: "anywhere" }}>
                           {resource.type}: {resource.searchTerm}
                         </Typography>
-                        <Typography sx={{ color: "text.secondary", lineHeight: 1.7 }}>
+                        <Typography sx={{ color: "text.secondary", lineHeight: 1.7, overflowWrap: "anywhere" }}>
                           {resource.howToUse}
                         </Typography>
                       </Box>
@@ -270,16 +271,16 @@ const Learning = () => {
 
             <Grid item size={{ xs: 12, md: 6 }}>
               <PremiumCard sx={{ p: 3, height: "100%" }}>
-                <Typography variant="h6" sx={{ color: "#fff", fontWeight: 950, mb: 2 }}>
+                <Typography variant="h6" sx={{ color: "#fff", fontWeight: 950, mb: 2, overflowWrap: "anywhere" }}>
                   Weekly Schedule & Metrics
                 </Typography>
                 {!!detailedPlan.weeklySchedule.length && (
-                  <Typography sx={{ color: "text.secondary", whiteSpace: "pre-wrap", lineHeight: 1.75 }}>
+                  <Typography sx={{ color: "text.secondary", whiteSpace: "pre-wrap", lineHeight: 1.75, overflowWrap: "anywhere" }}>
                     {detailedPlan.weeklySchedule.map((item, index) => `${index + 1}. ${item}`).join("\n")}
                   </Typography>
                 )}
                 {!!detailedPlan.successMetrics.length && (
-                  <Typography sx={{ color: "#BBF7D0", mt: 1.6, whiteSpace: "pre-wrap", lineHeight: 1.75 }}>
+                  <Typography sx={{ color: "#BBF7D0", mt: 1.6, whiteSpace: "pre-wrap", lineHeight: 1.75, overflowWrap: "anywhere" }}>
                     {detailedPlan.successMetrics.map((metric, index) => `${index + 1}. ${metric}`).join("\n")}
                   </Typography>
                 )}
@@ -317,8 +318,8 @@ const Learning = () => {
                   >
                     <Icon size={23} color="#fff" />
                   </Box>
-                  <Box>
-                    <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900 }}>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography variant="h6" sx={{ color: "#fff", fontWeight: 900, overflowWrap: "anywhere" }}>
                       {title}
                     </Typography>
                     <Stack direction="row" spacing={0.8} sx={{ mt: 0.8, flexWrap: "wrap", rowGap: 0.8 }}>
@@ -366,6 +367,7 @@ const Learning = () => {
                     color: "text.secondary",
                     lineHeight: 1.75,
                     whiteSpace: "pre-wrap",
+                    overflowWrap: "anywhere",
                   }}
                 >
                   {detail}

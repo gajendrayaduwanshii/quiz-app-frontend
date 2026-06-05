@@ -109,7 +109,7 @@ const TechQuizPage = () => {
   };
 
   return (
-    <Box sx={{ pb: 4 }}>
+    <Box sx={{ pb: 4, maxWidth: "100%", overflowX: "hidden" }}>
       <SectionHeader
         eyebrow="Logical Assessment"
         title={`${String(tech).toUpperCase()} Logic Practice`}
@@ -125,7 +125,13 @@ const TechQuizPage = () => {
         <Grid container spacing={2.4}>
           <Grid item size={{ xs: 12, lg: 8 }}>
             <PremiumCard sx={{ p: { xs: 2.4, md: 3.2 } }} glow="rgba(6,182,212,0.22)">
-              <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} mb={2}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                justifyContent="space-between"
+                alignItems={{ xs: "flex-start", sm: "center" }}
+                spacing={1.2}
+                mb={2}
+              >
                 <Chip
                   label={`Q${currentIndex + 1} of ${questions.length}`}
                   sx={{
@@ -154,11 +160,21 @@ const TechQuizPage = () => {
                 }}
               />
 
-              <Typography variant="h5" sx={{ color: "#fff", fontWeight: 950, mb: 1.4 }}>
+              <Typography
+                variant="h5"
+                sx={{
+                  color: "#fff",
+                  fontWeight: 950,
+                  mb: 1.4,
+                  fontSize: { xs: 20, sm: 24 },
+                  lineHeight: 1.28,
+                  overflowWrap: "anywhere",
+                }}
+              >
                 {currentQ.question}
               </Typography>
               {currentQ.input && (
-                <Typography sx={{ color: "text.secondary", mb: 2 }}>
+                <Typography sx={{ color: "text.secondary", mb: 2, overflowWrap: "anywhere" }}>
                   <strong>Input:</strong> {currentQ.input}
                 </Typography>
               )}
@@ -181,10 +197,11 @@ const TechQuizPage = () => {
                       onChange={handleAnswerChange}
                       style={{
                         minHeight: 170,
-                        padding: 18,
-                        fontSize: 14,
+                        padding: 14,
+                        fontSize: 13,
                         fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
                         background: "transparent",
+                        overflowX: "auto",
                       }}
                     />
                   </Box>
@@ -219,11 +236,17 @@ const TechQuizPage = () => {
                     background: "rgba(2,6,23,0.74)",
                     fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
                     fontSize: 14,
+                    maxWidth: "100%",
                   }}
                 />
               )}
 
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.4} mt={2.4}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1.4}
+                mt={2.4}
+                sx={{ "& > button": { width: { xs: "100%", sm: "auto" } } }}
+              >
                 <PremiumButton
                   onClick={handlePrevious}
                   disabled={currentIndex === 0}
@@ -327,7 +350,7 @@ const TechQuizPage = () => {
               >
                 <Stack direction="row" spacing={1.2} alignItems="flex-start" mb={1}>
                   {isCorrect ? <CheckCircle2 size={20} color="#22C55E" /> : <XCircle size={20} color="#EF4444" />}
-                  <Typography sx={{ color: "#fff", fontWeight: 900 }}>{q.question}</Typography>
+                  <Typography sx={{ color: "#fff", fontWeight: 900, overflowWrap: "anywhere" }}>{q.question}</Typography>
                 </Stack>
                 {q.input && <Typography sx={{ color: "text.secondary" }}>Input: {q.input}</Typography>}
                 <Typography sx={{ color: "text.secondary", fontWeight: 800, mt: 1.4, mb: 0.8 }}>
@@ -343,6 +366,7 @@ const TechQuizPage = () => {
                     bgcolor: "rgba(2,6,23,0.72)",
                     border: "1px solid rgba(255,255,255,0.08)",
                     whiteSpace: "pre-wrap",
+                    overflowWrap: "anywhere",
                   }}
                 >
                   {r?.userAnswer || "Not answered"}

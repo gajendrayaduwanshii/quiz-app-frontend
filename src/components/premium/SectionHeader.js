@@ -12,29 +12,38 @@ const SectionHeader = ({ eyebrow, title, description, action }) => {
         flexDirection: { xs: "column", md: "row" },
       }}
     >
-      <Box>
+      <Box sx={{ minWidth: 0, width: { xs: "100%", md: "auto" } }}>
         {eyebrow && (
           <Typography
             variant="overline"
             sx={{
               color: "secondary.main",
-              letterSpacing: "0.12em",
+              letterSpacing: { xs: "0.08em", sm: "0.12em" },
               fontWeight: 800,
+              overflowWrap: "anywhere",
             }}
           >
             {eyebrow}
           </Typography>
         )}
-        <Typography variant="h5" sx={{ fontWeight: 800 }}>
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 800,
+            fontSize: { xs: 24, sm: 28, md: 32 },
+            lineHeight: 1.14,
+            overflowWrap: "anywhere",
+          }}
+        >
           {title}
         </Typography>
         {description && (
-          <Typography sx={{ color: "text.secondary", mt: 0.5 }}>
+          <Typography sx={{ color: "text.secondary", mt: 0.5, overflowWrap: "anywhere" }}>
             {description}
           </Typography>
         )}
       </Box>
-      {action}
+      {action && <Box sx={{ width: { xs: "100%", md: "auto" }, "& > button, & > a": { width: { xs: "100%", sm: "auto" } } }}>{action}</Box>}
     </Box>
   );
 };

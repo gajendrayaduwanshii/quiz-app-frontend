@@ -37,6 +37,12 @@ const EducationSection = ({
             alignItems="center"
             justifyContent="space-between"
             marginBottom={2}
+            sx={{
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: { xs: "stretch", sm: "center" },
+              gap: 1.2,
+              "& button": { width: { xs: "100%", sm: "auto" } },
+            }}
           >
             <h3 style={{ margin: 0 }}>Education</h3>
             <Button
@@ -109,7 +115,8 @@ const EducationSection = ({
                       sx={{
                         display: "inline-flex",
                         alignItems: "center",
-                        marginLeft: "auto",
+                        marginLeft: { xs: 0, sm: "auto" },
+                        width: { xs: "100%", sm: "auto" },
                       }}
                     >
                       Remove
@@ -128,7 +135,7 @@ const EducationSection = ({
             {educations.length === 0 ? (
               <Typography>No education records added.</Typography>
             ) : (
-              <TableContainer component={Paper} sx={{ mb: 5 }}>
+              <TableContainer component={Paper} sx={{ mb: 5, maxWidth: "100%" }}>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -149,8 +156,8 @@ const EducationSection = ({
                   <TableBody>
                     {educations.map((edu, index) => (
                       <TableRow key={edu.id || index}>
-                        <TableCell>{edu.institution || "N/A"}</TableCell>
-                        <TableCell>{edu.degree || "N/A"}</TableCell>
+                        <TableCell sx={{ overflowWrap: "anywhere" }}>{edu.institution || "N/A"}</TableCell>
+                        <TableCell sx={{ overflowWrap: "anywhere" }}>{edu.degree || "N/A"}</TableCell>
                         <TableCell>{edu.passingYear || "N/A"}</TableCell>
                         <TableCell>{edu.grade || "N/A"}</TableCell>
                       </TableRow>

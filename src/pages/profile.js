@@ -258,7 +258,12 @@ const Profile = () => {
             flexDirection: { xs: "column", md: "row" },
           }}
         >
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            alignItems={{ xs: "flex-start", sm: "center" }}
+            sx={{ width: "100%", minWidth: 0 }}
+          >
             <Avatar
               sx={{
                 width: 74,
@@ -272,7 +277,7 @@ const Profile = () => {
             >
               {profileInitial}
             </Avatar>
-            <Box>
+            <Box sx={{ minWidth: 0, width: "100%" }}>
               <Chip
                 icon={<Sparkles size={14} />}
                 label="SkillSync AI Profile"
@@ -283,7 +288,16 @@ const Profile = () => {
                   bgcolor: "rgba(6,182,212,0.10)",
                 }}
               />
-              <Typography variant="h3" className="gradient-text" sx={{ fontWeight: 900, lineHeight: 1.05 }}>
+              <Typography
+                variant="h3"
+                className="gradient-text"
+                sx={{
+                  fontWeight: 900,
+                  lineHeight: 1.08,
+                  fontSize: { xs: 30, sm: 36, md: 48 },
+                  overflowWrap: "anywhere",
+                }}
+              >
                 {profileData.name || "User Profile"}
               </Typography>
               <Stack direction="row" spacing={1.2} sx={{ mt: 1, flexWrap: "wrap", rowGap: 1 }}>
@@ -294,7 +308,13 @@ const Profile = () => {
             </Box>
           </Stack>
 
-          <Box display="flex" alignItems="center" gap={1.2} flexWrap="wrap">
+          <Box
+            display="flex"
+            alignItems="center"
+            gap={1.2}
+            flexWrap="wrap"
+            sx={{ width: { xs: "100%", md: "auto" }, "& button": { width: { xs: "100%", sm: "auto" } } }}
+          >
             {isEditing ? (
               <>
                 <PremiumButton

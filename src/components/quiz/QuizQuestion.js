@@ -55,15 +55,32 @@ const QuizQuestion = memo(({
             />
           }
           label={
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.2, width: "100%" }}>
-              <Typography sx={{ fontWeight: 850, color: selected ? "#fff" : "rgba(226,232,240,0.88)" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: { xs: "flex-start", sm: "center" },
+                gap: 1.2,
+                width: "100%",
+                minWidth: 0,
+              }}
+            >
+              <Typography sx={{ fontWeight: 850, color: selected ? "#fff" : "rgba(226,232,240,0.88)", flex: "0 0 auto" }}>
                 {String.fromCharCode(65 + index)}
               </Typography>
-              <Typography sx={{ flex: 1, color: "inherit", lineHeight: 1.45 }}>
+              <Typography
+                sx={{
+                  flex: 1,
+                  minWidth: 0,
+                  color: "inherit",
+                  lineHeight: 1.45,
+                  fontSize: { xs: 14, sm: 15 },
+                  overflowWrap: "anywhere",
+                }}
+              >
                 {optionText}
               </Typography>
-              {correct && <Chip size="small" label="Correct" sx={{ color: "#BBF7D0", bgcolor: "rgba(34,197,94,0.14)" }} />}
-              {wrong && <Chip size="small" label="Selected" sx={{ color: "#FECACA", bgcolor: "rgba(239,68,68,0.14)" }} />}
+              {correct && <Chip size="small" label="Correct" sx={{ display: { xs: "none", sm: "inline-flex" }, color: "#BBF7D0", bgcolor: "rgba(34,197,94,0.14)" }} />}
+              {wrong && <Chip size="small" label="Selected" sx={{ display: { xs: "none", sm: "inline-flex" }, color: "#FECACA", bgcolor: "rgba(239,68,68,0.14)" }} />}
             </Box>
           }
           sx={{
@@ -92,6 +109,7 @@ const QuizQuestion = memo(({
             },
             "& .MuiFormControlLabel-label": {
               width: "100%",
+              minWidth: 0,
             },
             color: wrong ? "#FECACA" : correct ? "#BBF7D0" : "inherit",
           }}
@@ -123,7 +141,13 @@ const QuizQuestion = memo(({
           "linear-gradient(145deg, rgba(255,255,255,0.085), rgba(255,255,255,0.030)), radial-gradient(circle at 100% 0%, rgba(34,211,238,0.11), transparent 34%)",
       }}
     >
-      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1.5} sx={{ mb: 1.4 }}>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        alignItems={{ xs: "flex-start", sm: "center" }}
+        justifyContent="space-between"
+        spacing={1}
+        sx={{ mb: 1.4 }}
+      >
         <Typography variant="overline" sx={{ color: "#67E8F9", fontWeight: 950 }}>
           AI Assessment Question
         </Typography>
@@ -133,7 +157,16 @@ const QuizQuestion = memo(({
           sx={{ color: "#fff", bgcolor: "rgba(255,255,255,0.08)", fontWeight: 850 }}
         />
       </Stack>
-      <Typography variant="h5" sx={{ mb: 2.6, fontWeight: 900, lineHeight: 1.28 }}>
+      <Typography
+        variant="h5"
+        sx={{
+          mb: 2.6,
+          fontWeight: 900,
+          lineHeight: 1.28,
+          fontSize: { xs: 20, sm: 24 },
+          overflowWrap: "anywhere",
+        }}
+      >
         {question}
       </Typography>
       <FormControl component="fieldset" sx={{ width: "100%" }}>

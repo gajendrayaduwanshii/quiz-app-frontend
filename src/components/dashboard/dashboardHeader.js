@@ -54,7 +54,7 @@ const DashboardHeader = memo(({ user, onLearningQuiz }) => {
           width: '100%',
         }}
       >
-        <Box sx={{ maxWidth: 780 }}>
+        <Box sx={{ maxWidth: 780, minWidth: 0 }}>
           <Chip
             icon={<Sparkles size={15} />}
             label="SkillSync AI Command Center"
@@ -68,7 +68,13 @@ const DashboardHeader = memo(({ user, onLearningQuiz }) => {
           <Typography
             variant="h3"
             className="gradient-text"
-            sx={{ fontWeight: 950, lineHeight: 1.03, mb: 1.5, fontSize: { xs: 34, md: 46 } }}
+            sx={{
+              fontWeight: 950,
+              lineHeight: 1.06,
+              mb: 1.5,
+              fontSize: { xs: 28, sm: 34, md: 46 },
+              overflowWrap: "anywhere",
+            }}
           >
             Welcome back, {user.name || 'Future-ready talent'}
           </Typography>
@@ -121,6 +127,8 @@ const DashboardHeader = memo(({ user, onLearningQuiz }) => {
         <Box
           sx={{
             p: 2.2,
+            width: "100%",
+            maxWidth: { xs: "100%", lg: 340 },
             borderRadius: '18px',
             bgcolor: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.12)',
