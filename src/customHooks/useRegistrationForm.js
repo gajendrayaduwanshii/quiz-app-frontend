@@ -5,8 +5,6 @@ import {
   validateDate,
   validatePassword,
   validateExperienceYears,
-  validateEducation,
-  validateWorkExperience,
 } from "../helper/formValidationHelpers";
 
 export default function useRegistrationForm() {
@@ -41,8 +39,36 @@ export default function useRegistrationForm() {
   const [errors, setErrors] = useState({});
 
   const validLevels = ["Beginner", "Intermediate", "Expert"];
+  const validGenders = ["male", "female", "other"];
+  const requiredStepFields = {
+    0: ["name", "email", "phone", "dob", "gender", "password"],
+    1: ["jobTitle", "company", "experienceYears", "jobType"],
+    2: ["education"],
+    3: ["workExperience"],
+    4: ["skills"],
+    5: ["resumeFile"],
+  };
 
-  const validate = () => {
+  const hasFilledValue = (value) => {
+    if (typeof value === "boolean") return value;
+    return value !== undefined && value !== null && String(value).trim() !== "";
+  };
+
+  const hasAnyRowValue = (row, keys) => keys.some((key) => hasFilledValue(row?.[key]));
+
+  const hasErrors = (value) => {
+    if (Array.isArray(value)) {
+      return value.some((item) => hasErrors(item));
+    }
+
+    if (value && typeof value === "object") {
+      return Object.values(value).some((item) => hasErrors(item));
+    }
+
+    return Boolean(value);
+  };
+
+  const validatePersonalInfo = () => {
     const newErrors = {};
 
     if (!formData.name.trim()) newErrors.name = "Full Name is required";
@@ -54,19 +80,23 @@ export default function useRegistrationForm() {
     }
 
     if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
+      newErrors.phone = "Mobile number is required";
     } else if (!validatePhone(formData.phone)) {
-      newErrors.phone = "Invalid phone number";
+      newErrors.phone = "Enter a valid mobile number";
     }
 
     if (!formData.dob) {
       newErrors.dob = "Date of birth is required";
     } else if (!validateDate(formData.dob)) {
-      newErrors.dob = "Invalid date";
+      newErrors.dob = "Invalid date of birth";
+    } else if (new Date(formData.dob) > new Date()) {
+      newErrors.dob = "Date of birth cannot be in the future";
     }
 
     if (!formData.gender) {
       newErrors.gender = "Gender is required";
+    } else if (!validGenders.includes(formData.gender)) {
+      newErrors.gender = "Select a valid gender";
     }
 
     if (!formData.password.trim()) {
@@ -74,6 +104,12 @@ export default function useRegistrationForm() {
     } else if (!validatePassword(formData.password)) {
       newErrors.password = "Password must be at least 6 characters";
     }
+
+    return newErrors;
+  };
+
+  const validateProfessionalSummary = () => {
+    const newErrors = {};
 
     if (!formData.jobTitle.trim()) {
       newErrors.jobTitle = "Job Title is required";
@@ -84,69 +120,174 @@ export default function useRegistrationForm() {
     }
 
     if (!formData.jobType.trim()) {
-      newErrors.jobType = "Professional summary is required";
+      newErrors.jobType = "Desired job type is required";
     }
 
-    if (!validateExperienceYears(formData.experienceYears)) {
-      newErrors.experienceYears = "Invalid experience";
+    if (formData.experienceYears === "" || !validateExperienceYears(formData.experienceYears)) {
+      newErrors.experienceYears = "Valid experience is required";
     }
 
-    // Skills validation
-    const skillsData = Array.isArray(formData.skills) ? formData.skills : [];
-    if (!skillsData.length) {
-      newErrors.skills = "Please add at least one skill";
-    } else {
-      const skillsErrors = skillsData.map((skill) => {
-        const err = {};
-        if (!skill.skill || skill.skill.trim() === "") {
-          err.skill = "Skill is required";
-        }
+    return newErrors;
+  };
 
-        if (!skill.level || !validLevels.includes(skill.level)) {
-          err.level = `Level must be one of: ${validLevels.join(", ")}`;
-        }
-
-        if (
-          skill.experienceYears === undefined ||
-          skill.experienceYears === "" ||
-          isNaN(skill.experienceYears) ||
-          Number(skill.experienceYears) < 0
-        ) {
-          err.experienceYears = "Valid experience is required";
-        }
-
-        return err;
-      });
-
-      if (skillsErrors.some((e) => Object.keys(e).length > 0)) {
-        newErrors.skills = skillsErrors;
-      }
-    }
-
-    // Education validation
+  const validateEducationRows = () => {
     const educationData = Array.isArray(formData.education) ? formData.education : [];
-    const educationErrors = validateEducation(educationData);
-    if (educationErrors.some((e) => Object.keys(e).length > 0)) {
-      newErrors.education = educationErrors;
+    const keys = ["degree", "institution", "year", "grade"];
+    const startedRows = educationData.filter((item) => hasAnyRowValue(item, keys));
+    const educationErrors = educationData.map((edu) => {
+      const err = {};
+      const rowStarted = hasAnyRowValue(edu, keys);
+
+      if (!rowStarted) return err;
+
+      if (!edu.degree?.trim()) err.degree = "Degree is required";
+      if (!edu.institution?.trim()) err.institution = "Institution is required";
+      if (!edu.year?.trim()) {
+        err.year = "Passing year is required";
+      } else if (!/^\d{4}$/.test(edu.year.trim())) {
+        err.year = "Year must be a valid 4-digit year";
+      }
+      if (!edu.grade?.trim()) err.grade = "Grade/CGPA is required";
+
+      return err;
+    });
+
+    if (!startedRows.length) {
+      educationErrors[0] = {
+        ...(educationErrors[0] || {}),
+        degree: "Add at least one education row",
+      };
     }
 
-    // Work experience validation
+    return hasErrors(educationErrors) ? { education: educationErrors } : {};
+  };
+
+  const validateWorkExperienceRows = () => {
     const workData = Array.isArray(formData.workExperience) ? formData.workExperience : [];
-    const workErrors = validateWorkExperience(workData);
-    if (workErrors.some((e) => Object.keys(e).length > 0)) {
-      newErrors.workExperience = workErrors;
+    const keys = ["company", "title", "startDate", "endDate", "current", "description"];
+    const startedRows = workData.filter((item) => hasAnyRowValue(item, keys));
+    const workErrors = workData.map((work) => {
+      const err = {};
+      const rowStarted = hasAnyRowValue(work, keys);
+
+      if (!rowStarted) return err;
+
+      if (!work.company?.trim()) err.company = "Company is required";
+      if (!work.title?.trim()) err.title = "Job title is required";
+      if (!work.startDate) {
+        err.startDate = "Start date is required";
+      } else if (isNaN(new Date(work.startDate).getTime())) {
+        err.startDate = "Invalid start date";
+      }
+
+      if (!work.current) {
+        if (!work.endDate) {
+          err.endDate = "End date is required";
+        } else if (isNaN(new Date(work.endDate).getTime())) {
+          err.endDate = "Invalid end date";
+        } else if (work.startDate && new Date(work.endDate) < new Date(work.startDate)) {
+          err.endDate = "End date cannot be before start date";
+        }
+      }
+
+      if (!work.description?.trim()) err.description = "Description is required";
+
+      return err;
+    });
+
+    if (!startedRows.length) {
+      workErrors[0] = {
+        ...(workErrors[0] || {}),
+        company: "Add at least one work experience row",
+      };
     }
 
-    if (
-      formData.certifications !== undefined &&
-      formData.certifications.trim().length === 0
-    ) {
-      newErrors.certifications = "Certifications cannot be empty";
+    return hasErrors(workErrors) ? { workExperience: workErrors } : {};
+  };
+
+  const validateSkillRows = () => {
+    const skillsData = Array.isArray(formData.skills) ? formData.skills : [];
+    const keys = ["skill", "level", "experienceYears"];
+    const startedRows = skillsData.filter((item) => hasAnyRowValue(item, keys));
+    const skillsErrors = skillsData.map((skill) => {
+      const err = {};
+      const rowStarted = hasAnyRowValue(skill, keys);
+
+      if (!rowStarted) return err;
+
+      if (!skill.skill?.trim()) {
+        err.skill = "Skill is required";
+      }
+
+      if (!skill.level || !validLevels.includes(skill.level)) {
+        err.level = `Level must be one of: ${validLevels.join(", ")}`;
+      }
+
+      if (
+        skill.experienceYears === undefined ||
+        skill.experienceYears === "" ||
+        isNaN(skill.experienceYears) ||
+        Number(skill.experienceYears) < 0
+      ) {
+        err.experienceYears = "Valid experience is required";
+      }
+
+      return err;
+    });
+
+    if (!startedRows.length) {
+      skillsErrors[0] = {
+        ...(skillsErrors[0] || {}),
+        skill: "Add at least one skill",
+      };
     }
 
+    return hasErrors(skillsErrors) ? { skills: skillsErrors } : {};
+  };
+
+  const validateResume = () => {
     if (!formData.resumeFile) {
-      newErrors.resumeFile = "Please upload your resume";
+      return { resumeFile: "Please upload your resume" };
     }
+
+    if (formData.resumeFile.type !== "application/pdf") {
+      return { resumeFile: "Please upload a PDF file for your resume" };
+    }
+
+    return {};
+  };
+
+  const validateStep = (step) => {
+    const validators = {
+      0: validatePersonalInfo,
+      1: validateProfessionalSummary,
+      2: validateEducationRows,
+      3: validateWorkExperienceRows,
+      4: validateSkillRows,
+      5: validateResume,
+    };
+    const stepErrors = validators[step]?.() || {};
+
+    setErrors((prev) => {
+      const nextErrors = { ...prev };
+      (requiredStepFields[step] || []).forEach((key) => {
+        delete nextErrors[key];
+      });
+      return { ...nextErrors, ...stepErrors };
+    });
+
+    return Object.keys(stepErrors).length === 0;
+  };
+
+  const validate = () => {
+    const newErrors = {
+      ...validatePersonalInfo(),
+      ...validateProfessionalSummary(),
+      ...validateEducationRows(),
+      ...validateWorkExperienceRows(),
+      ...validateSkillRows(),
+      ...validateResume(),
+    };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -271,6 +412,7 @@ export default function useRegistrationForm() {
     formData,
     errors,
     validate,
+    validateStep,
     handleChange,
     handleArrayChange,
     addField,

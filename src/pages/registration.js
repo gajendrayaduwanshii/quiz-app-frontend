@@ -46,6 +46,7 @@ const RegistrationForm = () => {
     formData,
     errors,
     validate,
+    validateStep,
     handleChange,
     handleArrayChange,
     addField,
@@ -66,7 +67,7 @@ const RegistrationForm = () => {
     2: ["education"],
     3: ["workExperience"],
     4: ["skills"],
-    5: ["certifications", "resumeFile"],
+    5: ["resumeFile"],
   };
 
   useEffect(() => {
@@ -232,12 +233,14 @@ const RegistrationForm = () => {
 
   // Map arrays to backend expected structure
   const mapEducation = (educationArr) =>
-    educationArr.map((edu) => ({
-      degree: edu.degree,
-      institution: edu.institution,
-      passingYear: edu.year,
-      grade: edu.grade,
-    }));
+    educationArr
+      .filter((edu) => edu && (edu.degree || edu.institution || edu.year || edu.grade))
+      .map((edu) => ({
+        degree: edu.degree,
+        institution: edu.institution,
+        passingYear: edu.year,
+        grade: edu.grade,
+      }));
 // ✅ Utility to format date to yyyy-MM-dd
 const formatDate = (date) => {
   if (!date) return null;
@@ -247,21 +250,34 @@ const formatDate = (date) => {
 
 // ✅ Updated work experience mapping
 const mapWorkExperience = (workArr) =>
-  workArr.map((work) => ({
-    jobTitle: work.title,
-    company: work.company,
-    startDate: formatDate(work.startDate),
-    endDate: work.current ? null : formatDate(work.endDate),
-    jobDescription: work.description,
-    current: work.current || false, // 👈 Add this line
-  }));
+  workArr
+    .filter(
+      (work) =>
+        work &&
+        (work.company ||
+          work.title ||
+          work.startDate ||
+          work.endDate ||
+          work.current ||
+          work.description)
+    )
+    .map((work) => ({
+      jobTitle: work.title,
+      company: work.company,
+      startDate: formatDate(work.startDate),
+      endDate: work.current ? null : formatDate(work.endDate),
+      jobDescription: work.description,
+      current: work.current || false, // 👈 Add this line
+    }));
 
   const mapSkills = (skillsArr) =>
-    skillsArr.map((skill) => ({
-      skillName: skill.skill,
-      level: skill.level,
-      yearsExperience: skill.experienceYears,
-    }));
+    skillsArr
+      .filter((skill) => skill && (skill.skill || skill.level || skill.experienceYears))
+      .map((skill) => ({
+        skillName: skill.skill,
+        level: skill.level,
+        yearsExperience: skill.experienceYears,
+      }));
 
   // Submit form data to Strapi userlists
   const submitFormData = async (uploadedFileId) => {
@@ -315,6 +331,11 @@ const mapWorkExperience = (workArr) =>
   };
 
   const handleNext = async () => {
+    if (!validateStep(activeStep)) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
     if (activeStep === steps.length - 1) {
       if (!validate()) {
         window.scrollTo({ top: 0, behavior: "smooth" });
