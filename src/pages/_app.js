@@ -2,6 +2,7 @@
 import * as React from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@/styles/globals.css";
 import Layout from "../components/Layout";
 import { AuthProvider } from "@/context/AuthContext";
@@ -14,6 +15,7 @@ export default function App({ Component, pageProps }) {
         <Layout>
           <CssBaseline />
           <Component {...pageProps} />
+          <SpeedInsights />
         </Layout>
       </ThemeProvider>
     </AuthProvider>
