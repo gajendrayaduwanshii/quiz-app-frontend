@@ -15,6 +15,7 @@ export default function OtpVerification() {
   const [passwords, setPasswords] = useState({ newPassword: "", confirmPassword: "" });
   const [message, setMessage] = useState({ type: "", text: "" });
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
   const otp = useMemo(() => otpDigits.join(""), [otpDigits]);
 
   useEffect(() => {
@@ -44,6 +45,49 @@ export default function OtpVerification() {
   const handleOtpKeyDown = (index, event) => {
     if (event.key === "Backspace" && !otpDigits[index] && index > 0) {
       otpRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!resetRequest?.identifier) {
+      setMessage({ type: "error", text: "Please request an OTP first." });
+      return;
+    }
+
+    setResending(true);
+    setMessage({ type: "", text: "" });
+
+    try {
+      const response = await fetch("/api/auth/request-password-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ identifier: resetRequest.identifier }),
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        setMessage({ type: "error", text: result.error || "Failed to resend OTP." });
+        return;
+      }
+
+      const nextRequest = {
+        ...resetRequest,
+        destination: result.destination,
+        channel: result.channel,
+        devOtp: result.devOtp,
+      };
+
+      setResetRequest(nextRequest);
+      setOtpDigits(["", "", "", "", "", ""]);
+      sessionStorage.setItem("passwordResetRequest", JSON.stringify(nextRequest));
+      setMessage({ type: "success", text: "New OTP generated successfully." });
+      otpRefs.current[0]?.focus();
+    } catch (resendError) {
+      setMessage({ type: "error", text: resendError.message || "Failed to resend OTP." });
+    } finally {
+      setResending(false);
     }
   };
 
@@ -193,8 +237,17 @@ export default function OtpVerification() {
         <PremiumButton fullWidth sx={{ mt: 2 }} type="submit" disabled={loading || !resetRequest?.identifier}>
           {loading ? "Resetting..." : "Reset Password"}
         </PremiumButton>
+        <Button
+          fullWidth
+          type="button"
+          onClick={handleResendOtp}
+          disabled={resending || !resetRequest?.identifier}
+          sx={{ mt: 1, color: "text.secondary" }}
+        >
+          {resending ? "Sending new OTP..." : "Resend OTP"}
+        </Button>
         <Button fullWidth component={Link} href="/forgot-password" sx={{ mt: 1, color: "text.secondary" }}>
-          Request new OTP
+          Change email or mobile number
         </Button>
         <Button fullWidth component={Link} href="/login" sx={{ mt: 1.5, color: "text.secondary" }}>
           Back to login

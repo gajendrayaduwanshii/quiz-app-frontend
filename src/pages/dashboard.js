@@ -29,6 +29,7 @@ import { useUser } from "@/customHooks/useUser";
 // import { useUserSummary } from "@/customHooks/useUserSummary";
 // import { useResumeAnalysis } from "@/customHooks/useResumeAnalysis";
 import DashboardHeader from "@/components/dashboard/dashboardHeader";
+import CareerGrowthPanel from "@/components/dashboard/CareerGrowthPanel";
 import SummaryCards from "@/components/dashboard/summaryCards";
 import ChartsRow from "@/components/dashboard/chartsRow";
 import EducationSection from "@/components/dashboard/educationSection";
@@ -329,6 +330,8 @@ const Dashboard = () => {
           weakest={weakest}
           years={years}
         />
+
+        <CareerGrowthPanel user={dashboardData.user} />
 
         <ChartsRow skills={dashboardData.user.skills} />
 

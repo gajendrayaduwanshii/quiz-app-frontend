@@ -75,6 +75,12 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
         keywords: "resume ai ats analyzer cv keywords",
       },
       {
+        title: "Job Match",
+        description: "Compare saved profile with a target job description",
+        href: "/jobMatch",
+        keywords: "job match apply application jd role fit missing skills keywords",
+      },
+      {
         title: "Profile",
         description: "Update skills, education, work experience, awards",
         href: "/profile",
@@ -130,6 +136,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
     if (pathname.startsWith("/technologies")) return "Skill Quizzes";
     if (pathname.startsWith("/interactiveLearningHub")) return "AI Learning Hub";
     if (pathname.startsWith("/resumeAnalysis")) return "Resume Intelligence";
+    if (pathname.startsWith("/jobMatch")) return "Job Match";
     if (pathname.startsWith("/quiz/")) {
       const tech = decodeURIComponent(pathname.split("/quiz/")[1] || "Quiz");
       return `${tech.charAt(0).toUpperCase() + tech.slice(1)} Assessment`;

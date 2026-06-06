@@ -18,6 +18,7 @@ import {
   FileText,
   GraduationCap,
   Home,
+  SearchCheck,
   Mic2,
   Route,
   UserRound,
@@ -33,6 +34,7 @@ const iconMap = {
   resume: FileText,
   learning: Route,
   resources: GraduationCap,
+  jobmatch: SearchCheck,
   interview: Mic2,
   analysis: FileSearch,
   profile: UserRound,
@@ -44,6 +46,7 @@ const menuItems = [
   { label: "Skill Quizzes", href: "/technologies", icon: "users" },
   { label: "Learning Plan", href: "/learning", icon: "learning" },
   { label: "Resource Guide", href: "/courseRecommendations", icon: "resources" },
+  { label: "Job Match", href: "/jobMatch", icon: "jobmatch" },
   { label: "Resume AI", href: "/resumeAnalysis", icon: "resume" },
   // Voice AI is temporarily hidden until the feature is ready again.
   // { label: "Voice AI", href: "/voiceInterviewAI", icon: "interview" },

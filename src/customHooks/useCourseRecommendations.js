@@ -70,6 +70,5 @@ export const useCourseRecommendations = (user) => {
     recommendations,
     loading,
     error,
-    isAIGenerated: Boolean(recommendations?.source === "ai" && !error),
   };
 };
