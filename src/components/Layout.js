@@ -6,6 +6,7 @@ import { useMediaQuery } from "@mui/material";
 import HeaderSidebar from "./HeaderSidebar";
 import AICopilot from "./premium/AICopilot";
 import CommandPalette from "./premium/CommandPalette";
+import QuickActions from "./QuickActions";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Layout({ children }) {
@@ -36,6 +37,7 @@ export default function Layout({ children }) {
         {children}
       </HeaderSidebar>
       {user && <AICopilot />}
+      {user && <QuickActions />}
     </div>
   );
 }
