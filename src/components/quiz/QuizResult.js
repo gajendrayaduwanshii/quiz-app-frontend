@@ -33,7 +33,8 @@ const QuizResult = ({ correctAnswers, incorrectAnswers }) => {
           Score
         </Typography>
       </Box>
-      <ResponsiveContainer width="100%" height={300}>
+      <Box sx={{ height: { xs: 220, sm: 270, md: 300 } }}>
+      <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
             data={data}
@@ -67,6 +68,7 @@ const QuizResult = ({ correctAnswers, incorrectAnswers }) => {
           />
         </PieChart>
       </ResponsiveContainer>
+      </Box>
     </Box>
   );
 };

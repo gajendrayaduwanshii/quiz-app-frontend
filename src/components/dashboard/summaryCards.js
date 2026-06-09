@@ -33,7 +33,7 @@ const SummaryCards = ({ user, strongest, weakest, years }) => {
   const profileSignal = Math.min(100, Math.round((skills.length * 12 + quizResults.length * 10 + (user?.uploadResume ? 24 : 0) + Math.min(years * 8, 24))));
 
   return (
-    <div style={{marginTop: "32px"}}>
+    <Box sx={{ mt: { xs: 3, md: 4 } }}>
       <SectionHeader
         eyebrow="Career Intelligence"
         title="Professional Snapshot"
@@ -213,7 +213,7 @@ const SummaryCards = ({ user, strongest, weakest, years }) => {
           />
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 };
 

@@ -202,7 +202,7 @@ const ChangePassword = () => {
       <Typography
         component="h1"
         variant="h4"
-        sx={{ mb: 2, fontWeight: 950, fontSize: { xs: 28, md: 34 } }}
+        sx={{ mb: 2, fontWeight: 950, fontSize: { xs: "1.5rem", sm: "1.8rem", md: "2rem" } }}
       >
         Change Password
       </Typography>

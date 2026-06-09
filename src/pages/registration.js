@@ -488,7 +488,7 @@ const mapWorkExperience = (workArr) =>
           overflow: "hidden",
         }}
       >
-        <CardContent sx={{ flexGrow: 1, overflowY: "auto", p: { xs: 1.35, sm: 2.2, md: 4 } }}>
+        <CardContent sx={{ flexGrow: 1, overflowY: "auto", p: { xs: 1.8, sm: 2.4, md: 4 } }}>
           <Box
             sx={{
               display: "flex",

@@ -5,6 +5,7 @@ import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/customHooks/useUser";
 import { useQuiz } from "@/customHooks/useQuiz";
+import { Box } from "@mui/material";
 import LoaderTwo from "@/components/LoaderTwo";
 import QuizMainComponent from "@/components/QuizMainComponent";
 
@@ -43,9 +44,9 @@ const Quiz = () => {
       {questions.length > 0 ? (
           <QuizMainComponent questions={questions} documentId={storedUser.documentId}/>
       ) : (
-        <div style={{ padding: "2rem", color: "#fff" }}>
+        <Box sx={{ p: { xs: 2, md: 3 }, color: "#fff" }}>
           No quiz questions available.
-        </div>
+        </Box>
       )}
     </>
   );

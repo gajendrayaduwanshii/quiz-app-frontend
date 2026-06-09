@@ -204,8 +204,8 @@ const Dashboard = () => {
                     sx={{
                       display: "grid",
                       gridTemplateColumns: {
-                        xs: "1fr",
-                        sm: "repeat(3, minmax(0, 1fr))",
+                        xs: "1fr 1fr",
+                        md: "repeat(3, minmax(0, 1fr))",
                       },
                       gap: 1.2,
                     }}

@@ -100,12 +100,14 @@ export default function ForgotPassword() {
             setIdentifier(event.target.value);
             setError("");
           }}
-          InputProps={{
-            startAdornment: (
-              <Box sx={{ display: "flex", alignItems: "center", mr: 1, color: "#94A3B8" }}>
-                {identifier.includes("@") ? <Mail size={17} /> : <Smartphone size={17} />}
-              </Box>
-            ),
+          slotProps={{
+            input: {
+              startAdornment: (
+                <Box sx={{ display: "flex", alignItems: "center", mr: 1, color: "#94A3B8" }}>
+                  {identifier.includes("@") ? <Mail size={17} /> : <Smartphone size={17} />}
+                </Box>
+              ),
+            },
           }}
         />
         {error && (

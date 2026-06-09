@@ -87,9 +87,9 @@ const DashboardHeader = memo(({ user, onLearningQuiz }) => {
       <PremiumCard
         hover={false}
         sx={{
-          p: { xs: 2.5, md: 3.6 },
+          p: { xs: 2, sm: 2.5, md: 3.6 },
           mb: 3,
-          minHeight: 280,
+          minHeight: { xs: "auto", md: 280 },
           display: 'flex',
           alignItems: 'center',
           borderRadius: '22px',
@@ -211,7 +211,7 @@ const DashboardHeader = memo(({ user, onLearningQuiz }) => {
                   fontWeight: 950,
                   lineHeight: 1.06,
                   mb: 1.5,
-                  fontSize: { xs: '1.75rem', sm: '2.125rem', md: '2.875rem' },
+                  fontSize: { xs: '1.5rem', sm: '2rem', md: '2.875rem' },
                   background: 'linear-gradient(90deg, #ffffff 0%, #A78BFA 45%, #67E8F9 75%, #ffffff 100%)',
                   backgroundSize: '250% auto',
                   WebkitBackgroundClip: 'text',
@@ -242,7 +242,7 @@ const DashboardHeader = memo(({ user, onLearningQuiz }) => {
             <Box sx={{
               mt: 2.6,
               display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
+              gridTemplateColumns: { xs: '1fr 1fr', sm: 'repeat(2, minmax(0, 1fr))', md: 'repeat(3, minmax(0, 1fr))' },
               gap: 1.2,
               maxWidth: 720,
             }}>

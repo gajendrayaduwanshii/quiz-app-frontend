@@ -111,7 +111,7 @@ const Technologies = () => {
                               fontWeight: 900,
                               lineHeight: 1.15,
                               textTransform: "uppercase",
-                              fontSize: { xs: 22, sm: 24 },
+                              fontSize: { xs: "1.15rem", sm: "1.35rem", md: "1.5rem" },
                               overflowWrap: "anywhere",
                             }}
                           >
@@ -142,7 +142,7 @@ const Technologies = () => {
                     component={NextLink}
                     href={`/quiz/${encodeURIComponent(skill.skillName.toLowerCase())}`}
                     endIcon={<ArrowRight size={17} />}
-                    sx={{ alignSelf: "flex-start", width: { xs: "100%", sm: "auto" }, minWidth: 150 }}
+                    sx={{ alignSelf: "flex-start", width: { xs: "100%", sm: "auto" }, minWidth: { xs: 0, sm: 150 } }}
                   >
                     Start Quiz
                   </PremiumButton>

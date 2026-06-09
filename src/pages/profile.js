@@ -248,7 +248,7 @@ const Profile = () => {
 
   return (
     <PremiumPage className="profile-page" sx={{ pb: 4 }}>
-      <PremiumCard hover={false} sx={{ p: { xs: 2.4, md: 3.4 }, mb: 3 }}>
+      <PremiumCard hover={false} sx={{ p: { xs: 2, sm: 2.6, md: 3.4 }, mb: 3 }}>
         <Box
           sx={{
             display: "flex",
@@ -294,13 +294,13 @@ const Profile = () => {
                 sx={{
                   fontWeight: 900,
                   lineHeight: 1.08,
-                  fontSize: { xs: "1.875rem", sm: "2.25rem", md: "3rem" },
+                  fontSize: { xs: "1.5rem", sm: "2rem", md: "2.75rem" },
                   overflowWrap: "anywhere",
                 }}
               >
                 {profileData.name || "User Profile"}
               </Typography>
-              <Stack direction="row" spacing={1.2} sx={{ mt: 1, flexWrap: "wrap", rowGap: 1 }}>
+              <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: "wrap", rowGap: 1.2 }}>
                 <Chip icon={<Mail size={14} />} label={profileData.email || "No email"} />
                 <Chip icon={<BriefcaseBusiness size={14} />} label={profileData.currentJobTitle || "Role pending"} />
                 <Chip icon={<ShieldCheck size={14} />} label={`${profileCompleteness}% complete`} />

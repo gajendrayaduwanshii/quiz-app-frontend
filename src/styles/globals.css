@@ -59,7 +59,7 @@ html {
 
 @media only screen and (max-width: 480px) {
   html {
-    font-size: 3.333vw;
+    font-size: max(3.333vw, 13px);
   }
 }
 
@@ -712,6 +712,7 @@ p {
 .two-line-text-truncate {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -891,6 +892,7 @@ p {
 .two-line-text-truncate {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1078,9 +1080,6 @@ p {
   color: var(--ss-text-secondary);
 }
 
-.quizButton {
-
-}
 
 .summarySection {
   display: flex;

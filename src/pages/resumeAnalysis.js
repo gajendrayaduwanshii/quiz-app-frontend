@@ -82,7 +82,7 @@ const ResumeAnalysis = () => {
           >
             <UploadCloud size={34} color="#fff" />
           </Box>
-          <Typography variant="h5" sx={{ color: "#fff", fontWeight: 900, mb: 1, fontSize: { xs: "1.375rem", md: "1.75rem" }, overflowWrap: "anywhere" }}>
+          <Typography variant="h5" sx={{ color: "#fff", fontWeight: 900, mb: 1, fontSize: { xs: "1.25rem", sm: "1.5rem", md: "1.75rem" }, overflowWrap: "anywhere" }}>
             No Resume Found
           </Typography>
           <Typography sx={{ color: "text.secondary", mb: 3, overflowWrap: "anywhere" }}>

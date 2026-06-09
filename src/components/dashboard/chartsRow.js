@@ -136,7 +136,7 @@ const ChartsRow = ({ skills = [] }) => {
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: { xs: "1fr", sm: "repeat(3, minmax(0, 1fr))" },
+            gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(3, minmax(0, 1fr))" },
             gap: 1.4,
             mb: 2.4,
           }}
@@ -197,7 +197,7 @@ const ChartsRow = ({ skills = [] }) => {
                 </Box>
                 <PieChart size={22} color="#06B6D4" />
               </Stack>
-              <Box sx={{ height: { xs: 250, sm: 300 } }}>
+              <Box sx={{ height: { xs: 220, sm: 260, md: 300 } }}>
                 <Pie data={pieData} options={commonOptions} />
               </Box>
               <Box
@@ -247,7 +247,7 @@ const ChartsRow = ({ skills = [] }) => {
                 </Box>
                 <BarChart3 size={22} color="#7C3AED" />
               </Stack>
-              <Box sx={{ height: { xs: 230, sm: 248 } }}>
+              <Box sx={{ height: { xs: 200, sm: 240, md: 260 } }}>
                 <Bar data={barData} options={barOptions} />
               </Box>
 

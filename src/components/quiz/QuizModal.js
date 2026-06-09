@@ -28,8 +28,10 @@ const QuizModal = ({
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: onRestart ? { xs: "calc(100vw - 28px)", sm: 560 } : { xs: "calc(100vw - 28px)", sm: 440 },
-          maxHeight: "88vh",
+          width: onRestart
+            ? { xs: "calc(100vw - 24px)", sm: 560, md: 620 }
+            : { xs: "calc(100vw - 24px)", sm: 440, md: 480 },
+          maxHeight: { xs: "92dvh", sm: "88vh" },
           overflowY: "auto",
           overflowX: "hidden",
           bgcolor: "rgba(11,17,32,0.94)",
