@@ -34,6 +34,9 @@ const initialMessages = [
   },
 ];
 
+const chatButtonBottom = { xs: 18, md: 24 };
+const chatPanelBottom = { xs: 154, md: 168 };
+
 const AICopilot = () => {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -165,9 +168,12 @@ const AICopilot = () => {
             sx={{
               position: "fixed",
               right: { xs: 14, md: 24 },
-              bottom: { xs: 82, md: 94 },
+              bottom: chatPanelBottom,
               width: { xs: "calc(100vw - 28px)", sm: 420 },
-              maxHeight: { xs: "calc(100dvh - 106px)", sm: "none" },
+              maxHeight: {
+                xs: "calc(100dvh - 170px)",
+                md: "calc(100dvh - 192px)",
+              },
               zIndex: 1500,
               borderRadius: "20px",
               border: "1px solid rgba(255,255,255,0.14)",
@@ -175,6 +181,8 @@ const AICopilot = () => {
               boxShadow: "0 30px 90px rgba(0,0,0,0.55), 0 0 46px rgba(6,182,212,0.16)",
               backdropFilter: "blur(24px)",
               overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: { xs: 1.5, sm: 2 }, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
@@ -194,7 +202,16 @@ const AICopilot = () => {
               </IconButton>
             </Stack>
 
-            <Box ref={scrollRef} sx={{ p: { xs: 1.5, sm: 2 }, height: { xs: "min(350px, calc(100dvh - 318px))", sm: 350 }, overflowY: "auto" }}>
+            <Box
+              ref={scrollRef}
+              sx={{
+                p: { xs: 1.5, sm: 2 },
+                height: { xs: "auto", sm: 350 },
+                minHeight: 180,
+                flex: 1,
+                overflowY: "auto",
+              }}
+            >
               <Stack spacing={1.2}>
                 {messages.map((message, index) => {
                   const isUser = message.role === "user";
@@ -287,7 +304,7 @@ const AICopilot = () => {
         sx={{
           position: "fixed",
           right: { xs: 16, md: 24 },
-          bottom: { xs: 18, md: 24 },
+          bottom: chatButtonBottom,
           zIndex: 1400,
           color: "#fff",
           background: "linear-gradient(135deg, #2563EB, #14B8A6)",

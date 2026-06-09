@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@mui/material";
-import { BrainCircuit, BookOpen, FileText, Target, Plus, Zap } from "lucide-react";
+import { BrainCircuit, BookOpen, FileText, Target, X, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const ACTIONS = [
@@ -32,6 +32,8 @@ const ACTIONS = [
   },
 ];
 
+const quickActionsBottom = { xs: 88, md: 96 };
+
 const QuickActions = () => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -41,7 +43,7 @@ const QuickActions = () => {
       ariaLabel="Quick navigation actions"
       sx={{
         position: "fixed",
-        bottom: { xs: 20, md: 28 },
+        bottom: quickActionsBottom,
         right: { xs: 16, md: 28 },
         zIndex: 1199,
         "& .MuiSpeedDial-fab": {
@@ -60,8 +62,8 @@ const QuickActions = () => {
       }}
       icon={
         <SpeedDialIcon
-          openIcon={<Zap size={22} color="#fff" />}
-          icon={<Plus size={22} color="#fff" />}
+          openIcon={<X size={22} color="#fff" />}
+          icon={<Zap size={22} color="#fff" />}
         />
       }
       onClose={() => setOpen(false)}
