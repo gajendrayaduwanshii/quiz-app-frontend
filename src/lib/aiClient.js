@@ -147,7 +147,7 @@ const generateGeminiText = async (prompt, options, config) => {
       lastStatus = response.status;
       lastErrorText = await response.text();
       const shouldTryNextKey =
-        [403, 429, 500, 503].includes(response.status) &&
+        [400, 401, 403, 429, 500, 503].includes(response.status) &&
         index < apiKeys.length - 1;
 
       if (shouldTryNextKey) continue;
