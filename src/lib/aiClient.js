@@ -47,6 +47,7 @@ const unique = (items) => [...new Set(items.filter(Boolean))];
 const maskKey = (key = "") =>
   key.length > 10 ? `${key.slice(0, 6)}...${key.slice(-4)}` : "configured key";
 
+// Order matters: Gemini requests try each configured key in sequence.
 const getGoogleApiKeys = () =>
   unique([
     process.env.GOOGLE_API_KEY,

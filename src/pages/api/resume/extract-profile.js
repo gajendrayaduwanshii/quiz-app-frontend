@@ -1,5 +1,6 @@
 import pdfParse from "pdf-parse";
 import { generateAIText } from "@/lib/aiClient";
+import { resolveStrapiMediaUrl } from "@/lib/strapiConfig";
 
 const safeJsonParse = (text) => {
   try {
@@ -112,8 +113,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const pdfRes = await fetch(uploadResume);
-    if (!pdfRes.ok) throw new Error("Failed to fetch resume PDF");
+    const resumeUrl = resolveStrapiMediaUrl(uploadResume);
+    const pdfRes = await fetch(resumeUrl);
+    if (!pdfRes.ok) {
+      return res.status(pdfRes.status === 404 ? 404 : 502).json({
+        error:
+          pdfRes.status === 404
+            ? "Resume PDF not found on the server. Please re-upload your resume."
+            : `Failed to fetch resume PDF: ${pdfRes.status}`,
+      });
+    }
 
     const arrayBuffer = await pdfRes.arrayBuffer();
     const pdfData = await pdfParse(arrayBuffer);

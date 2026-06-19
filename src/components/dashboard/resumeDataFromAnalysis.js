@@ -32,6 +32,7 @@ import {
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import { alpha, useTheme } from '@mui/material/styles';
+import { resolveStrapiMediaUrl } from '@/lib/strapiConfig';
 
 const parseApiResponse = async (response) => {
   const contentType = response.headers.get('content-type') || '';
@@ -74,7 +75,7 @@ const ResumeDataFromAnalysis = ({ user, resumeData }) => {
     setError(null);
     
     try {
-      const resumeUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}${user.uploadResume.url}`;
+      const resumeUrl = resolveStrapiMediaUrl(user.uploadResume.url);
       console.log('Resume URL:', resumeUrl);
       
       const response = await fetch(`/api/resume/analyze`, {

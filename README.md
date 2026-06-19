@@ -84,6 +84,17 @@ AI_MODEL=gemini-3.1-flash-lite
 GOOGLE_API_KEY=your_google_ai_studio_key
 ```
 
+You can configure multiple Gemini keys for automatic fallback:
+
+```bash
+NEXT_PUBLIC_GOOGLE_API_KEY=your_first_google_ai_studio_key
+NEXT_PUBLIC_GOOGLE_API_KEY1=your_second_google_ai_studio_key
+NEXT_PUBLIC_GOOGLE_API_KEY2=your_third_google_ai_studio_key
+```
+
+All server AI routes use `src/lib/aiClient.js`, so Gemini requests try key 1,
+then key 2, then key 3 before returning an error.
+
 When `AI_PROVIDER=google`, the app calls Gemini's native `generateContent` API:
 
 ```text

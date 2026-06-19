@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { resolveStrapiMediaUrl } from "@/lib/strapiConfig";
 
 export const useResumeAnalysis = (user) => {
   const [analysisData, setAnalysisData] = useState({
@@ -28,7 +29,7 @@ export const useResumeAnalysis = (user) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ 
-          uploadResume: `${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}${user.uploadResume.url}` 
+          uploadResume: resolveStrapiMediaUrl(user.uploadResume.url)
         }),
       });
 

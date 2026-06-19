@@ -28,3 +28,12 @@ export function assertConfiguredStrapiUrl(url) {
 
   return target.toString();
 }
+
+export function resolveStrapiMediaUrl(url) {
+  if (!url) return "";
+
+  const value = String(url);
+  if (/^https?:\/\//i.test(value)) return value;
+
+  return `${getStrapiUrl()}${value.startsWith("/") ? value : `/${value}`}`;
+}
