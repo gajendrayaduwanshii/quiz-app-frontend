@@ -13,7 +13,7 @@ const contentToText = (content) => {
       return part?.text || "";
     })
     .filter(Boolean)
-    .join("\n");
+    .join("\n"); 
 };
 
 const buildGeminiContents = (prompt, messages = []) => {
