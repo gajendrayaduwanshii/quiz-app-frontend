@@ -4,7 +4,10 @@ import { useEffect, useRef } from "react";
 
 const NODE_COUNT = 72;
 const CONNECTION_DIST = 170;
-const PULSE_INTERVAL = 420;
+const PULSE_INTERVAL = 170;
+const NODE_SPEED = 0.00082;
+const PULSE_SPEED_MIN = 0.078;
+const PULSE_SPEED_RANGE = 0.072;
 
 export default function NeuralBackground() {
   const canvasRef = useRef(null);
@@ -21,8 +24,8 @@ export default function NeuralBackground() {
     const nodes = Array.from({ length: NODE_COUNT }, () => ({
       x: Math.random(),
       y: Math.random(),
-      vx: (Math.random() - 0.5) * 0.00026,
-      vy: (Math.random() - 0.5) * 0.00026,
+      vx: (Math.random() - 0.5) * NODE_SPEED,
+      vy: (Math.random() - 0.5) * NODE_SPEED,
       r: 1.6 + Math.random() * 2.4,
       baseAlpha: 0.18 + Math.random() * 0.28,
       glowAlpha: 0,
@@ -55,7 +58,7 @@ export default function NeuralBackground() {
         from: forward ? edge[0] : edge[1],
         to: forward ? edge[1] : edge[0],
         t: 0,
-        speed: 0.028 + Math.random() * 0.032,
+        speed: PULSE_SPEED_MIN + Math.random() * PULSE_SPEED_RANGE,
         color: Math.random() > 0.5 ? "#7C3AED" : "#06B6D4",
       });
     }
