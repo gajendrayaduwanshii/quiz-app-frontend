@@ -44,6 +44,9 @@ const buildGeminiContents = (prompt, messages = []) => {
 
 const unique = (items) => [...new Set(items.filter(Boolean))];
 
+const maskKey = (key = "") =>
+  key.length > 10 ? `${key.slice(0, 6)}...${key.slice(-4)}` : "configured key";
+
 const getGoogleApiKeys = () =>
   unique([
     process.env.GOOGLE_API_KEY,
@@ -124,47 +127,78 @@ const generateGeminiText = async (prompt, options, config) => {
   let lastStatus = 0;
 
   for (const [index, apiKey] of apiKeys.entries()) {
-    const response = await fetch(
-      `${config.googleBaseURL}/models/${options.model || config.model}:generateContent`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-goog-api-key": apiKey,
-        },
-        body: JSON.stringify({
-          contents,
-          ...(systemInstruction ? { systemInstruction } : {}),
-          generationConfig: {
-            temperature: options.temperature ?? 0.4,
-            ...(options.responseMimeType
-              ? { responseMimeType: options.responseMimeType }
-              : {}),
-            ...(options.maxTokens ? { maxOutputTokens: options.maxTokens } : {}),
+    const hasNextKey = index < apiKeys.length - 1;
+
+    try {
+      const response = await fetch(
+        `${config.googleBaseURL}/models/${options.model || config.model}:generateContent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-goog-api-key": apiKey,
           },
-        }),
+          body: JSON.stringify({
+            contents,
+            ...(systemInstruction ? { systemInstruction } : {}),
+            generationConfig: {
+              temperature: options.temperature ?? 0.4,
+              ...(options.responseMimeType
+                ? { responseMimeType: options.responseMimeType }
+                : {}),
+              ...(options.maxTokens ? { maxOutputTokens: options.maxTokens } : {}),
+            },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        lastStatus = response.status;
+        lastErrorText = await response.text();
+
+        if (hasNextKey) {
+          console.warn(
+            `Gemini key ${index + 1} (${maskKey(apiKey)}) failed with ${response.status}. Trying next key.`
+          );
+          continue;
+        }
+
+        throw new Error(`Gemini API request failed: ${response.status} ${lastErrorText}`);
       }
-    );
 
-    if (!response.ok) {
-      lastStatus = response.status;
-      lastErrorText = await response.text();
-      const shouldTryNextKey =
-        [400, 401, 403, 429, 500, 503].includes(response.status) &&
-        index < apiKeys.length - 1;
+      const data = await response.json();
+      const text =
+        data?.candidates?.[0]?.content?.parts
+          ?.map((part) => part.text || "")
+          .join("") || "";
 
-      if (shouldTryNextKey) continue;
+      if (text) return text;
 
-      throw new Error(`Gemini API request failed: ${response.status} ${lastErrorText}`);
+      lastErrorText =
+        data?.candidates?.[0]?.finishReason ||
+        data?.promptFeedback?.blockReason ||
+        "Gemini returned an empty response.";
+
+      if (hasNextKey) {
+        console.warn(
+          `Gemini key ${index + 1} (${maskKey(apiKey)}) returned no text. Trying next key.`
+        );
+        continue;
+      }
+
+      throw new Error(`Gemini API request failed: ${lastErrorText}`);
+    } catch (error) {
+      lastErrorText = error?.message || String(error);
+
+      if (hasNextKey) {
+        console.warn(
+          `Gemini key ${index + 1} (${maskKey(apiKey)}) failed. Trying next key.`
+        );
+        continue;
+      }
+
+      throw error;
     }
-
-    const data = await response.json();
-
-    return (
-      data?.candidates?.[0]?.content?.parts
-        ?.map((part) => part.text || "")
-        .join("") || ""
-    );
   }
 
   throw new Error(`Gemini API request failed: ${lastStatus} ${lastErrorText}`);
