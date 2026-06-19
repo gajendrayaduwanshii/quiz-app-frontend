@@ -53,9 +53,11 @@ const getGoogleApiKeys = () =>
     process.env.GOOGLE_API_KEY,
     process.env.GOOGLE_API_KEY1,
     process.env.GOOGLE_API_KEY2,
+    process.env.GOOGLE_API_KEY3,
     process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
     process.env.NEXT_PUBLIC_GOOGLE_API_KEY1,
     process.env.NEXT_PUBLIC_GOOGLE_API_KEY2,
+    process.env.NEXT_PUBLIC_GOOGLE_API_KEY3,
   ]);
 
 const getAIConfig = () => {

@@ -90,10 +90,11 @@ You can configure multiple Gemini keys for automatic fallback:
 NEXT_PUBLIC_GOOGLE_API_KEY=your_first_google_ai_studio_key
 NEXT_PUBLIC_GOOGLE_API_KEY1=your_second_google_ai_studio_key
 NEXT_PUBLIC_GOOGLE_API_KEY2=your_third_google_ai_studio_key
+NEXT_PUBLIC_GOOGLE_API_KEY3=your_fourth_google_ai_studio_key
 ```
 
 All server AI routes use `src/lib/aiClient.js`, so Gemini requests try key 1,
-then key 2, then key 3 before returning an error.
+then key 2, then key 3, then key 4 before returning an error.
 
 When `AI_PROVIDER=google`, the app calls Gemini's native `generateContent` API:
 
