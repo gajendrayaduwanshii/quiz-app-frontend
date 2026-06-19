@@ -80,7 +80,7 @@ For Google Gemini:
 
 ```bash
 AI_PROVIDER=google
-AI_MODEL=gemini-flash-latest
+AI_MODEL=gemini-3.1-flash-lite
 GOOGLE_API_KEY=your_google_ai_studio_key
 ```
 
@@ -99,6 +99,10 @@ AI_MODEL=llama-3.3-70b-versatile
 ```
 
 Do not put server AI keys in `NEXT_PUBLIC_*` variables.
+
+If `npm run dev` reports missing modules with `OS file watch limit reached`,
+the dev script uses webpack mode by default to reduce watcher pressure. Use
+`npm run dev:turbo` when your system watch limit is high enough for Turbopack.
 
 For native OpenAI:
 

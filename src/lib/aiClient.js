@@ -46,6 +46,9 @@ const unique = (items) => [...new Set(items.filter(Boolean))];
 
 const getGoogleApiKeys = () =>
   unique([
+    process.env.GOOGLE_API_KEY,
+    process.env.GOOGLE_API_KEY1,
+    process.env.GOOGLE_API_KEY2,
     process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
     process.env.NEXT_PUBLIC_GOOGLE_API_KEY1,
     process.env.NEXT_PUBLIC_GOOGLE_API_KEY2,
@@ -77,7 +80,7 @@ const getAIConfig = () => {
     googleBaseURL,
     model:
       process.env.AI_MODEL ||
-      (shouldUseGoogleDefaults ? "gemini-flash-latest" : "gpt-4o-mini"),
+      (shouldUseGoogleDefaults ? "gemini-3.1-flash-lite" : "gpt-4o-mini"),
   };
 };
 
