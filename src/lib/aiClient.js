@@ -47,9 +47,8 @@ const unique = (items) => [...new Set(items.filter(Boolean))];
 const getGoogleApiKeys = () =>
   unique([
     process.env.GOOGLE_API_KEY,
-    process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
-    process.env.NEXT_PUBLIC_GOOGLE_API_KEY1,
-    process.env.NEXT_PUBLIC_GOOGLE_API_KEY2,
+    process.env.GOOGLE_API_KEY1,
+    process.env.GOOGLE_API_KEY2,
   ]);
 
 const getAIConfig = () => {
@@ -63,7 +62,9 @@ const getAIConfig = () => {
   const openaiApiKey = process.env.OPENAI_API_KEY;
 
   const shouldUseGoogleDefaults =
-    provider === "google" || provider === "gemini" || (!explicitBaseURL && googleApiKey);
+    provider === "google" ||
+    provider === "gemini" ||
+    (!provider && !explicitBaseURL && googleApiKey);
   const useGoogleNative = shouldUseGoogleDefaults && !explicitBaseURL;
   const apiKey = useGoogleNative
     ? googleApiKey || process.env.AI_API_KEY || openaiApiKey
@@ -78,7 +79,7 @@ const getAIConfig = () => {
     googleBaseURL,
     model:
       process.env.AI_MODEL ||
-      (shouldUseGoogleDefaults ? "gemini-flash-latest" : "gpt-4o-mini"),
+      (shouldUseGoogleDefaults ? "gemini-2.0-flash" : "gpt-4o-mini"),
   };
 };
 
