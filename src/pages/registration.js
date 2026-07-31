@@ -12,6 +12,8 @@ import {
   Step,
   StepLabel,
   CircularProgress,
+  Alert,
+  LinearProgress,
 } from "@mui/material";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -23,12 +25,10 @@ import EducationSection from "../components/registration/educationSection";
 import WorkExperienceSection from "../components/registration/workExperienceSection";
 import SkillsSection from "../components/registration/skillsSection";
 import CertificationsResumeSection from "../components/registration/certificationsResumeSection";
-
+import { useAuth } from "../context/AuthContext";
 import useRegistrationForm from "../customHooks/useRegistrationForm";
 
-import axios from "axios";
-
-const STRAPI_URL = "http://localhost:1337";
+import { BrainCircuit, Save, UploadCloud } from "lucide-react";
 
 const steps = [
   "Personal Info",
@@ -41,21 +41,25 @@ const steps = [
 
 const RegistrationForm = () => {
   const router = useRouter();
-
+  const { login, setRegistrationCompleted } = useAuth(); 
   const {
     formData,
     errors,
     validate,
+    validateStep,
     handleChange,
     handleArrayChange,
     addField,
     removeField,
-    handleFileChange,
+    setFormData,
+    setErrors,
   } = useRegistrationForm();
 
   const [activeStep, setActiveStep] = useState(0);
   const [stepErrors, setStepErrors] = useState({}); // Track error per step
   const [loading, setLoading] = useState(false);
+  const [resumeAutofillLoading, setResumeAutofillLoading] = useState(false);
+  const [resumeAutofillMessage, setResumeAutofillMessage] = useState("");
 
   const errorMap = {
     0: ["name", "email", "phone", "dob", "gender", "password"],
@@ -63,7 +67,7 @@ const RegistrationForm = () => {
     2: ["education"],
     3: ["workExperience"],
     4: ["skills"],
-    5: ["certifications", "resumeFile"],
+    5: ["resumeFile"],
   };
 
   useEffect(() => {
@@ -89,32 +93,154 @@ const RegistrationForm = () => {
     formData.append("files", file);
 
     try {
-      const res = await axios.post(`${STRAPI_URL}/api/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
       });
 
-      if (Array.isArray(res.data) && res.data.length > 0) {
-        return res.data[0]; // uploaded file object
+      const result = await res.json();
+
+      if (res.ok && result.file) {
+        return result.file; // uploaded file object
       } else {
-        console.error("Unexpected response format from upload:", res.data);
-        return null;
+        throw new Error(result.error || "Resume upload failed");
       }
     } catch (error) {
       console.error("Error uploading file to Strapi:", error.response || error.message);
-      return null;
+      throw error;
+    }
+  };
+
+  const hasValue = (value) => {
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "boolean") return value;
+    return value !== undefined && value !== null && String(value).trim() !== "";
+  };
+
+  const normalizeEducation = (items = []) =>
+    items
+      .filter((item) => item && (item.degree || item.institution || item.year || item.grade))
+      .map((item) => ({
+        degree: item.degree || "",
+        institution: item.institution || "",
+        year: item.year || "",
+        grade: item.grade || "",
+      }));
+
+  const normalizeWorkExperience = (items = []) =>
+    items
+      .filter((item) => item && (item.company || item.title || item.description))
+      .map((item) => ({
+        company: item.company || "",
+        title: item.title || "",
+        startDate: item.startDate || "",
+        endDate: item.current ? "" : item.endDate || "",
+        current: Boolean(item.current),
+        description: item.description || "",
+      }));
+
+  const normalizeSkills = (items = []) =>
+    items
+      .filter((item) => item && item.skill)
+      .map((item) => ({
+        skill: item.skill || "",
+        level: ["Beginner", "Intermediate", "Expert"].includes(item.level)
+          ? item.level
+          : "",
+        experienceYears: item.experienceYears || "",
+      }));
+
+  const mergeResumeProfile = (currentData, profileData) => {
+    const nextData = { ...currentData };
+    const simpleFields = [
+      "name",
+      "email",
+      "phone",
+      "dob",
+      "gender",
+      "jobTitle",
+      "company",
+      "experienceYears",
+      "jobType",
+      "certifications",
+    ];
+
+    simpleFields.forEach((field) => {
+      if (!hasValue(nextData[field]) && hasValue(profileData[field])) {
+        nextData[field] = profileData[field];
+      }
+    });
+
+    const education = normalizeEducation(profileData.education);
+    const workExperience = normalizeWorkExperience(profileData.workExperience);
+    const skills = normalizeSkills(profileData.skills);
+
+    if (education.length) nextData.education = education;
+    if (workExperience.length) nextData.workExperience = workExperience;
+    if (skills.length) nextData.skills = skills;
+
+    return nextData;
+  };
+
+  const handleResumeAutofillChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      setResumeAutofillMessage("Please upload a PDF resume for automatic field filling.");
+      setFormData((prev) => ({ ...prev, resumeFile: file, uploadedResume: null }));
+      return;
+    }
+
+    setResumeAutofillLoading(true);
+    setResumeAutofillMessage("AI is reading your full resume and filling profile fields...");
+    setFormData((prev) => ({ ...prev, resumeFile: file, uploadedResume: null }));
+    setErrors((prev) => ({ ...prev, resumeFile: null }));
+
+    try {
+      const resumeFormData = new FormData();
+      resumeFormData.append("resume", file);
+
+      const response = await fetch("/api/resume/extract-profile-upload", {
+        method: "POST",
+        body: resumeFormData,
+      });
+      const profileData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(profileData.error || "Could not read resume data.");
+      }
+
+      setFormData((prev) => ({
+        ...mergeResumeProfile(prev, profileData),
+        resumeFile: file,
+        uploadedResume: null,
+      }));
+      setResumeAutofillMessage(
+        "AI read the resume and filled matching fields. Please review and complete any blank fields manually."
+      );
+      setActiveStep(0);
+    } catch (error) {
+      console.error("Resume autofill failed:", error);
+      setResumeAutofillMessage(
+        error.message || "Could not auto-fill from this resume. You can still fill the form manually."
+      );
+    } finally {
+      setResumeAutofillLoading(false);
+      e.target.value = "";
     }
   };
 
   // Map arrays to backend expected structure
   const mapEducation = (educationArr) =>
-    educationArr.map((edu) => ({
-      degree: edu.degree,
-      institution: edu.institution,
-      passingYear: edu.year,
-      grade: edu.grade,
-    }));
+    educationArr
+      .filter((edu) => edu && (edu.degree || edu.institution || edu.year || edu.grade))
+      .map((edu) => ({
+        degree: edu.degree,
+        institution: edu.institution,
+        passingYear: edu.year,
+        grade: edu.grade,
+      }));
 // ✅ Utility to format date to yyyy-MM-dd
 const formatDate = (date) => {
   if (!date) return null;
@@ -124,21 +250,34 @@ const formatDate = (date) => {
 
 // ✅ Updated work experience mapping
 const mapWorkExperience = (workArr) =>
-  workArr.map((work) => ({
-    jobTitle: work.title,
-    company: work.company,
-    startDate: formatDate(work.startDate),
-    endDate: work.current ? null : formatDate(work.endDate),
-    jobDescription: work.description,
-    current: work.current || false, // 👈 Add this line
-  }));
+  workArr
+    .filter(
+      (work) =>
+        work &&
+        (work.company ||
+          work.title ||
+          work.startDate ||
+          work.endDate ||
+          work.current ||
+          work.description)
+    )
+    .map((work) => ({
+      jobTitle: work.title,
+      company: work.company,
+      startDate: formatDate(work.startDate),
+      endDate: work.current ? null : formatDate(work.endDate),
+      jobDescription: work.description,
+      current: work.current || false, // 👈 Add this line
+    }));
 
   const mapSkills = (skillsArr) =>
-    skillsArr.map((skill) => ({
-      skillName: skill.skill,
-      level: skill.level,
-      yearsExperience: skill.experienceYears,
-    }));
+    skillsArr
+      .filter((skill) => skill && (skill.skill || skill.level || skill.experienceYears))
+      .map((skill) => ({
+        skillName: skill.skill,
+        level: skill.level,
+        yearsExperience: skill.experienceYears,
+      }));
 
   // Submit form data to Strapi userlists
   const submitFormData = async (uploadedFileId) => {
@@ -165,8 +304,23 @@ const mapWorkExperience = (workArr) =>
     };
 
     try {
-      const res = await axios.post(`${STRAPI_URL}/api/userlists`, payload);
-      return res.data;
+      const res = await fetch("/api/data/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          endpoint: "/api/userlists?status=published",
+          data: payload,
+        }),
+      });
+
+      const result = await res.json();
+      if (res.ok) {
+        return result.data;
+      } else {
+        throw new Error(result.error || "Registration failed");
+      }
     } catch (error) {
       console.error(
         "Error submitting userlist entry:",
@@ -177,6 +331,11 @@ const mapWorkExperience = (workArr) =>
   };
 
   const handleNext = async () => {
+    if (!validateStep(activeStep)) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
     if (activeStep === steps.length - 1) {
       if (!validate()) {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -196,8 +355,8 @@ const mapWorkExperience = (workArr) =>
       setLoading(true);
 
       try {
-        // 1. Upload resume file
-        const uploadedFile = await uploadFileToStrapi(formData.resumeFile);
+        const uploadedFile =
+          formData.uploadedResume || (await uploadFileToStrapi(formData.resumeFile));
 
         if (!uploadedFile) {
           alert("File upload failed. Please try again.");
@@ -206,20 +365,21 @@ const mapWorkExperience = (workArr) =>
         }
 
         // 2. Submit form data with uploaded file ID
-        await submitFormData(uploadedFile.id);
+        const createdUser = await submitFormData(uploadedFile.id);
 
-         // ✅ 2. Show form data in console before submitting
-      console.log("Form data being submitted:", {
-        ...formData,
-        resumeFile: uploadedFile,
-      });
+        console.log("Form data being submitted:", {
+          ...formData,
+          uploadedResume: uploadedFile,
+        });
 
         setLoading(false);
-
-        alert("Registration successful!");
-        router.push("/dashboard");
+        setRegistrationCompleted(true);
+        login({
+          email: formData.email,
+          documentId: createdUser?.documentId,
+        });
       } catch (error) {
-        alert("An error occurred during submission. Please try again.");
+        alert(error.message || "An error occurred during submission. Please try again.");
         setLoading(false);
       }
     } else {
@@ -285,15 +445,15 @@ const mapWorkExperience = (workArr) =>
         );
       case 5:
         return (
-         <CertificationsResumeSection
-          formData={formData}
-          handleChange={handleChange}
-          handleFileChange={handleFileChange}
-          errors={{
-            certifications: errors.certifications,
-            resumeFile: errors.resumeFile,
-          }}
-        />
+          <CertificationsResumeSection
+            formData={formData}
+            handleChange={handleChange}
+            handleFileChange={handleResumeAutofillChange}
+            errors={{
+              certifications: errors.certifications,
+              resumeFile: errors.resumeFile,
+            }}
+          />
         );
       default:
         return null;
@@ -308,47 +468,217 @@ const mapWorkExperience = (workArr) =>
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
+        p: { xs: 1.5, md: 3 },
       }}
     >
+      <Box className="skillsync-glow-grid" />
       <Card
         sx={{
-          maxWidth: 1200,
-          minHeight: "600px",
+          maxWidth: 1240,
+          minHeight: { xs: "auto", md: "680px" },
           width: "100%",
-          boxShadow: 3,
+          borderRadius: { xs: "22px", sm: "30px" },
+          border: "1px solid rgba(255,255,255,0.08)",
+          background:
+            "linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.03))",
+          backdropFilter: "blur(24px)",
+          boxShadow: "0 30px 110px rgba(0,0,0,0.46), 0 0 60px rgba(124,58,237,0.16)",
           display: "flex",
           flexDirection: "column",
+          overflow: "hidden",
         }}
       >
-        <CardContent sx={{ flexGrow: 1, overflowY: "auto" }}>
+        <CardContent sx={{ flexGrow: 1, overflowY: "auto", p: { xs: 1.8, sm: 2.4, md: 4 } }}>
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              mb: 2,
+              flexDirection: { xs: "column", sm: "row" },
+              gap: { xs: 1, sm: 2 },
+              mb: { xs: 1.25, sm: 2 },
             }}
           >
             <Button
               startIcon={<ArrowBackIcon />}
               onClick={handleBackToLogin}
-              sx={{ textTransform: "none" }}
+              sx={{
+                color: "text.secondary",
+                alignSelf: { xs: "flex-start", sm: "center" },
+              }}
             >
               Back to Login
             </Button>
 
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: "bold", flexGrow: 1, textAlign: "center" }}
-              gutterBottom
-            >
-              Registration
-            </Typography>
+            <Box sx={{ flexGrow: 1, textAlign: "center", width: "100%" }}>
+              <Box sx={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 0.8, mb: 0.5 }}>
+                <BrainCircuit size={20} color="#06B6D4" />
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontWeight: 900,
+                      fontSize: { xs: "1.26rem", sm: "1.6rem", md: "1.9rem" },
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    SkillSync AI Registration
+                  </Typography>
+                </Box>
+                <Typography sx={{ color: "text.secondary", fontSize: { xs: "0.82rem", sm: "0.9rem" } }}>
+                Build your Naukri-style career profile in guided AI-ready steps.
+              </Typography>
+            </Box>
 
-            <Box sx={{ width: "120px" }} />
+            <Box sx={{ width: { xs: 0, sm: "120px" }, display: { xs: "none", sm: "block" } }} />
           </Box>
 
-          <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 3 }}>
+          <Alert
+            severity={resumeAutofillMessage.toLowerCase().includes("failed") || resumeAutofillMessage.toLowerCase().includes("could not") ? "warning" : "info"}
+            sx={{
+              mb: { xs: 1.25, sm: 2 },
+              borderRadius: { xs: "14px", sm: "18px" },
+              py: { xs: 1, sm: 1.25 },
+              px: { xs: 1.2, sm: 2 },
+              "& .MuiAlert-message": {
+                fontSize: { xs: "0.82rem", sm: "0.95rem" },
+                lineHeight: 1.45,
+              },
+            }}
+          >
+            First upload your PDF resume. AI will read the complete resume, fill matching fields, and leave missing details for manual entry.
+          </Alert>
+
+          <Box
+            sx={{
+              mb: { xs: 1.25, sm: 2 },
+              p: { xs: 1.35, sm: 2 },
+              borderRadius: { xs: "15px", sm: "18px" },
+              border: "1px solid rgba(255,255,255,0.10)",
+              bgcolor: "rgba(255,255,255,0.045)",
+              display: "flex",
+              alignItems: { xs: "stretch", sm: "center" },
+              justifyContent: "space-between",
+              gap: { xs: 1.2, sm: 2 },
+              flexDirection: { xs: "column", sm: "row" },
+            }}
+          >
+            <Box>
+              <Typography sx={{ fontWeight: 800 }}>AI Resume Auto-Fill</Typography>
+              <Typography sx={{ color: "text.secondary", fontSize: { xs: "0.8rem", sm: "0.8125rem" }, lineHeight: 1.45 }}>
+                {formData.resumeFile?.name
+                  ? `Selected: ${formData.resumeFile.name}`
+                  : "Upload your resume first so AI can read it before registration."}
+              </Typography>
+              {resumeAutofillMessage && (
+                <Typography sx={{ color: "text.secondary", fontSize: { xs: "0.8rem", sm: "0.8125rem" }, mt: 0.5 }}>
+                  {resumeAutofillMessage}
+                </Typography>
+              )}
+            </Box>
+            <Button
+              variant="outlined"
+              component="label"
+              disabled={resumeAutofillLoading}
+              startIcon={
+                resumeAutofillLoading ? (
+                  <CircularProgress size={16} color="inherit" />
+                ) : (
+                  <UploadCloud size={17} />
+                )
+              }
+              sx={{ borderColor: "rgba(255,255,255,0.18)", color: "#fff", width: { xs: "100%", sm: "auto" } }}
+            >
+              {resumeAutofillLoading ? "Reading..." : "Upload Resume"}
+              <input
+                type="file"
+                accept="application/pdf"
+                hidden
+                onChange={handleResumeAutofillChange}
+              />
+            </Button>
+          </Box>
+
+          <Box
+            sx={{
+              display: { xs: "block", sm: "none" },
+              mb: 1,
+              p: 1.15,
+              borderRadius: "14px",
+              border: "1px solid rgba(255,255,255,0.08)",
+              bgcolor: "rgba(255,255,255,0.035)",
+            }}
+          >
+            <Typography sx={{ color: "#67E8F9", fontWeight: 900, fontSize: "0.75rem", mb: 0.4 }}>
+              Step {activeStep + 1} of {steps.length}
+            </Typography>
+            <Typography sx={{ color: "#fff", fontWeight: 900, fontSize: "0.95rem", mb: 0.8 }}>
+              {steps[activeStep]}
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={((activeStep + 1) / steps.length) * 100}
+              sx={{
+                height: "0.42rem",
+                borderRadius: 999,
+                bgcolor: "rgba(255,255,255,0.08)",
+                "& .MuiLinearProgress-bar": {
+                  borderRadius: 999,
+                  background: "linear-gradient(90deg, #7C3AED, #06B6D4)",
+                },
+              }}
+            />
+          </Box>
+
+          <Stepper
+            activeStep={activeStep}
+            alternativeLabel
+            sx={{
+              mb: { xs: 1.8, sm: 3 },
+              p: { xs: 0.85, sm: 1.4, md: 2 },
+              borderRadius: { xs: "16px", sm: "22px" },
+              border: "1px solid rgba(255,255,255,0.08)",
+              bgcolor: "rgba(255,255,255,0.035)",
+              width: "100%",
+              maxWidth: "100%",
+              overflowX: { xs: "auto", lg: "visible" },
+              overflowY: "hidden",
+              justifyContent: { xs: "flex-start", lg: "center" },
+              scrollbarWidth: { xs: "none", lg: "thin" },
+              "&::-webkit-scrollbar": {
+                display: { xs: "none", lg: "block" },
+              },
+              "& .MuiStep-root": {
+                flex: { xs: "0 0 2.75rem", sm: "0 0 7.2rem", md: "1 1 0" },
+                minWidth: { xs: "2.75rem", sm: "7.2rem", md: 0 },
+                px: { xs: 0.15, sm: 0.5, md: 1 },
+              },
+              "& .MuiStepLabel-label": {
+                display: { xs: "none", sm: "block" },
+                mt: { xs: 0.55, sm: 0.75 },
+                fontSize: { xs: "0.68rem", sm: "0.75rem", md: "0.8125rem" },
+                lineHeight: 1.18,
+                whiteSpace: "normal",
+                wordBreak: "break-word",
+                overflowWrap: "anywhere",
+                maxWidth: "100%",
+              },
+              "& .MuiStepIcon-root": {
+                width: { xs: "1.55rem", sm: "1.65rem" },
+                height: { xs: "1.55rem", sm: "1.65rem" },
+              },
+              "& .MuiStepLabel-iconContainer": {
+                p: 0,
+              },
+              "& .MuiStepConnector-root": {
+                left: { xs: "calc(-50% + 0.9rem)", sm: "calc(-50% + 1rem)" },
+                right: { xs: "calc(50% + 0.9rem)", sm: "calc(50% + 1rem)" },
+                top: { xs: "0.8rem", sm: "0.85rem" },
+              },
+              "& .MuiStepConnector-line": {
+                borderColor: "rgba(255,255,255,0.16)",
+              },
+            }}
+          >
             {steps.map((label, index) => (
               <Step key={label} error={stepErrors[index] ? true : undefined}>
                 <StepLabel error={stepErrors[index] ? true : undefined}>
@@ -368,10 +698,13 @@ const mapWorkExperience = (workArr) =>
         <Box
           sx={{
             p: 2,
-            borderTop: "1px solid rgba(0,0,0,0.12)",
+            borderTop: "1px solid rgba(255,255,255,0.08)",
             display: "flex",
             justifyContent: "space-between",
-            backgroundColor: "background.paper",
+            gap: 2,
+            flexDirection: { xs: "column", sm: "row" },
+            background: "rgba(5,8,22,0.76)",
+            backdropFilter: "blur(18px)",
             position: "sticky",
             bottom: 0,
             zIndex: 10,
@@ -381,6 +714,7 @@ const mapWorkExperience = (workArr) =>
             disabled={activeStep === 0 || loading}
             onClick={handleBack}
             variant="outlined"
+            sx={{ borderColor: "rgba(255,255,255,0.14)", color: "#fff", width: { xs: "100%", sm: "auto" } }}
           >
             Back
           </Button>
@@ -390,6 +724,8 @@ const mapWorkExperience = (workArr) =>
             color="primary"
             onClick={handleNext}
             disabled={loading}
+            startIcon={activeStep === steps.length - 1 ? <UploadCloud size={17} /> : <Save size={17} />}
+            sx={{ width: { xs: "100%", sm: "auto" } }}
           >
             {loading ? (
               <CircularProgress size={24} color="inherit" />

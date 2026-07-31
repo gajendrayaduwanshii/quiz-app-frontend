@@ -1,19 +1,21 @@
-import axios from "axios";
-
-const STRAPI_URL = "http://localhost:1337";
-
 export const uploadFileToStrapi = async (file) => {
   const formData = new FormData();
   formData.append("files", file);
 
   try {
-    const res = await axios.post(`${STRAPI_URL}/api/upload`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
     });
 
-    return res.data[0]; // Uploaded file object
+    const result = await res.json();
+
+    if (res.ok && result.file) {
+      return result.file; // Uploaded file object
+    } else {
+      console.error("Error uploading file:", result.error);
+      return null;
+    }
   } catch (error) {
     console.error("Error uploading file to Strapi:", error);
     return null;

@@ -18,7 +18,16 @@ const WorkExperienceSection = ({
   errors = [], // array of error objects for each work experience item
 }) => (
   <Grid item xs={12} className="section-wrapper">
-    <Box display="flex" justifyContent="space-between" alignItems="center">
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      sx={{
+        flexDirection: { xs: "column", sm: "row" },
+        alignItems: { xs: "stretch", sm: "center" },
+        gap: 1,
+      }}
+    >
       <Typography variant="h6" className="form-sub-title">
         Work Experience
       </Typography>
@@ -34,8 +43,8 @@ const WorkExperienceSection = ({
             current: false, // new field for current working
           })
         }
-        startIcon={<AddCircle sx={{ fontSize: 28 }} />}
-        sx={{ padding: "0", minWidth: "auto" }}
+        startIcon={<AddCircle sx={{ fontSize: "1.75rem" }} />}
+        sx={{ padding: "0.3rem 0", minWidth: "auto", alignSelf: { xs: "flex-start", sm: "center" } }}
       />
     </Box>
 
@@ -49,8 +58,24 @@ const WorkExperienceSection = ({
             display="flex"
             justifyContent="space-between"
             alignItems="center"
+            sx={{
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: { xs: "stretch", sm: "center" },
+              gap: 1,
+              minWidth: 0,
+            }}
           >
-            <Box display="flex" alignItems="center" gap={2}>
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={2}
+              sx={{
+                flexDirection: { xs: "column", sm: "row" },
+                alignItems: { xs: "stretch", sm: "center" },
+                gap: { xs: 0.6, sm: 2 },
+                minWidth: 0,
+              }}
+            >
               <Typography variant="h6" className="form-row-title">
                 Experience {i + 1}
               </Typography>
@@ -60,7 +85,6 @@ const WorkExperienceSection = ({
                     <Checkbox
                       checked={exp.current}
                       onChange={(e) => {
-                        console.log("Checkbox changed:", e.target.checked);
                         handleArrayChange(
                           "workExperience",
                           i,
@@ -75,22 +99,42 @@ const WorkExperienceSection = ({
                     />
                   }
                   label="Currently Working Here"
+                  sx={{
+                    m: 0,
+                    alignItems: "flex-start",
+                    "& .MuiFormControlLabel-label": {
+                      fontSize: "0.875rem",
+                      lineHeight: 1.3,
+                    },
+                  }}
                 />
               </Box>
             </Box>
             {workExperience.length > 1 && (
               <Button
                 onClick={() => removeField("workExperience", i)}
-                startIcon={<RemoveCircle color="error" sx={{ fontSize: 28 }} />}
-                sx={{ padding: "0", minWidth: "auto" }}
+                startIcon={<RemoveCircle color="error" sx={{ fontSize: "1.75rem" }} />}
+                sx={{ padding: "0.3rem 0", minWidth: "auto", alignSelf: { xs: "flex-start", sm: "center" } }}
                 className="icon-btn"
               />
             )}
           </Box>
 
           <Box>
-            <Box className="custom-row">
-              <Box className="custom-col">
+            <Box
+              className="custom-row registration-work-row"
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, minmax(0, 1fr))",
+                  lg: "repeat(4, minmax(0, 1fr))",
+                },
+                gap: { xs: 1.4, sm: 2 },
+                mb: 2,
+              }}
+            >
+              <Box className="custom-col" sx={{ minWidth: 0 }}>
                 <TextField
                   label="Company"
                   fullWidth
@@ -108,7 +152,7 @@ const WorkExperienceSection = ({
                 />
               </Box>
 
-              <Box className="custom-col">
+              <Box className="custom-col" sx={{ minWidth: 0 }}>
                 <TextField
                   label="Job Title"
                   fullWidth
@@ -126,7 +170,7 @@ const WorkExperienceSection = ({
                 />
               </Box>
 
-              <Box className="custom-col">
+              <Box className="custom-col" sx={{ minWidth: 0 }}>
                 <TextField
                   label="Start Date"
                   type="date"
@@ -148,7 +192,7 @@ const WorkExperienceSection = ({
 
               <Box
                 className="custom-col"
-                sx={{ display: "flex", alignItems: "center" }}
+                sx={{ display: "flex", alignItems: "center", minWidth: 0 }}
               >
                 <TextField
                   label="End Date"
@@ -170,7 +214,7 @@ const WorkExperienceSection = ({
                 />
               </Box>
             </Box>
-            <Box className="custom-col">
+            <Box className="custom-col" sx={{ minWidth: 0 }}>
               <TextField
                 label="Job Description"
                 fullWidth

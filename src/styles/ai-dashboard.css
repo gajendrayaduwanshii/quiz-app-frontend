@@ -1,0 +1,370 @@
+/* AI Dashboard Modern Styles */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(25, 118, 210, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(25, 118, 210, 0.6);
+  }
+}
+
+/* AI Dashboard Container */
+.ai-dashboard-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* AI Card Animations */
+.ai-card {
+  animation: fadeInUp 0.6s ease-out;
+  transition: all 0.3s ease;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+.ai-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.ai-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.ai-card:hover::before {
+  left: 100%;
+}
+
+/* AI Loading States */
+.ai-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.ai-loading-text {
+  animation: pulse 2s infinite;
+}
+
+/* AI Icons and Avatars */
+.ai-icon {
+  animation: float 3s ease-in-out infinite;
+}
+
+.ai-icon.rotating {
+  animation: rotate 2s linear infinite;
+}
+
+.ai-avatar {
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.ai-avatar:hover {
+  border-color: #1976d2;
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* AI Progress Bars */
+.ai-progress {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.ai-progress::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+/* AI Charts */
+.ai-chart {
+  animation: fadeInUp 0.8s ease-out;
+  transition: all 0.3s ease;
+}
+
+.ai-chart:hover {
+  transform: scale(1.02);
+}
+
+/* AI Buttons */
+.ai-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.ai-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.ai-button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* AI Cards with Gradient Backgrounds */
+.ai-card-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.ai-card-gradient-secondary {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.ai-card-gradient-success {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.ai-card-gradient-warning {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: white;
+}
+
+.ai-card-gradient-info {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  color: white;
+}
+
+/* AI Typography */
+.ai-title {
+  background: linear-gradient(45deg, #1976d2, #42a5f5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: bold;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.ai-subtitle {
+  color: #666;
+  animation: slideInLeft 0.8s ease-out;
+}
+
+/* AI Grid Animations */
+.ai-grid-item {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.ai-grid-item:nth-child(1) { animation-delay: 0.1s; }
+.ai-grid-item:nth-child(2) { animation-delay: 0.2s; }
+.ai-grid-item:nth-child(3) { animation-delay: 0.3s; }
+.ai-grid-item:nth-child(4) { animation-delay: 0.4s; }
+.ai-grid-item:nth-child(5) { animation-delay: 0.5s; }
+.ai-grid-item:nth-child(6) { animation-delay: 0.6s; }
+
+/* AI Loading Spinner */
+.ai-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #1976d2;
+  border-radius: 50%;
+  animation: rotate 1s linear infinite;
+}
+
+/* AI Success States */
+.ai-success {
+  animation: pulse 1s ease-in-out;
+  background: linear-gradient(135deg, #4caf50, #8bc34a);
+  color: white;
+}
+
+/* AI Error States */
+.ai-error {
+  animation: pulse 1s ease-in-out;
+  background: linear-gradient(135deg, #f44336, #ff9800);
+  color: white;
+}
+
+/* AI Hover Effects */
+.ai-hover-lift {
+  transition: all 0.3s ease;
+}
+
+.ai-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* AI Glass Morphism */
+.ai-glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+}
+
+/* AI Neon Effects */
+.ai-neon {
+  box-shadow: 0 0 5px #1976d2, 0 0 10px #1976d2, 0 0 15px #1976d2;
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* AI Responsive Design */
+@media (max-width: 768px) {
+  .ai-dashboard-container {
+    padding: 10px;
+  }
+  
+  .ai-card {
+    margin-bottom: 16px;
+  }
+  
+  .ai-grid-item {
+    animation-delay: 0s;
+  }
+}
+
+/* AI Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .ai-card {
+    background: rgba(30, 30, 30, 0.8);
+    color: white;
+  }
+  
+  .ai-glass {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* AI Accessibility */
+.ai-focus:focus {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+.ai-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* AI Performance Optimizations */
+.ai-will-change {
+  will-change: transform, opacity;
+}
+
+.ai-gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}

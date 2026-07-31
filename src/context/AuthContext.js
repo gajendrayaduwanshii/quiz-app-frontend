@@ -1,15 +1,17 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { useRouter } from "next/navigation";
+import { authService } from "@/services/authService";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const router = useRouter();
+    const [registrationCompleted, setRegistrationCompleted] = useState(false);
 
     useEffect(() => {
         if (typeof window !== "undefined") { 
-            const storedUser = JSON.parse(localStorage.getItem("user"));
+            const storedUser = authService.getStoredUser();
             if (storedUser) {
                 setUser(storedUser);
             }
@@ -29,7 +31,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, setRegistrationCompleted, registrationCompleted }}>
             {children}
         </AuthContext.Provider>
     );
