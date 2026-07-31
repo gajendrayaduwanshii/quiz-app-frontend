@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     }
 
     const arrayBuffer = await pdfRes.arrayBuffer();
-    const pdfData = await pdfParse(arrayBuffer);
+    const pdfData = await pdfParse(Buffer.from(arrayBuffer));
     const trimmedText = pdfData.text.slice(0, 5000);
 
     if (!trimmedText.trim()) {
@@ -87,7 +87,7 @@ ${trimmedText}
 
     const aiText = await generateAIText(prompt, {
       temperature: 0.4,
-      responseMimeType: "application/json",
+      maxTokens: 4096,
     });
 
     const parsedData = safeJsonParse(aiText);

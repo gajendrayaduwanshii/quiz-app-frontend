@@ -122,9 +122,23 @@ const normalizeDetailedPlan = (recommendations) => {
   };
 };
 
+// Cache AI responses for 30 minutes per user to avoid calling the LLM on every visit
+const AI_CACHE_TTL_MS = 30 * 60 * 1000;
+const aiCache = new Map(); // key: documentId, value: { ts, suggestions, detailedPlan }
+
+const getCached = (userId) => {
+  const entry = aiCache.get(userId);
+  if (entry && Date.now() - entry.ts < AI_CACHE_TTL_MS) return entry;
+  aiCache.delete(userId);
+  return null;
+};
+
 export const useLearningSuggestions = (user, questions) => {
-  const [suggestions, setSuggestions] = useState([]);
-  const [detailedPlan, setDetailedPlan] = useState(null);
+  const userId = user?.documentId || user?.id;
+  const cached = userId ? getCached(userId) : null;
+
+  const [suggestions, setSuggestions] = useState(() => cached?.suggestions || []);
+  const [detailedPlan, setDetailedPlan] = useState(() => cached?.detailedPlan || null);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [suggestionError, setSuggestionError] = useState("");
 
@@ -132,6 +146,15 @@ export const useLearningSuggestions = (user, questions) => {
     if (!user) {
       setSuggestions([]);
       setDetailedPlan(null);
+      setSuggestionError("");
+      return;
+    }
+
+    // Serve from cache — skip LLM call entirely
+    const hit = userId ? getCached(userId) : null;
+    if (hit) {
+      setSuggestions(hit.suggestions);
+      setDetailedPlan(hit.detailedPlan);
       setSuggestionError("");
       return;
     }
@@ -163,6 +186,10 @@ export const useLearningSuggestions = (user, questions) => {
         const aiPlan = normalizeDetailedPlan(data.recommendations);
         const aiCards = aiPlan ? [] : buildAISuggestionCards(data.recommendations);
         if (!cancelled) {
+          // Store in cache so next visit skips the LLM call
+          if (userId && (aiPlan || aiCards.length)) {
+            aiCache.set(userId, { ts: Date.now(), suggestions: aiCards, detailedPlan: aiPlan });
+          }
           setSuggestions(aiCards);
           setDetailedPlan(aiPlan);
           setSuggestionError(
@@ -189,7 +216,8 @@ export const useLearningSuggestions = (user, questions) => {
     return () => {
       cancelled = true;
     };
-  }, [questions, user]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, questions]);
 
   return {
     suggestions,

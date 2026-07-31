@@ -1,8 +1,76 @@
 import { generateAIText } from "@/lib/aiClient";
+import { normalizeQuizQuestions } from "@/utils/quizQuestions";
 
-// Cache for quiz questions
 const quizCache = new Map();
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+
+// ── Extract every complete question object from raw AI text ───────────────────
+// Works even when the outer JSON array is truncated mid-response.
+const extractCompleteQuestions = (text) => {
+  const questions = [];
+  let pos = 0;
+
+  while (pos < text.length) {
+    const start = text.indexOf("{", pos);
+    if (start === -1) break;
+
+    // Walk forward matching braces to find the closing }
+    let depth = 0;
+    let end = -1;
+    for (let j = start; j < text.length; j++) {
+      if (text[j] === "{") depth++;
+      else if (text[j] === "}") {
+        depth--;
+        if (depth === 0) { end = j; break; }
+      }
+    }
+
+    if (end === -1) break; // No complete object — rest is truncated
+
+    try {
+      const q = JSON.parse(text.slice(start, end + 1));
+      if (
+        q.question &&
+        Array.isArray(q.options) &&
+        q.options.length >= 2 &&
+        q.answer
+      ) {
+        if (!q.id) q.id = String(questions.length + 1);
+        questions.push(q);
+      }
+    } catch { /* incomplete or malformed object — skip */ }
+
+    pos = end + 1;
+  }
+
+  return questions;
+};
+
+// ── Try standard JSON.parse then fall back to object-by-object extraction ─────
+const parseQuestions = (raw) => {
+  if (!raw || !raw.trim()) return [];
+
+  // Step 1: standard parse after stripping markdown fences
+  const cleaned = raw
+    .replace(/```json\s*/gi, "")
+    .replace(/```\s*/g, "")
+    .trim();
+
+  // Find the outermost [...]
+  const arrayStart = cleaned.indexOf("[");
+  const arrayEnd = cleaned.lastIndexOf("]");
+
+  if (arrayStart !== -1 && arrayEnd > arrayStart) {
+    try {
+      const slice = cleaned.slice(arrayStart, arrayEnd + 1);
+      const parsed = JSON.parse(slice);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch { /* truncated or malformed — fall through */ }
+  }
+
+  // Step 2: extract individual complete question objects (handles truncation)
+  return extractCompleteQuestions(cleaned);
+};
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -11,200 +79,76 @@ export default async function handler(req, res) {
 
   try {
     const { user, tech } = req.body;
-    console.log("Quiz API: Received request", { 
-      tech, 
-      hasUser: !!user,
-      userSkills: user?.skills?.length || 0,
-      userId: user?.documentId || 'N/A'
-    });
 
     if (!user || !tech) {
-      console.error("Quiz API: Missing required fields", { hasUser: !!user, tech });
       return res.status(400).json({ error: "Missing user or tech" });
     }
 
-    // Create cache key
-    const cacheKey = `quiz_${tech}_${user.skills?.length || 0}_${user.yearsExperience || 0}`;
-    const cachedData = quizCache.get(cacheKey);
-    
-    if (cachedData && Date.now() - cachedData.timestamp < CACHE_DURATION) {
-      return res.status(200).json({ questions: cachedData.questions });
+    const cacheKey = `quiz_${tech}_${user.documentId || "anon"}`;
+    const cached = quizCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      return res.status(200).json({
+        questions: normalizeQuizQuestions(cached.questions),
+      });
     }
 
     const matchedSkill = Array.isArray(user.skills)
       ? user.skills.find(
-          (skill) => skill.skillName?.toLowerCase() === tech.toLowerCase()
+          (s) => (s.skillName || "").toLowerCase() === tech.toLowerCase()
         )
       : null;
 
     const experience = matchedSkill?.yearsExperience || "N/A";
     const level = matchedSkill?.level || "N/A";
 
-    const prompt = `
-You are a senior technical interviewer and assessment expert with deep expertise in ${tech}. Create a comprehensive quiz to evaluate a developer's knowledge and skills.
+    const prompt = `You are a technical quiz generator. Generate exactly 10 multiple-choice questions for ${tech}.
 
-**Developer Profile:**
-- Technology: ${tech}
-- Experience Level: ${level}
-- Years of Experience: ${experience} years
-- Skills: ${user.skills?.map(s => s.skillName).join(', ') || 'Not specified'}
+Developer: level=${level}, experience=${experience} years
 
-**Quiz Requirements:**
-Generate 10 high-quality multiple-choice questions in JSON format. Each question must be an object with this exact structure:
-{
-  "id": "unique_question_id",
-  "question": "Clear, specific question text",
-  "options": ["Option A", "Option B", "Option C", "Option D"],
-  "answer": "Correct option text"
-}
+Rules:
+- Return ONLY a valid JSON array — no markdown, no text outside the array
+- Start with [ and end with ]
+- Each question: {"id":"1","question":"...","options":["A","B","C","D"],"answer":"correct option text"}
+- Option strings must contain only the option text; do not prefix them with A, B, C, or D
+- Keep each option under 12 words
+- Only one option is correct
+- Mix difficulty: 4 easy, 4 medium, 2 hard
 
-**Question Distribution:**
-- 40% Fundamentals & Basics (${experience < 2 ? 'Beginner' : experience < 5 ? 'Intermediate' : 'Advanced'})
-- 30% Practical Application & Best Practices
-- 20% Advanced Concepts & Architecture
-- 10% Current Trends & Latest Features
-
-**Quality Standards:**
-- Questions should be realistic and job-relevant
-- Avoid trick questions or overly complex scenarios
-- Include real-world scenarios and practical problems
-- Ensure options are plausible but only one is correct
-- Use industry-standard terminology
-- Consider the developer's experience level appropriately
-
-**CRITICAL FORMATTING REQUIREMENTS:**
-- You MUST respond with ONLY a valid JSON array
-- Do NOT include any markdown code blocks (no code fences)
-- Do NOT include any explanations, comments, or additional text
-- Start directly with [ and end with ]
-- Ensure all JSON is properly formatted and valid
-- Example format: [{"id": "1", "question": "...", "options": [...], "answer": "..."}]
-`;
+JSON array:`;
 
     const output = await generateAIText(prompt, {
-      temperature: 0.4,
-      responseMimeType: "application/json",
+      temperature: 0.3,
+      maxTokens: 3000,
     });
-    console.log("Quiz API: Raw output length", output.length);
-    
-    if (!output || output.trim().length === 0) {
-      console.error("Quiz API: Empty response from AI provider");
-      return res.status(500).json({ 
-        error: "Empty response from AI",
-        questions: [] 
-      });
+
+    if (!output || !output.trim()) {
+      console.error("Quiz API: empty AI response");
+      return res.status(500).json({ error: "Empty response from AI", questions: [] });
     }
 
-    // Try multiple JSON extraction methods
-    let questions = null;
-    let jsonString = null;
+    console.log("Quiz API: raw output length", output.length);
 
-    // Method 1: Look for JSON array in markdown code blocks
-    const codeBlockMatch = output.match(/```(?:json)?\s*(\[.*?\])\s*```/s);
-    if (codeBlockMatch) {
-      jsonString = codeBlockMatch[1];
-      console.log("Quiz API: Found JSON in code block");
-    }
+    let questions = parseQuestions(output);
 
-    // Method 2: Look for JSON array directly
-    if (!jsonString) {
-      const jsonArrayMatch = output.match(/\[[\s\S]*\]/);
-      if (jsonArrayMatch) {
-        jsonString = jsonArrayMatch[0];
-        console.log("Quiz API: Found JSON array directly");
-      }
-    }
+    // Normalize inconsistent AI shapes and remove incomplete questions.
+    questions = normalizeQuizQuestions(questions);
 
-    // Method 3: Try to find JSON between curly braces or brackets
-    if (!jsonString) {
-      const bracketMatch = output.match(/(\[[\s\S]{100,}\])/);
-      if (bracketMatch) {
-        jsonString = bracketMatch[1];
-        console.log("Quiz API: Found JSON with bracket matching");
-      }
-    }
+    console.log("Quiz API: valid questions parsed", questions.length);
 
-    // Method 4: Try to extract everything that looks like JSON
-    if (!jsonString) {
-      // Remove markdown formatting and extract JSON
-      const cleaned = output
-        .replace(/```json/g, '')
-        .replace(/```/g, '')
-        .replace(/^[^{[]*/, '') // Remove text before first [ or {
-        .replace(/[^}\]]*$/, ''); // Remove text after last } or ]
-      
-      if (cleaned.trim().startsWith('[') && cleaned.trim().endsWith(']')) {
-        jsonString = cleaned.trim();
-        console.log("Quiz API: Extracted JSON after cleaning");
-      }
-    }
-
-    if (!jsonString) {
-      console.error("Quiz API: No JSON found in response");
-      console.log("Quiz API: Full output (first 1000 chars):", output.substring(0, 1000));
-      console.log("Quiz API: Output length:", output.length);
-      return res.status(200).json({ 
+    if (questions.length === 0) {
+      console.error("Quiz API: no valid questions. Raw output:", output.slice(0, 600));
+      return res.status(500).json({
+        error: "Failed to parse questions from AI response",
         questions: [],
-        error: "Could not extract valid JSON from AI response. The AI may have returned text instead of JSON.",
-        debug: output.substring(0, 500),
-        outputLength: output.length
+        debug: output.slice(0, 300),
       });
     }
 
-    try {
-      // Clean up the JSON string
-      jsonString = jsonString.trim();
-      
-      // Remove any trailing commas before closing brackets
-      jsonString = jsonString.replace(/,(\s*[}\]])/g, '$1');
-      
-      questions = JSON.parse(jsonString);
-      
-      // Validate questions structure
-      if (!Array.isArray(questions)) {
-        console.error("Quiz API: Parsed JSON is not an array");
-        return res.status(200).json({ questions: [] });
-      }
+    quizCache.set(cacheKey, { questions, timestamp: Date.now() });
+    return res.status(200).json({ questions });
 
-      // Filter out invalid questions
-      questions = questions.filter(q => 
-        q && 
-        q.id && 
-        q.question && 
-        Array.isArray(q.options) && 
-        q.options.length >= 2 &&
-        q.answer
-      );
-
-      console.log("Quiz API: Parsed questions count", questions.length);
-
-      if (questions.length === 0) {
-        console.error("Quiz API: No valid questions after filtering");
-        return res.status(200).json({ 
-          questions: [],
-          error: "No valid questions generated"
-        });
-      }
-
-      // Cache the result
-      quizCache.set(cacheKey, {
-        questions,
-        timestamp: Date.now()
-      });
-
-      res.status(200).json({ questions });
-    } catch (parseError) {
-      console.error("Quiz API: JSON parse error", parseError);
-      console.log("Quiz API: JSON string that failed to parse:", jsonString?.substring(0, 500));
-      console.log("Quiz API: Full output:", output.substring(0, 1000));
-      return res.status(200).json({ 
-        questions: [],
-        error: "Failed to parse JSON response",
-        debug: jsonString?.substring(0, 200)
-      });
-    }
-  } catch (error) {
-    console.error("Error in /api/quiz:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+  } catch (err) {
+    console.error("Quiz API error:", err);
+    return res.status(500).json({ error: "Internal Server Error", questions: [] });
   }
 }

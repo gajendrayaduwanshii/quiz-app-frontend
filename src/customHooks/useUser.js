@@ -1,34 +1,45 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/authService";
+
+// In-memory cache shared across all hook instances in the same session
+const cache = { data: null, documentId: null };
 
 export const useUser = () => {
   const router = useRouter();
   const [documentId, setDocumentId] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => cache.data || null);
   const [error, setError] = useState(null);
+  const fetchedRef = useRef(false);
 
-  // Simple fetch function - NO CACHING
-  const fetchUserData = async (docId) => {
+  const fetchUserData = async (docId, { force = false } = {}) => {
+    // Return cached data instantly if same user and not forced
+    if (!force && cache.data && cache.documentId === docId) {
+      setUser(cache.data);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch(`/api/user/fetch?documentId=${docId}`, {
-        method: 'GET',
-        cache: 'no-cache' // Force fresh data
+        method: "GET",
       });
 
       const result = await response.json();
 
       if (result.user) {
+        cache.data = result.user;
+        cache.documentId = docId;
         setUser(result.user);
       } else {
         router.push("/login");
       }
     } catch (err) {
-      console.error('useUser: Error fetching user data', err);
+      console.error("useUser: Error fetching user data", err);
       setError(err);
       router.push("/login");
     } finally {
@@ -36,38 +47,29 @@ export const useUser = () => {
     }
   };
 
-  // Initialize documentId from localStorage
+  // Initialize documentId from localStorage — run once only
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const userObj = authService.getStoredUser();
-      
-      if (!userObj?.documentId) {
-        router.push("/login");
-      } else {
-        setDocumentId(userObj.documentId);
-      }
+    if (typeof window === "undefined") return;
+    const userObj = authService.getStoredUser();
+    if (!userObj?.documentId) {
+      router.push("/login");
+    } else {
+      setDocumentId(userObj.documentId);
     }
-  }, [router]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Fetch user data when documentId changes
+  // Fetch when documentId is set — skip if already fetched this session
   useEffect(() => {
-    if (documentId) {
-      fetchUserData(documentId);
-    }
+    if (!documentId || fetchedRef.current) return;
+    fetchedRef.current = true;
+    fetchUserData(documentId);
   }, [documentId]);
 
-  // Simple refetch function - ALWAYS FRESH
+  // Force a fresh fetch from Strapi and update cache
   const refetch = () => {
-    if (documentId) {
-      fetchUserData(documentId);
-    }
+    if (documentId) fetchUserData(documentId, { force: true });
   };
 
-  // Simple return value
-  return { 
-    user, 
-    loading, 
-    error, 
-    refetch 
-  };
+  return { user, loading, error, refetch };
 };

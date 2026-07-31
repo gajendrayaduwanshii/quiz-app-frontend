@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { CheckCircle2, Circle, CircleDot, XCircle } from "lucide-react";
 import PremiumCard from "@/components/premium/PremiumCard";
+import { cleanOptionText } from "@/utils/quizQuestions";
 
 const QuizQuestion = memo(({
   question,
@@ -31,7 +32,8 @@ const QuizQuestion = memo(({
   const optionElements = useMemo(() => {
     return options.map((opt, index) => {
       // If opt is object with 'option' prop use it; else assume opt is string
-      const optionText = typeof opt === "object" ? opt.option : opt;
+      // Defensive cleanup for saved/cached questions created before normalization.
+      const optionText = cleanOptionText(opt);
       const optionId = typeof opt === "object" ? opt.id : index;
       const selected = value === optionText;
       const correct = submitted && optionText === answer;

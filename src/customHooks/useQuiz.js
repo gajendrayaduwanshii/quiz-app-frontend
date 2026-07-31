@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { normalizeQuizQuestions } from "@/utils/quizQuestions";
 
 export const useQuiz = (user, tech) => {
   const [questions, setQuestions] = useState([]);
@@ -33,7 +34,7 @@ export const useQuiz = (user, tech) => {
       const data = await res.json();
 
       if (res.ok) {
-        const questionsArray = data.questions || [];
+        const questionsArray = normalizeQuizQuestions(data.questions);
         console.log("Quiz API: Received questions", questionsArray.length);
         
         if (questionsArray.length === 0) {

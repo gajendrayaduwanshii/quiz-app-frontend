@@ -16,6 +16,7 @@ import {
   BarChart3,
   BookMarked,
   BrainCircuit,
+  ClipboardList,
   Code2,
   FileSearch,
   FileText,
@@ -23,6 +24,7 @@ import {
   Home,
   Medal,
   Mic2,
+  MonitorPlay,
   PieChart,
   Route,
   SearchCheck,
@@ -41,10 +43,13 @@ const iconMap = {
   resources: GraduationCap,
   jobmatch: SearchCheck,
   interview: Mic2,
+  mockinterview: MonitorPlay,
+  interviewhistory: ClipboardList,
   analysis: FileSearch,
   profile: UserRound,
   progress: Medal,
   analytics: PieChart,
+
   background: BookMarked,
 };
 
@@ -59,6 +64,8 @@ const MENU_GROUPS = [
     title: "Assess",
     items: [
       { label: "Skill Quizzes", href: "/technologies", icon: "users" },
+      { label: "Mock Interview", href: "/mockInterview", icon: "mockinterview" },
+      { label: "Interview History", href: "/interviewHistory", icon: "interviewhistory" },
       { label: "Job Match", href: "/jobMatch", icon: "jobmatch" },
       { label: "Resume AI", href: "/resumeAnalysis", icon: "resume" },
       { label: "Skills Analytics", href: "/skillsAnalytics", icon: "analytics" },

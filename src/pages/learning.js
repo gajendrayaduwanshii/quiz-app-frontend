@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/customHooks/useUser";
 import LoaderTwo from "@/components/LoaderTwo";
@@ -14,13 +15,14 @@ const Learning = () => {
   const router = useRouter();
   const { user, loading: userLoading } = useUser();
 
-  // Extract last quiz result from user's quizzes (for prompt input)
-  // Ensure user.quizResult is an array with quiz objects having quizQuestion array
-  const lastQuiz = user?.quizResult?.length
-    ? user.quizResult[user.quizResult.length - 1]
-    : null;
-
-  const questions = lastQuiz?.quizQuestion || [];
+  // Stable reference — || [] would create a new array every render and trigger
+  // useLearningSuggestions's useEffect on every render causing an infinite loop.
+  const questions = useMemo(() => {
+    const lastQuiz = user?.quizResult?.length
+      ? user.quizResult[user.quizResult.length - 1]
+      : null;
+    return lastQuiz?.quizQuestion || [];
+  }, [user]);
 
   // Use the hook - pass user and questions for AI prompt
   const { suggestions, detailedPlan, loadingSuggestions, isAIGenerated, suggestionError } =
